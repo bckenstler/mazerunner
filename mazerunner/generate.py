@@ -11,6 +11,7 @@ from mazerunner.common.rle import encode_rle
 from mazerunner.common.types import RenderConfig
 from mazerunner.generator.difficulty import sample_difficulty_params
 from mazerunner.generator.masks import (
+    carve_outer_openings,
     compute_cell_center,
     compute_image_size,
     generate_free_space_mask,
@@ -19,6 +20,7 @@ from mazerunner.generator.masks import (
     solution_cells_to_polyline,
 )
 from mazerunner.generator.maze_graph import build_maze
+from mazerunner.generator.placement import opening_center
 from mazerunner.generator.renderer import MazeRenderer
 from mazerunner.generator.seed_utils import derive_seed, make_rng
 from mazerunner.generator.themes import pick_theme
@@ -49,7 +51,7 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
 
         diff = sample_difficulty_params(tier, rng)
 
-        chrome_height_top = 38
+        chrome_height_top = 0
         chrome_width_left = 0
 
         image_width, image_height, render_config = compute_image_size(
@@ -70,14 +72,25 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
         maze = build_maze(diff.grid_rows, diff.grid_cols, diff.min_solution_length, rng)
 
         wall_mask = generate_wall_mask(maze, render_config)
+        carve_outer_openings(wall_mask, maze, render_config)
         free_mask = generate_free_space_mask(wall_mask)
 
-        start_center = compute_cell_center(
-            maze.start[0], maze.start[1], render_config, maze.rows, maze.cols
-        )
-        goal_center = compute_cell_center(
-            maze.goal[0], maze.goal[1], render_config, maze.rows, maze.cols
-        )
+        if maze.start_edge:
+            start_center = opening_center(
+                maze.start, maze.start_edge, render_config, maze.rows, maze.cols
+            )
+        else:
+            start_center = compute_cell_center(
+                maze.start[0], maze.start[1], render_config, maze.rows, maze.cols
+            )
+        if maze.goal_edge:
+            goal_center = opening_center(
+                maze.goal, maze.goal_edge, render_config, maze.rows, maze.cols
+            )
+        else:
+            goal_center = compute_cell_center(
+                maze.goal[0], maze.goal[1], render_config, maze.rows, maze.cols
+            )
 
         start_mask = generate_region_mask(
             start_center, render_config.corridor_width * 0.4, (image_height, image_width)
@@ -87,7 +100,8 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
         )
 
         solution_polyline = solution_cells_to_polyline(
-            maze.solution_path, render_config, maze.rows, maze.cols
+            maze.solution_path, render_config, maze.rows, maze.cols,
+            start_edge=maze.start_edge, goal_edge=maze.goal_edge,
         )
 
         # Compute solution length
@@ -134,6 +148,11 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
                 "chrome_height_top": render_config.chrome_height_top,
                 "chrome_width_left": render_config.chrome_width_left,
                 "theme_name": render_config.theme_name,
+            },
+            "placement": {
+                "style": maze.placement_style,
+                "start_edge": maze.start_edge,
+                "goal_edge": maze.goal_edge,
             },
         }
 

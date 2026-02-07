@@ -64,6 +64,9 @@ class TestMazeReproducibility:
         assert maze1.start == maze2.start
         assert maze1.goal == maze2.goal
         assert maze1.solution_path == maze2.solution_path
+        assert maze1.placement_style == maze2.placement_style
+        assert maze1.start_edge == maze2.start_edge
+        assert maze1.goal_edge == maze2.goal_edge
 
     def test_different_seed_different_maze(self):
         rng1 = make_rng(42)
@@ -89,3 +92,6 @@ class TestMazeReproducibility:
                 assert maze.start == first_maze.start
                 assert maze.goal == first_maze.goal
                 assert maze.solution_path == first_maze.solution_path
+                assert maze.placement_style == first_maze.placement_style
+                assert maze.start_edge == first_maze.start_edge
+                assert maze.goal_edge == first_maze.goal_edge

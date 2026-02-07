@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 
 from mazerunner.common.types import Cell, DifficultyConfig, MazeGrid, RenderConfig
+from mazerunner.generator.placement import opening_center, opening_pixel_rect
 
 
 def compute_cell_pixel_bounds(
@@ -76,6 +77,26 @@ def generate_wall_mask(maze: MazeGrid, config: RenderConfig) -> np.ndarray:
     return mask
 
 
+def carve_outer_openings(
+    wall_mask: np.ndarray, maze: MazeGrid, config: RenderConfig
+) -> None:
+    """Carve corridor-width gaps through the outer wall at start/goal edge positions.
+
+    Modifies wall_mask in place.
+    """
+    if maze.start_edge:
+        y_min, y_max, x_min, x_max = opening_pixel_rect(
+            maze.start, maze.start_edge, config, maze.rows, maze.cols
+        )
+        wall_mask[y_min:y_max, x_min:x_max] = False
+
+    if maze.goal_edge:
+        y_min, y_max, x_min, x_max = opening_pixel_rect(
+            maze.goal, maze.goal_edge, config, maze.rows, maze.cols
+        )
+        wall_mask[y_min:y_max, x_min:x_max] = False
+
+
 def generate_free_space_mask(wall_mask: np.ndarray) -> np.ndarray:
     """Returns inverse of wall mask."""
     return ~wall_mask
@@ -96,12 +117,28 @@ def solution_cells_to_polyline(
     config: RenderConfig,
     grid_rows: int,
     grid_cols: int,
+    start_edge: str = "",
+    goal_edge: str = "",
 ) -> List[Tuple[float, float]]:
-    """Convert cell path to pixel polyline through cell centers."""
+    """Convert cell path to pixel polyline through cell centers.
+
+    When start_edge/goal_edge are set, prepend/append the opening center
+    so the polyline extends to the wall opening.
+    """
     polyline = []
+
+    if start_edge and solution_path:
+        pt = opening_center(solution_path[0], start_edge, config, grid_rows, grid_cols)
+        polyline.append(pt)
+
     for cell in solution_path:
         center = compute_cell_center(cell[0], cell[1], config, grid_rows, grid_cols)
         polyline.append(center)
+
+    if goal_edge and solution_path:
+        pt = opening_center(solution_path[-1], goal_edge, config, grid_rows, grid_cols)
+        polyline.append(pt)
+
     return polyline
 
 

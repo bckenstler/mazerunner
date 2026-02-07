@@ -6,6 +6,7 @@ from typing import Dict, List, Set, Tuple, FrozenSet
 import numpy as np
 
 from mazerunner.common.types import Cell, MazeGrid
+from mazerunner.generator.placement import choose_start_goal_placed
 
 
 def _get_neighbors(row: int, col: int, rows: int, cols: int) -> List[Cell]:
@@ -128,7 +129,9 @@ def build_maze(
 ) -> MazeGrid:
     """Generate maze, choose start/goal, solve, return MazeGrid."""
     passages = generate_maze_dfs(rows, cols, rng)
-    start, goal = choose_start_goal(rows, cols, passages, min_solution_length, rng)
+    start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
+        rows, cols, passages, min_solution_length, rng
+    )
     solution_path = solve_bfs(rows, cols, passages, start, goal)
     return MazeGrid(
         rows=rows,
@@ -137,4 +140,7 @@ def build_maze(
         start=start,
         goal=goal,
         solution_path=solution_path,
+        placement_style=style,
+        start_edge=start_edge,
+        goal_edge=goal_edge,
     )

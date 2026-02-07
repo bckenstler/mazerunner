@@ -3,6 +3,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 from mazerunner.common.types import MazeGrid, RenderConfig
+from mazerunner.generator.placement import opening_pixel_rect
 from mazerunner.generator.themes import get_theme
 
 
@@ -23,38 +24,39 @@ class MazeRenderer:
         img = Image.new("RGBA", (w_width, w_height), (0, 0, 0, 255))
         draw = ImageDraw.Draw(img)
 
-        # Draw chrome bar
-        draw.rectangle([0, 0, w_width - 1, chrome_top - 1], fill=theme["chrome_bg"] + (255,))
-        # Chrome bottom border
-        border_y = chrome_top - 1
-        draw.line([(0, border_y), (w_width - 1, border_y)], fill=theme["chrome_border"] + (255,), width=max(1, scale))
+        if chrome_top > 0:
+            # Draw chrome bar
+            draw.rectangle([0, 0, w_width - 1, chrome_top - 1], fill=theme["chrome_bg"] + (255,))
+            # Chrome bottom border
+            border_y = chrome_top - 1
+            draw.line([(0, border_y), (w_width - 1, border_y)], fill=theme["chrome_border"] + (255,), width=max(1, scale))
 
-        # Traffic light circles
-        circle_diameter = 12 * scale
-        circle_radius = circle_diameter // 2
-        spacing = 8 * scale
-        cy = chrome_top // 2  # vertically centered in chrome bar
-        colors = [theme["traffic_close"], theme["traffic_minimize"], theme["traffic_maximize"]]
-        for i, color in enumerate(colors):
-            cx = spacing + circle_radius + i * (circle_diameter + spacing)
-            draw.ellipse(
-                [cx - circle_radius, cy - circle_radius, cx + circle_radius, cy + circle_radius],
-                fill=color + (255,),
-            )
+            # Traffic light circles
+            circle_diameter = 12 * scale
+            circle_radius = circle_diameter // 2
+            spacing = 8 * scale
+            cy = chrome_top // 2  # vertically centered in chrome bar
+            colors = [theme["traffic_close"], theme["traffic_minimize"], theme["traffic_maximize"]]
+            for i, color in enumerate(colors):
+                cx = spacing + circle_radius + i * (circle_diameter + spacing)
+                draw.ellipse(
+                    [cx - circle_radius, cy - circle_radius, cx + circle_radius, cy + circle_radius],
+                    fill=color + (255,),
+                )
 
-        # Title text
-        try:
-            font_size = max(10, 14 * scale)
-            font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
-        except (OSError, IOError):
-            font = ImageFont.load_default()
-        title = "Maze Puzzle"
-        bbox = draw.textbbox((0, 0), title, font=font)
-        text_w = bbox[2] - bbox[0]
-        text_h = bbox[3] - bbox[1]
-        text_x = (w_width - text_w) // 2
-        text_y = (chrome_top - text_h) // 2
-        draw.text((text_x, text_y), title, fill=theme["title_text"] + (255,), font=font)
+            # Title text
+            try:
+                font_size = max(10, 14 * scale)
+                font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", font_size)
+            except (OSError, IOError):
+                font = ImageFont.load_default()
+            title = "Maze Puzzle"
+            bbox = draw.textbbox((0, 0), title, font=font)
+            text_w = bbox[2] - bbox[0]
+            text_h = bbox[3] - bbox[1]
+            text_x = (w_width - text_w) // 2
+            text_y = (chrome_top - text_h) // 2
+            draw.text((text_x, text_y), title, fill=theme["title_text"] + (255,), font=font)
 
         # Fill maze area with wall color
         draw.rectangle(
@@ -100,7 +102,20 @@ class MazeRenderer:
                 x_end = x_start + cw - 1
                 draw.rectangle([x_start, y_start, x_end, y_end], fill=theme["corridor"] + (255,))
 
-        # Draw start marker
+        # Carve outer wall openings for start/goal
+        def _draw_opening(cell, edge):
+            y_min, y_max, x_min, x_max = opening_pixel_rect(cell, edge, config, maze.rows, maze.cols)
+            draw.rectangle(
+                [x_min * scale, y_min * scale, x_max * scale - 1, y_max * scale - 1],
+                fill=theme["corridor"] + (255,),
+            )
+
+        if maze.start_edge:
+            _draw_opening(maze.start, maze.start_edge)
+        if maze.goal_edge:
+            _draw_opening(maze.goal, maze.goal_edge)
+
+        # Draw start marker (circle at cell center)
         marker_radius = cw * 0.35
         sr, sc = maze.start
         sx = maze_origin_x + sc * cell_size + cw / 2.0
@@ -110,7 +125,7 @@ class MazeRenderer:
             fill=theme["start_marker"] + (255,),
         )
 
-        # Draw goal marker
+        # Draw goal marker (circle at cell center)
         gr, gc = maze.goal
         gx = maze_origin_x + gc * cell_size + cw / 2.0
         gy = maze_origin_y + gr * cell_size + cw / 2.0

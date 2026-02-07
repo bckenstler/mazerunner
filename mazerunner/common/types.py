@@ -16,6 +16,9 @@ class MazeGrid:
     start: Cell
     goal: Cell
     solution_path: List[Cell]
+    placement_style: str = "edge_to_edge"
+    start_edge: str = "top"
+    goal_edge: str = ""
 
 
 @dataclass

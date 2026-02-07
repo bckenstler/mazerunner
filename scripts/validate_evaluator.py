@@ -11,6 +11,7 @@ from mazerunner.common.types import RenderConfig
 from mazerunner.evaluator.evaluate import evaluate_single
 from mazerunner.generator.difficulty import sample_difficulty_params
 from mazerunner.generator.masks import (
+    carve_outer_openings,
     compute_cell_center,
     compute_image_size,
     generate_free_space_mask,
@@ -19,6 +20,7 @@ from mazerunner.generator.masks import (
     solution_cells_to_polyline,
 )
 from mazerunner.generator.maze_graph import build_maze
+from mazerunner.generator.placement import opening_center
 from mazerunner.generator.seed_utils import derive_seed, make_rng
 
 
@@ -28,7 +30,7 @@ def build_gt_data():
     rng = make_rng(seed)
     diff = sample_difficulty_params(1, rng)
 
-    chrome_height_top = 38
+    chrome_height_top = 0
     chrome_width_left = 0
     image_width, image_height, render_config = compute_image_size(
         diff, chrome_height_top, chrome_width_left
@@ -45,14 +47,25 @@ def build_gt_data():
 
     maze = build_maze(diff.grid_rows, diff.grid_cols, diff.min_solution_length, rng)
     wall_mask = generate_wall_mask(maze, render_config)
+    carve_outer_openings(wall_mask, maze, render_config)
     free_mask = generate_free_space_mask(wall_mask)
 
-    start_center = compute_cell_center(
-        maze.start[0], maze.start[1], render_config, maze.rows, maze.cols
-    )
-    goal_center = compute_cell_center(
-        maze.goal[0], maze.goal[1], render_config, maze.rows, maze.cols
-    )
+    if maze.start_edge:
+        start_center = opening_center(
+            maze.start, maze.start_edge, render_config, maze.rows, maze.cols
+        )
+    else:
+        start_center = compute_cell_center(
+            maze.start[0], maze.start[1], render_config, maze.rows, maze.cols
+        )
+    if maze.goal_edge:
+        goal_center = opening_center(
+            maze.goal, maze.goal_edge, render_config, maze.rows, maze.cols
+        )
+    else:
+        goal_center = compute_cell_center(
+            maze.goal[0], maze.goal[1], render_config, maze.rows, maze.cols
+        )
 
     start_mask = generate_region_mask(
         start_center, render_config.corridor_width * 0.4, (image_height, image_width)
@@ -62,7 +75,8 @@ def build_gt_data():
     )
 
     solution_polyline = solution_cells_to_polyline(
-        maze.solution_path, render_config, maze.rows, maze.cols
+        maze.solution_path, render_config, maze.rows, maze.cols,
+        start_edge=maze.start_edge, goal_edge=maze.goal_edge,
     )
 
     solution_length = 0.0
@@ -230,7 +244,9 @@ def main():
             "data": {"cells": cells},
         }
         result = evaluate_single(prediction, gt_data)
-        assert result.success["0"], f"success@0={result.success['0']}"
+        # Cell-route only covers cell centers, not opening centers, so
+        # endpoints may not land in start/goal regions. Check valid_frac instead.
+        assert result.valid_frac["0"] >= 0.99, f"valid_frac@0={result.valid_frac['0']}"
 
     results.append(run_test("Cell-route encoded GT", test_cell_route_encoded))
 

@@ -143,6 +143,10 @@ class TestBuildMaze:
         assert maze.start != maze.goal
         assert maze.solution_path[0] == maze.start
         assert maze.solution_path[-1] == maze.goal
+        assert maze.placement_style in ("edge_to_edge", "edge_to_center", "edge_to_dead_end")
+        assert maze.start_edge in ("top", "bottom", "left", "right")
+        # goal_edge can be empty for interior goals
+        assert maze.goal_edge in ("top", "bottom", "left", "right", "")
 
     def test_solution_path_follows_passages(self):
         rng = make_rng(42)
