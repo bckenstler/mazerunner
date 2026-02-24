@@ -1,7 +1,7 @@
 """Shared data structures for MazeRunner benchmark."""
 
 from dataclasses import dataclass, field
-from typing import Dict, FrozenSet, List, Set, Tuple
+from typing import Dict, FrozenSet, List, Optional, Set, Tuple
 
 Point = Tuple[float, float]
 Polyline = List[Point]
@@ -54,3 +54,15 @@ class EvalResult:
     mono_score: float
     start_ok: bool
     goal_ok: bool
+
+
+@dataclass
+class AgenticEvalResult:
+    eval_result: Optional[EvalResult]
+    segments_submitted: int
+    segments_accepted: int
+    segments_rejected: int
+    wall_rejections: int
+    contiguity_rejections: int
+    total_tool_calls: int
+    finish_reason: str
