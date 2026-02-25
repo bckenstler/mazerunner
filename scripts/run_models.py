@@ -322,6 +322,7 @@ async def run_maze(
     response_format: Optional[dict],
     use_structured_prompt: bool,
     verbose: bool,
+    reasoning_effort: Optional[str] = None,
 ) -> Optional[dict]:
     """Run a single maze through the model and return a submission entry."""
     async with sem:
@@ -344,13 +345,10 @@ async def run_maze(
             }
         ]
 
-        # Thinking/reasoning models (gpt-5*, o3*, o4*) include reasoning
-        # tokens in max_tokens, so we need a much higher budget to leave
-        # room for the actual output after internal reasoning.
-        model_lower = model.lower()
-        is_thinking_model = any(
-            model_lower.startswith(p) for p in ("gpt-5", "o3", "o4", "o1")
-        )
+        # Thinking/reasoning models include reasoning tokens in max_tokens,
+        # so we need a much higher budget to leave room for the actual
+        # output after internal reasoning.
+        is_thinking_model = litellm.supports_reasoning(model=model)
         effective_max_tokens = max(max_tokens, 65536) if is_thinking_model else max_tokens
 
         kwargs: dict = {
@@ -363,6 +361,8 @@ async def run_maze(
             kwargs["api_base"] = api_base
         if response_format:
             kwargs["response_format"] = response_format
+        if reasoning_effort and is_thinking_model:
+            kwargs["reasoning_effort"] = reasoning_effort
 
         # Retry with exponential backoff for rate limiting
         max_retries = 5
@@ -420,6 +420,15 @@ async def run_maze(
             except (AttributeError, IndexError):
                 pass
 
+        # Extract reasoning/thinking content if present
+        reasoning_content = getattr(message, "reasoning_content", None) or None
+        reasoning_tokens = None
+        usage = getattr(response, "usage", None)
+        if usage:
+            details = getattr(usage, "completion_tokens_details", None)
+            if details:
+                reasoning_tokens = getattr(details, "reasoning_tokens", None)
+
         prediction = parse_model_response(text)
         if prediction is None:
             if verbose:
@@ -430,6 +439,10 @@ async def run_maze(
             return None
 
         entry = {"id": maze_id, "prediction": prediction}
+        if reasoning_content is not None:
+            entry["reasoning_content"] = reasoning_content
+        if reasoning_tokens is not None:
+            entry["reasoning_tokens"] = reasoning_tokens
 
         if verbose:
             enc = prediction.get("encoding", "?")
@@ -482,9 +495,13 @@ async def run_all(args: argparse.Namespace) -> list[dict]:
         "off": "off (prompt-only, client-side parsing)",
     }
 
+    reasoning_effort = getattr(args, "reasoning_effort", None)
+
     print(f"Model: {args.model}")
     print(f"Encoding: {args.encoding}")
     print(f"Structured output: {mode_label.get(structured_mode, structured_mode)}")
+    if reasoning_effort:
+        print(f"Reasoning effort: {reasoning_effort}")
     print(f"Mazes: {len(maze_ids)}")
     print(f"Concurrency: {args.concurrency}")
     print(f"Output: {args.output}")
@@ -505,6 +522,7 @@ async def run_all(args: argparse.Namespace) -> list[dict]:
             response_format=response_format,
             use_structured_prompt=use_structured_prompt,
             verbose=args.verbose,
+            reasoning_effort=reasoning_effort,
         )
         for maze_id in maze_ids
     ]
@@ -780,6 +798,12 @@ def main() -> None:
         "--visualize-dir",
         default=None,
         help="Directory to write path visualization images",
+    )
+    parser.add_argument(
+        "--reasoning-effort",
+        default=None,
+        choices=["low", "medium", "high"],
+        help="Reasoning effort level for thinking models (default: None)",
     )
     parser.add_argument(
         "--dry-run",

@@ -128,6 +128,7 @@ async def run_maze_live(
     temperature: float = 0.0,
     max_tokens: int = 8192,
     api_base: Optional[str] = None,
+    reasoning_effort: Optional[str] = None,
 ) -> dict:
     """Run a maze in agentic mode, streaming turns via on_turn callback.
 
@@ -173,10 +174,7 @@ async def run_maze_live(
     ]
 
     # Thinking models need higher token budgets
-    model_lower = model.lower()
-    is_thinking_model = any(
-        model_lower.startswith(p) for p in ("gpt-5", "o3", "o4", "o1")
-    )
+    is_thinking_model = litellm.supports_reasoning(model=model)
     effective_max_tokens = max(max_tokens, 65536) if is_thinking_model else max_tokens
 
     timestamp = datetime.now(timezone.utc).isoformat()
@@ -192,12 +190,14 @@ async def run_maze_live(
             "cols": gt_data["difficulty"]["grid_cols"],
         },
         "system_prompt": system_prompt,
+        "reasoning_effort": reasoning_effort,
         "turns": [],
         "final_result": None,
     }
 
     session_result = None
     turn = 0
+    total_reasoning_tokens = 0
     accepted_path_so_far: list[list[float]] = []
     progress_msg_idx: int | None = None  # index of last progress image in messages
 
@@ -213,6 +213,8 @@ async def run_maze_live(
         }
         if api_base:
             kwargs["api_base"] = api_base
+        if reasoning_effort and is_thinking_model:
+            kwargs["reasoning_effort"] = reasoning_effort
 
         # Retry with exponential backoff
         max_retries = 5
@@ -249,6 +251,17 @@ async def run_maze_live(
         content = getattr(message, "content", "") or ""
         tool_calls = getattr(message, "tool_calls", None)
 
+        # Extract reasoning/thinking content
+        reasoning_content = getattr(message, "reasoning_content", None) or None
+        turn_reasoning_tokens = None
+        usage = getattr(response, "usage", None)
+        if usage:
+            details = getattr(usage, "completion_tokens_details", None)
+            if details:
+                turn_reasoning_tokens = getattr(details, "reasoning_tokens", None)
+        if turn_reasoning_tokens:
+            total_reasoning_tokens += turn_reasoning_tokens
+
         turn_data: dict = {
             "turn": turn,
             "role": "assistant",
@@ -256,6 +269,10 @@ async def run_maze_live(
             "tool_calls": [],
             "tool_results": [],
         }
+        if reasoning_content is not None:
+            turn_data["reasoning_content"] = reasoning_content
+        if turn_reasoning_tokens is not None:
+            turn_data["reasoning_tokens"] = turn_reasoning_tokens
 
         if not tool_calls:
             # Model didn't use tools — stream the turn and break
@@ -410,6 +427,7 @@ async def run_maze_live(
                 "contiguity_rejections": stats.contiguity_rejections,
             },
             "eval_result": eval_dict,
+            "total_reasoning_tokens": total_reasoning_tokens,
         }
 
     return run_log

@@ -84,6 +84,16 @@
   /* Empty state */
   .empty-state { display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text2); font-size: 14px; text-align: center; padding: 20px; }
 
+  /* Reasoning/thinking block */
+  .reasoning-block { margin: 6px 0; border-left: 3px solid var(--yellow); background: rgba(240, 192, 64, 0.08); border-radius: 4px; overflow: hidden; }
+  .reasoning-header { display: flex; align-items: center; gap: 6px; padding: 6px 8px; cursor: pointer; user-select: none; font-size: 12px; color: var(--yellow); }
+  .reasoning-header:hover { background: rgba(240, 192, 64, 0.05); }
+  .reasoning-header .arrow { transition: transform 0.2s; }
+  .reasoning-block.expanded .reasoning-header .arrow { transform: rotate(90deg); }
+  .reasoning-body { display: none; padding: 4px 8px 8px; font-size: 12px; line-height: 1.5; color: var(--text2); white-space: pre-wrap; max-height: 300px; overflow-y: auto; }
+  .reasoning-block.expanded .reasoning-body { display: block; }
+  .badge.reasoning { background: rgba(240, 192, 64, 0.2); color: var(--yellow); }
+
   /* Checkbox toggle */
   .toggle { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text2); cursor: pointer; }
   .toggle input { accent-color: var(--accent); }
@@ -134,6 +144,13 @@
     <select id="maze-select" style="max-width:150px;"></select>
     <label>Turns:</label>
     <input id="max-turns-input" type="number" value="30" style="width:60px;">
+    <label>Thinking:</label>
+    <select id="reasoning-effort-select" style="width:90px;">
+      <option value="">Off</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
   </span>
 
   <div class="spacer"></div>
@@ -210,6 +227,7 @@ const resultsMazeSelect = $('results-maze-select');
 const modelInput = $('model-input');
 const mazeSelect = $('maze-select');
 const maxTurnsInput = $('max-turns-input');
+const reasoningEffortSelect = $('reasoning-effort-select');
 const goBtn = $('go-btn');
 const convScroll = $('conv-scroll');
 const convEmpty = $('conv-empty');
@@ -466,7 +484,10 @@ async function startLiveRun() {
   state.ws = ws;
 
   ws.onopen = () => {
-    ws.send(JSON.stringify({ model, maze_id: mazeId, max_turns: maxTurns }));
+    const config = { model, maze_id: mazeId, max_turns: maxTurns };
+    const effort = reasoningEffortSelect.value;
+    if (effort) config.reasoning_effort = effort;
+    ws.send(JSON.stringify(config));
     setStatus('Running...');
   };
 
@@ -565,12 +586,27 @@ function appendTurnCard(turn, index) {
     else { badgeText = status; }
   }
 
+  // Reasoning tokens badge
+  let reasoningBadge = '';
+  if (turn.reasoning_tokens) {
+    reasoningBadge = `<span class="badge reasoning">${turn.reasoning_tokens} thinking</span>`;
+  }
+
   card.innerHTML = `
     <div class="turn-header" onclick="toggleTurnCard(${index})">
       <span>Turn ${turn.turn || index + 1}</span>
       <span class="badge ${badgeClass}">${badgeText}</span>
+      ${reasoningBadge}
     </div>
     <div class="turn-body">
+      ${turn.reasoning_content ? `
+        <div class="reasoning-block" id="reasoning-${index}">
+          <div class="reasoning-header" onclick="event.stopPropagation(); document.getElementById('reasoning-${index}').classList.toggle('expanded');">
+            <span class="arrow">&#9654;</span> Thinking${turn.reasoning_tokens ? ' (' + turn.reasoning_tokens + ' tokens)' : ''}
+          </div>
+          <div class="reasoning-body">${escHtml(turn.reasoning_content)}</div>
+        </div>
+      ` : ''}
       ${turn.content ? `<div class="turn-content">${escHtml(turn.content)}</div>` : ''}
       ${(turn.tool_calls || []).map(tc => `
         <div class="tool-call">
@@ -783,10 +819,11 @@ function updateStatsFromTurns() {
     return;
   }
 
-  let accepted = 0, rejected = 0, wallRej = 0, totalPts = 0, pathLen = 0;
+  let accepted = 0, rejected = 0, wallRej = 0, totalPts = 0, pathLen = 0, reasoningToks = 0;
 
   for (let t = 0; t <= state.currentTurn; t++) {
     const turn = state.turns[t];
+    if (turn.reasoning_tokens) reasoningToks += turn.reasoning_tokens;
     for (const tr of (turn.tool_results || [])) {
       if (tr.status === 'ACCEPTED') {
         accepted++;
@@ -805,6 +842,7 @@ function updateStatsFromTurns() {
     <div>Rejected: <span class="val bad">${rejected}</span>${wallRej ? ` (${wallRej} wall)` : ''}</div>
     <div>Points: <span class="val">${totalPts}</span></div>
     <div>Length: <span class="val">${pathLen.toFixed(0)}px</span></div>
+    ${reasoningToks > 0 ? `<div>Thinking: <span class="val" style="color:var(--yellow)">${reasoningToks} tokens</span></div>` : ''}
   `;
 }
 
@@ -813,6 +851,7 @@ function updateStatsOverlay(finalResult) {
   const stats = finalResult.stats || {};
   const evalResult = finalResult.eval_result || {};
   const success = evalResult.success ? evalResult.success['0'] : null;
+  const totalReasoningTokens = finalResult.total_reasoning_tokens || 0;
 
   statsOverlay.style.display = 'block';
   statsOverlay.innerHTML = `
@@ -821,6 +860,7 @@ function updateStatsOverlay(finalResult) {
     <div>Rejected: <span class="val bad">${stats.segments_rejected || 0}</span></div>
     <div>Finish: <span class="val">${finalResult.finish_reason || '?'}</span></div>
     ${evalResult.goal_distance != null ? `<div>Goal dist: <span class="val">${evalResult.goal_distance.toFixed(1)}px</span></div>` : ''}
+    ${totalReasoningTokens > 0 ? `<div>Thinking: <span class="val" style="color:var(--yellow)">${totalReasoningTokens} tokens</span></div>` : ''}
   `;
 }
 
