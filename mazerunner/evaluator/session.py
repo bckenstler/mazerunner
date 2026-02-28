@@ -60,12 +60,17 @@ class MazeSession:
     def __init__(
         self,
         gt_data: dict,
-        contiguity_tolerance: float = 3.0,
+        contiguity_tolerance: float | None = None,
         wall_check_densify_gap: float = 2.0,
+        endpoint_tolerance: int | None = None,
     ):
         self._gt_data = gt_data
-        self._contiguity_tolerance = contiguity_tolerance
+
+        # Scale tolerances based on rendered corridor width
+        cw = gt_data.get("render_config", {}).get("corridor_width", 30)
+        self._contiguity_tolerance = contiguity_tolerance if contiguity_tolerance is not None else max(3.0, cw * 0.1)
         self._wall_check_densify_gap = wall_check_densify_gap
+        self._endpoint_tolerance = endpoint_tolerance if endpoint_tolerance is not None else max(10, int(cw * 0.3))
 
         # Decode masks
         regions = gt_data["regions"]
@@ -126,7 +131,7 @@ class MazeSession:
         # 3. Start region check (first segment only)
         if not self._path:
             first_pt = clamped[0]
-            if not check_endpoint(first_pt, self._start_mask, tolerance=4):
+            if not check_endpoint(first_pt, self._start_mask, tolerance=self._endpoint_tolerance):
                 self._stats.segments_rejected += 1
                 return SegmentResult(
                     status=SegmentStatus.REJECTED_NOT_IN_START,

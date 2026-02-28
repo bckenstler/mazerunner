@@ -18,9 +18,15 @@ import random
 import sys
 from typing import Optional
 
-import litellm
+import base64
+import io
 
-from mazerunner.evaluator.session import MazeSession
+import numpy as np
+import litellm
+from PIL import Image, ImageDraw
+
+from mazerunner.common.rle import decode_rle
+from mazerunner.evaluator.session import MazeSession, SegmentStatus
 from mazerunner.evaluator.tool_schema import (
     AGENTIC_TOOLS,
     format_finish_result,
@@ -44,7 +50,8 @@ AGENTIC_SYSTEM_PROMPT = """\
 You are navigating a maze. The image is {width}x{height} pixels \
 (origin top-left, X right, Y down).
 The maze is a {rows}x{cols} grid with:
-- GREEN circle = START, RED circle = GOAL
+- GREEN circle = START (centered near ({start_x}, {start_y}))
+- RED circle = GOAL (centered near ({goal_x}, {goal_y}))
 - White corridors to travel through, dark walls to avoid
 
 Navigate from the green START to the red GOAL by submitting path segments \
@@ -66,15 +73,57 @@ position.
 - Pay attention to wall violation coordinates in rejection feedback."""
 
 
+def _compute_region_center(mask_rle: dict) -> tuple[int, int]:
+    """Compute (x, y) center of a region from its RLE-encoded mask."""
+    mask = decode_rle(mask_rle)
+    ys, xs = np.where(mask)
+    return int(xs.mean()), int(ys.mean())
+
+
 def format_system_prompt(gt_data: dict) -> str:
     """Fill in the system prompt template from GT metadata."""
     width = gt_data["image_size"]["w"]
     height = gt_data["image_size"]["h"]
     rows = gt_data["difficulty"]["grid_rows"]
     cols = gt_data["difficulty"]["grid_cols"]
+    start_x, start_y = _compute_region_center(gt_data["regions"]["start_mask_rle"])
+    goal_x, goal_y = _compute_region_center(gt_data["regions"]["goal_mask_rle"])
     return AGENTIC_SYSTEM_PROMPT.format(
-        width=width, height=height, rows=rows, cols=cols
+        width=width, height=height, rows=rows, cols=cols,
+        start_x=start_x, start_y=start_y, goal_x=goal_x, goal_y=goal_y,
     )
+
+
+def render_progress_image(
+    base_image: Image.Image,
+    accepted_segments: list[list[list[float]]],
+    rejected_segments: list[list[list[float]]],
+    violation_points: list[list[float]],
+) -> str:
+    """Render path progress onto the maze image and return as base64 data URI."""
+    img = base_image.copy().convert("RGBA")
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+
+    for seg in accepted_segments:
+        if len(seg) >= 2:
+            flat = [(int(p[0]), int(p[1])) for p in seg]
+            draw.line(flat, fill=(78, 204, 163, 220), width=3)
+
+    for seg in rejected_segments:
+        if len(seg) >= 2:
+            flat = [(int(p[0]), int(p[1])) for p in seg]
+            draw.line(flat, fill=(233, 69, 96, 180), width=2)
+
+    for vp in violation_points:
+        x, y = int(vp[0]), int(vp[1])
+        draw.ellipse([x - 4, y - 4, x + 4, y + 4], fill=(233, 69, 96, 230))
+
+    img = Image.alpha_composite(img, overlay).convert("RGB")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
+    return f"data:image/png;base64,{b64}"
 
 
 # ---------------------------------------------------------------------------
@@ -102,10 +151,20 @@ async def run_maze_agentic(
         with open(gt_path) as f:
             gt_data = json.load(f)
 
+        # Use actual PNG dimensions (PIL-verified) for system prompt
+        base_image = Image.open(image_path)
+        actual_w, actual_h = base_image.size
+        gt_data["image_size"] = {"w": actual_w, "h": actual_h}
+
         system_prompt = format_system_prompt(gt_data)
         image_uri = encode_image_base64(image_path)
 
         session = MazeSession(gt_data)
+
+        # Track segments for progress image rendering
+        accepted_segments: list[list[list[float]]] = []
+        rejected_segments: list[list[list[float]]] = []
+        violation_points: list[list[float]] = []
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -136,6 +195,7 @@ async def run_maze_agentic(
 
         session_result = None
         turn = 0
+        progress_msg_idx: int | None = None  # track progress image message
 
         while turn < max_turns:
             turn += 1
@@ -217,6 +277,13 @@ async def run_maze_agentic(
                     points = fn_args.get("points", [])
                     seg_result = session.submit_segment(points)
                     tool_response = format_tool_result(seg_result)
+                    # Track segments for progress image
+                    if seg_result.status == SegmentStatus.ACCEPTED:
+                        accepted_segments.append(points)
+                    else:
+                        rejected_segments.append(points)
+                    if seg_result.violation_point is not None:
+                        violation_points.append(list(seg_result.violation_point))
                     if verbose:
                         print(
                             f"  [{maze_id}] Turn {turn}: submit_segment "
@@ -244,6 +311,28 @@ async def run_maze_agentic(
                         "content": tool_response,
                     }
                 )
+
+            # Re-inject maze image with progress overlay (replace previous to
+            # avoid accumulating base64 images which eats memory)
+            if session_result is None:
+                progress_uri = render_progress_image(
+                    base_image, accepted_segments, rejected_segments, violation_points,
+                )
+                progress_msg = {
+                    "role": "user",
+                    "content": [
+                        {"type": "image_url", "image_url": {"url": progress_uri}},
+                        {
+                            "type": "text",
+                            "text": "Here is the maze with your progress so far. Green lines are accepted path segments. Red lines are rejected segments. Continue navigating.",
+                        },
+                    ],
+                }
+                if progress_msg_idx is not None:
+                    messages[progress_msg_idx] = progress_msg
+                else:
+                    messages.append(progress_msg)
+                    progress_msg_idx = len(messages) - 1
 
             if session_result is not None:
                 break

@@ -3,7 +3,7 @@
 from PIL import Image, ImageDraw, ImageFont
 
 from mazerunner.common.types import MazeGrid, RenderConfig
-from mazerunner.generator.placement import opening_pixel_rect
+from mazerunner.generator.placement import opening_center, opening_pixel_rect
 from mazerunner.generator.themes import get_theme
 
 
@@ -115,20 +115,28 @@ class MazeRenderer:
         if maze.goal_edge:
             _draw_opening(maze.goal, maze.goal_edge)
 
-        # Draw start marker (circle at cell center)
+        # Draw start marker (circle at opening center if edge, else cell center)
         marker_radius = cw * 0.35
-        sr, sc = maze.start
-        sx = maze_origin_x + sc * cell_size + cw / 2.0
-        sy = maze_origin_y + sr * cell_size + cw / 2.0
+        if maze.start_edge:
+            oc = opening_center(maze.start, maze.start_edge, config, maze.rows, maze.cols)
+            sx, sy = oc[0] * scale, oc[1] * scale
+        else:
+            sr, sc = maze.start
+            sx = maze_origin_x + sc * cell_size + cw / 2.0
+            sy = maze_origin_y + sr * cell_size + cw / 2.0
         draw.ellipse(
             [sx - marker_radius, sy - marker_radius, sx + marker_radius, sy + marker_radius],
             fill=theme["start_marker"] + (255,),
         )
 
-        # Draw goal marker (circle at cell center)
-        gr, gc = maze.goal
-        gx = maze_origin_x + gc * cell_size + cw / 2.0
-        gy = maze_origin_y + gr * cell_size + cw / 2.0
+        # Draw goal marker (circle at opening center if edge, else cell center)
+        if maze.goal_edge:
+            oc = opening_center(maze.goal, maze.goal_edge, config, maze.rows, maze.cols)
+            gx, gy = oc[0] * scale, oc[1] * scale
+        else:
+            gr, gc = maze.goal
+            gx = maze_origin_x + gc * cell_size + cw / 2.0
+            gy = maze_origin_y + gr * cell_size + cw / 2.0
         draw.ellipse(
             [gx - marker_radius, gy - marker_radius, gx + marker_radius, gy + marker_radius],
             fill=theme["goal_marker"] + (255,),
