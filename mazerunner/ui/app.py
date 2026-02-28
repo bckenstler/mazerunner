@@ -153,6 +153,7 @@ async def websocket_run(ws: WebSocket):
         temperature = config.get("temperature", 0.0)
         max_tokens = config.get("max_tokens", 8192)
         api_base = config.get("api_base")
+        reasoning_effort = config.get("reasoning_effort")
 
         await ws.send_json({"type": "started", "maze_id": maze_id, "model": model})
 
@@ -169,6 +170,7 @@ async def websocket_run(ws: WebSocket):
             temperature=temperature,
             max_tokens=max_tokens,
             api_base=api_base,
+            reasoning_effort=reasoning_effort,
         )
 
         # Save run log

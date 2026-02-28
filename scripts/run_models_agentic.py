@@ -18,15 +18,9 @@ import random
 import sys
 from typing import Optional
 
-import base64
-import io
-
-import numpy as np
 import litellm
-from PIL import Image, ImageDraw
 
-from mazerunner.common.rle import decode_rle
-from mazerunner.evaluator.session import MazeSession, SegmentStatus
+from mazerunner.evaluator.session import MazeSession
 from mazerunner.evaluator.tool_schema import (
     AGENTIC_TOOLS,
     format_finish_result,
@@ -50,8 +44,7 @@ AGENTIC_SYSTEM_PROMPT = """\
 You are navigating a maze. The image is {width}x{height} pixels \
 (origin top-left, X right, Y down).
 The maze is a {rows}x{cols} grid with:
-- GREEN circle = START (centered near ({start_x}, {start_y}))
-- RED circle = GOAL (centered near ({goal_x}, {goal_y}))
+- GREEN circle = START, RED circle = GOAL
 - White corridors to travel through, dark walls to avoid
 
 Navigate from the green START to the red GOAL by submitting path segments \
@@ -73,57 +66,15 @@ position.
 - Pay attention to wall violation coordinates in rejection feedback."""
 
 
-def _compute_region_center(mask_rle: dict) -> tuple[int, int]:
-    """Compute (x, y) center of a region from its RLE-encoded mask."""
-    mask = decode_rle(mask_rle)
-    ys, xs = np.where(mask)
-    return int(xs.mean()), int(ys.mean())
-
-
 def format_system_prompt(gt_data: dict) -> str:
     """Fill in the system prompt template from GT metadata."""
     width = gt_data["image_size"]["w"]
     height = gt_data["image_size"]["h"]
     rows = gt_data["difficulty"]["grid_rows"]
     cols = gt_data["difficulty"]["grid_cols"]
-    start_x, start_y = _compute_region_center(gt_data["regions"]["start_mask_rle"])
-    goal_x, goal_y = _compute_region_center(gt_data["regions"]["goal_mask_rle"])
     return AGENTIC_SYSTEM_PROMPT.format(
-        width=width, height=height, rows=rows, cols=cols,
-        start_x=start_x, start_y=start_y, goal_x=goal_x, goal_y=goal_y,
+        width=width, height=height, rows=rows, cols=cols
     )
-
-
-def render_progress_image(
-    base_image: Image.Image,
-    accepted_segments: list[list[list[float]]],
-    rejected_segments: list[list[list[float]]],
-    violation_points: list[list[float]],
-) -> str:
-    """Render path progress onto the maze image and return as base64 data URI."""
-    img = base_image.copy().convert("RGBA")
-    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
-    draw = ImageDraw.Draw(overlay)
-
-    for seg in accepted_segments:
-        if len(seg) >= 2:
-            flat = [(int(p[0]), int(p[1])) for p in seg]
-            draw.line(flat, fill=(78, 204, 163, 220), width=3)
-
-    for seg in rejected_segments:
-        if len(seg) >= 2:
-            flat = [(int(p[0]), int(p[1])) for p in seg]
-            draw.line(flat, fill=(233, 69, 96, 180), width=2)
-
-    for vp in violation_points:
-        x, y = int(vp[0]), int(vp[1])
-        draw.ellipse([x - 4, y - 4, x + 4, y + 4], fill=(233, 69, 96, 230))
-
-    img = Image.alpha_composite(img, overlay).convert("RGB")
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    b64 = base64.b64encode(buf.getvalue()).decode("utf-8")
-    return f"data:image/png;base64,{b64}"
 
 
 # ---------------------------------------------------------------------------
@@ -142,6 +93,7 @@ async def run_maze_agentic(
     max_turns: int,
     api_base: Optional[str],
     verbose: bool,
+    reasoning_effort: Optional[str] = None,
 ) -> Optional[dict]:
     """Run a single maze in agentic multi-turn mode."""
     async with sem:
@@ -151,20 +103,10 @@ async def run_maze_agentic(
         with open(gt_path) as f:
             gt_data = json.load(f)
 
-        # Use actual PNG dimensions (PIL-verified) for system prompt
-        base_image = Image.open(image_path)
-        actual_w, actual_h = base_image.size
-        gt_data["image_size"] = {"w": actual_w, "h": actual_h}
-
         system_prompt = format_system_prompt(gt_data)
         image_uri = encode_image_base64(image_path)
 
         session = MazeSession(gt_data)
-
-        # Track segments for progress image rendering
-        accepted_segments: list[list[list[float]]] = []
-        rejected_segments: list[list[list[float]]] = []
-        violation_points: list[list[float]] = []
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -185,17 +127,14 @@ async def run_maze_agentic(
         ]
 
         # Thinking/reasoning models need higher token budgets
-        model_lower = model.lower()
-        is_thinking_model = any(
-            model_lower.startswith(p) for p in ("gpt-5", "o3", "o4", "o1")
-        )
+        is_thinking_model = litellm.supports_reasoning(model=model)
         effective_max_tokens = (
             max(max_tokens, 65536) if is_thinking_model else max_tokens
         )
 
         session_result = None
         turn = 0
-        progress_msg_idx: int | None = None  # track progress image message
+        total_reasoning_tokens = 0
 
         while turn < max_turns:
             turn += 1
@@ -209,6 +148,8 @@ async def run_maze_agentic(
             }
             if api_base:
                 kwargs["api_base"] = api_base
+            if reasoning_effort and is_thinking_model:
+                kwargs["reasoning_effort"] = reasoning_effort
 
             # Retry with exponential backoff for rate limiting
             max_retries = 5
@@ -253,6 +194,15 @@ async def run_maze_agentic(
             message = response.choices[0].message
             messages.append(message)
 
+            # Track reasoning tokens
+            usage = getattr(response, "usage", None)
+            if usage:
+                details = getattr(usage, "completion_tokens_details", None)
+                if details:
+                    rt = getattr(details, "reasoning_tokens", None)
+                    if rt:
+                        total_reasoning_tokens += rt
+
             # Check for tool calls
             tool_calls = getattr(message, "tool_calls", None)
             if not tool_calls:
@@ -277,13 +227,6 @@ async def run_maze_agentic(
                     points = fn_args.get("points", [])
                     seg_result = session.submit_segment(points)
                     tool_response = format_tool_result(seg_result)
-                    # Track segments for progress image
-                    if seg_result.status == SegmentStatus.ACCEPTED:
-                        accepted_segments.append(points)
-                    else:
-                        rejected_segments.append(points)
-                    if seg_result.violation_point is not None:
-                        violation_points.append(list(seg_result.violation_point))
                     if verbose:
                         print(
                             f"  [{maze_id}] Turn {turn}: submit_segment "
@@ -311,28 +254,6 @@ async def run_maze_agentic(
                         "content": tool_response,
                     }
                 )
-
-            # Re-inject maze image with progress overlay (replace previous to
-            # avoid accumulating base64 images which eats memory)
-            if session_result is None:
-                progress_uri = render_progress_image(
-                    base_image, accepted_segments, rejected_segments, violation_points,
-                )
-                progress_msg = {
-                    "role": "user",
-                    "content": [
-                        {"type": "image_url", "image_url": {"url": progress_uri}},
-                        {
-                            "type": "text",
-                            "text": "Here is the maze with your progress so far. Green lines are accepted path segments. Red lines are rejected segments. Continue navigating.",
-                        },
-                    ],
-                }
-                if progress_msg_idx is not None:
-                    messages[progress_msg_idx] = progress_msg
-                else:
-                    messages.append(progress_msg)
-                    progress_msg_idx = len(messages) - 1
 
             if session_result is not None:
                 break
@@ -380,6 +301,7 @@ async def run_maze_agentic(
                 "wall_rejections": session_result.stats.wall_rejections,
                 "contiguity_rejections": session_result.stats.contiguity_rejections,
                 "finish_reason": session_result.finish_reason,
+                "total_reasoning_tokens": total_reasoning_tokens,
             },
         }
 
@@ -426,9 +348,13 @@ async def run_all(args: argparse.Namespace) -> list[dict]:
         print("All mazes already completed.")
         return []
 
+    reasoning_effort = getattr(args, "reasoning_effort", None)
+
     print(f"Model: {args.model}")
     print(f"Mode: agentic (multi-turn)")
     print(f"Max turns per maze: {args.max_turns}")
+    if reasoning_effort:
+        print(f"Reasoning effort: {reasoning_effort}")
     print(f"Mazes: {len(maze_ids)}")
     print(f"Concurrency: {args.concurrency}")
     print(f"Output: {args.output}")
@@ -447,6 +373,7 @@ async def run_all(args: argparse.Namespace) -> list[dict]:
             max_turns=args.max_turns,
             api_base=args.api_base,
             verbose=args.verbose,
+            reasoning_effort=reasoning_effort,
         )
         for maze_id in maze_ids
     ]
@@ -544,6 +471,12 @@ def main() -> None:
         "--resume",
         action="store_true",
         help="Skip mazes already in output file",
+    )
+    parser.add_argument(
+        "--reasoning-effort",
+        default=None,
+        choices=["low", "medium", "high"],
+        help="Reasoning effort level for thinking models (default: None)",
     )
     parser.add_argument(
         "--visualize-dir",
