@@ -51,6 +51,10 @@ generator/               evaluator/
 - `check_endpoint` dilates region masks by 4px tolerance using distance transform.
 - Seeds are derived via SHA-256 (`derive_seed`), not Python's random module, for platform independence.
 
+## Git Workflow
+
+Always checkout a new branch for every new feature before committing changes. Never commit directly to main.
+
 ## Code Style
 
 - Python 3.11+, type hints on function signatures

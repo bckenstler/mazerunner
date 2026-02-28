@@ -4,7 +4,7 @@ import sys
 
 
 if len(sys.argv) < 2:
-    print("Usage: python -m mazerunner {generate,evaluate}")
+    print("Usage: python -m mazerunner {generate,evaluate,ui}")
     sys.exit(1)
 
 command = sys.argv[1]
@@ -15,6 +15,9 @@ if command == "generate":
     main()
 elif command == "evaluate":
     from mazerunner.evaluate_cli import main
+    main()
+elif command == "ui":
+    from mazerunner.ui.cli import main
     main()
 else:
     print(f"Unknown command: {command}")

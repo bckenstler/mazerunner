@@ -5,6 +5,7 @@ from typing import List, Tuple
 import numpy as np
 
 from mazerunner.common.types import Cell, DifficultyConfig, MazeGrid, RenderConfig
+from mazerunner.generator.placement import opening_center, opening_pixel_rect
 
 
 def compute_cell_pixel_bounds(
@@ -76,6 +77,26 @@ def generate_wall_mask(maze: MazeGrid, config: RenderConfig) -> np.ndarray:
     return mask
 
 
+def carve_outer_openings(
+    wall_mask: np.ndarray, maze: MazeGrid, config: RenderConfig
+) -> None:
+    """Carve corridor-width gaps through the outer wall at start/goal edge positions.
+
+    Modifies wall_mask in place.
+    """
+    if maze.start_edge:
+        y_min, y_max, x_min, x_max = opening_pixel_rect(
+            maze.start, maze.start_edge, config, maze.rows, maze.cols
+        )
+        wall_mask[y_min:y_max, x_min:x_max] = False
+
+    if maze.goal_edge:
+        y_min, y_max, x_min, x_max = opening_pixel_rect(
+            maze.goal, maze.goal_edge, config, maze.rows, maze.cols
+        )
+        wall_mask[y_min:y_max, x_min:x_max] = False
+
+
 def generate_free_space_mask(wall_mask: np.ndarray) -> np.ndarray:
     """Returns inverse of wall mask."""
     return ~wall_mask
@@ -96,12 +117,28 @@ def solution_cells_to_polyline(
     config: RenderConfig,
     grid_rows: int,
     grid_cols: int,
+    start_edge: str = "",
+    goal_edge: str = "",
 ) -> List[Tuple[float, float]]:
-    """Convert cell path to pixel polyline through cell centers."""
+    """Convert cell path to pixel polyline through cell centers.
+
+    When start_edge/goal_edge are set, prepend/append the opening center
+    so the polyline extends to the wall opening.
+    """
     polyline = []
+
+    if start_edge and solution_path:
+        pt = opening_center(solution_path[0], start_edge, config, grid_rows, grid_cols)
+        polyline.append(pt)
+
     for cell in solution_path:
         center = compute_cell_center(cell[0], cell[1], config, grid_rows, grid_cols)
         polyline.append(center)
+
+    if goal_edge and solution_path:
+        pt = opening_center(solution_path[-1], goal_edge, config, grid_rows, grid_cols)
+        polyline.append(pt)
+
     return polyline
 
 
@@ -109,23 +146,50 @@ def compute_image_size(
     config_difficulty: DifficultyConfig,
     chrome_height_top: int,
     chrome_width_left: int,
+    target_width: int = 1920,
+    target_height: int = 1080,
 ) -> Tuple[int, int, RenderConfig]:
-    """Compute image dimensions based on grid size and corridor/wall sizes."""
+    """Compute image dimensions to fill target resolution (default 1920x1080).
+
+    Scales corridor_width and wall_thickness so the maze fills the target
+    resolution as closely as possible while keeping integer pixel values.
+    The image is fit to the target so that neither dimension exceeds it.
+    """
     rows = config_difficulty.grid_rows
     cols = config_difficulty.grid_cols
     cw = config_difficulty.corridor_width
     wt = config_difficulty.wall_thickness
 
-    maze_width = cols * (cw + wt) + wt
-    maze_height = rows * (cw + wt) + wt
+    # Original (unscaled) maze dimensions
+    orig_maze_w = cols * (cw + wt) + wt
+    orig_maze_h = rows * (cw + wt) + wt
+    orig_w = chrome_width_left + orig_maze_w
+    orig_h = chrome_height_top + orig_maze_h
+
+    # Compute scale factor to fit target resolution
+    scale = min(target_width / orig_w, target_height / orig_h)
+
+    # Scale wall thickness first (at least 2px), then derive corridor width
+    scaled_wt = max(2, round(wt * scale))
+
+    # Compute max corridor_width that fits within target for both dimensions
+    avail_w = target_width - chrome_width_left
+    avail_h = target_height - chrome_height_top
+    max_cw_from_w = (avail_w - scaled_wt) // cols - scaled_wt
+    max_cw_from_h = (avail_h - scaled_wt) // rows - scaled_wt
+    scaled_cw = max(4, min(max_cw_from_w, max_cw_from_h))
+
+    # Recompute actual image size from scaled values
+    maze_width = cols * (scaled_cw + scaled_wt) + scaled_wt
+    maze_height = rows * (scaled_cw + scaled_wt) + scaled_wt
     image_width = chrome_width_left + maze_width
     image_height = chrome_height_top + maze_height
 
     render_config = RenderConfig(
         image_width=image_width,
         image_height=image_height,
-        corridor_width=cw,
-        wall_thickness=wt,
+        corridor_width=scaled_cw,
+        wall_thickness=scaled_wt,
         chrome_height_top=chrome_height_top,
         chrome_width_left=chrome_width_left,
         theme_name="",

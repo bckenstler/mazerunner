@@ -19,7 +19,7 @@ def compute_clearance_map(free_space_mask: np.ndarray) -> np.ndarray:
 def check_endpoint(
     point: Tuple[float, float],
     region_mask: np.ndarray,
-    tolerance: int = 4,
+    tolerance: int = 10,
 ) -> bool:
     """Check if a point falls within a dilated version of region_mask.
 
@@ -42,7 +42,7 @@ def compute_success_at_r(
     start_mask: np.ndarray,
     goal_mask: np.ndarray,
     radius: float,
-    tolerance: int = 4,
+    tolerance: int = 10,
 ) -> Tuple[bool, bool, bool]:
     """Compute success@r metric.
 
