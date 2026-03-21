@@ -103,6 +103,8 @@ class TestFileIO:
                 assert "start" in data
                 assert "goal" in data
                 assert "metadata" in data
+                assert "color_schema" in data["metadata"]
+                assert "name" in data["metadata"]["color_schema"]
                 tiers_seen.add(data["metadata"]["tier"])
 
             assert tiers_seen == {1, 2, 3}

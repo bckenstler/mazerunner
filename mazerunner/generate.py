@@ -10,6 +10,7 @@ from mazerunner.generator.seed_utils import derive_seed, make_rng
 from mazerunner.generator.maze_graph import generate_maze, solve_bfs
 from mazerunner.generator.placement import ENDPOINT_TYPES, place_endpoints
 from mazerunner.generator.difficulty import sample_difficulty_params
+from mazerunner.generator.color_schemas import sample_color_schema
 from mazerunner.generator.serialization import maze_grid_to_instance, instance_to_json
 
 
@@ -67,9 +68,12 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
             endpoint_type=endpoint_type,
         )
 
+        # Sample color schema
+        color_schema = sample_color_schema(rng)
+
         # Serialize
         maze_id = f"maze_{i:06d}"
-        instance = maze_grid_to_instance(grid, maze_id)
+        instance = maze_grid_to_instance(grid, maze_id, color_schema=color_schema)
         instance.metadata["tier"] = tier
 
         json_str = instance_to_json(instance)
