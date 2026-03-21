@@ -52,7 +52,9 @@ def compute_branching_factor(adjacency: Dict[str, list]) -> float:
     return total / len(adjacency)
 
 
-def maze_grid_to_instance(grid: MazeGrid, maze_id: str) -> MazeInstance:
+def maze_grid_to_instance(
+    grid: MazeGrid, maze_id: str, color_schema: Dict[str, str] | None = None
+) -> MazeInstance:
     """Convert a MazeGrid to a serializable MazeInstance."""
     adjacency = maze_grid_to_adjacency(grid)
     path_length = len(grid.solution_path)
@@ -67,6 +69,7 @@ def maze_grid_to_instance(grid: MazeGrid, maze_id: str) -> MazeInstance:
         "branching_factor": round(branching_factor, 4),
         "grid_rows": grid.rows,
         "grid_cols": grid.cols,
+        "color_schema": color_schema or {},
     }
 
     return MazeInstance(

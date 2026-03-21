@@ -94,6 +94,20 @@ class TestMazeGridToInstance:
         assert "difficulty_score" in meta
         assert "path_length" in meta
         assert "branching_factor" in meta
+        assert "color_schema" in meta
+
+    def test_metadata_color_schema_from_arg(self):
+        grid = _make_test_grid()
+        schema = {"name": "classic", "wall": "#1a1a2e", "corridor": "#e8e8e8",
+                  "start": "#22c55e", "goal": "#ef4444", "solution_path": "#3b82f6",
+                  "background": "#f5f5f5"}
+        instance = maze_grid_to_instance(grid, "test_001", color_schema=schema)
+        assert instance.metadata["color_schema"]["name"] == "classic"
+
+    def test_metadata_color_schema_default_empty(self):
+        grid = _make_test_grid()
+        instance = maze_grid_to_instance(grid, "test_001")
+        assert instance.metadata["color_schema"] == {}
 
     def test_difficulty_score_in_range(self):
         grid = _make_test_grid()
