@@ -1,28 +1,37 @@
-"""Difficulty tier configurations and sampling."""
+"""Difficulty tier parameter configs and sampling."""
 
 import numpy as np
 
 from mazerunner.common.types import DifficultyConfig
 
-TIER_CONFIGS = {
-    1: {"rows": (5, 8), "cols": (7, 12), "corridor": (28, 40), "wall": (3, 6), "min_solution": 8},
-    2: {"rows": (10, 16), "cols": (14, 22), "corridor": (16, 26), "wall": (3, 5), "min_solution": 20},
-    3: {"rows": (18, 28), "cols": (25, 40), "corridor": (8, 16), "wall": (2, 4), "min_solution": 40},
+# Tier definitions: (row_min, row_max, col_min, col_max, min_solution_length)
+TIER_PARAMS = {
+    1: {"row_range": (5, 8), "col_range": (7, 12), "min_solution_length": 8},
+    2: {"row_range": (10, 16), "col_range": (14, 22), "min_solution_length": 20},
+    3: {"row_range": (18, 28), "col_range": (25, 40), "min_solution_length": 40},
 }
 
 
 def sample_difficulty_params(tier: int, rng: np.random.Generator) -> DifficultyConfig:
-    """Sample difficulty parameters uniformly from tier ranges."""
-    cfg = TIER_CONFIGS[tier]
-    rows = int(rng.integers(cfg["rows"][0], cfg["rows"][1] + 1))
-    cols = int(rng.integers(cfg["cols"][0], cfg["cols"][1] + 1))
-    corridor_width = int(rng.integers(cfg["corridor"][0], cfg["corridor"][1] + 1))
-    wall_thickness = int(rng.integers(cfg["wall"][0], cfg["wall"][1] + 1))
+    """Sample grid dimensions for a given difficulty tier."""
+    if tier not in TIER_PARAMS:
+        raise ValueError(f"Invalid tier: {tier}. Must be 1, 2, or 3.")
+
+    params = TIER_PARAMS[tier]
+    row_min, row_max = params["row_range"]
+    col_min, col_max = params["col_range"]
+
+    grid_rows = int(rng.integers(row_min, row_max + 1))
+    grid_cols = int(rng.integers(col_min, col_max + 1))
+
     return DifficultyConfig(
         tier=tier,
-        grid_rows=rows,
-        grid_cols=cols,
-        corridor_width=corridor_width,
-        wall_thickness=wall_thickness,
-        min_solution_length=cfg["min_solution"],
+        grid_rows=grid_rows,
+        grid_cols=grid_cols,
+        min_solution_length=params["min_solution_length"],
     )
+
+
+def compute_difficulty_score(path_length: int, rows: int, cols: int) -> int:
+    """Compute difficulty score (1-9) from path length and grid size."""
+    return min(9, 1 + int(8 * path_length / (rows * cols)))

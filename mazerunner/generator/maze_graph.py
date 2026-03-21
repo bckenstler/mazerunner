@@ -1,146 +1,114 @@
-"""Core maze generation and solving algorithms."""
+"""Randomized DFS maze generation and BFS solving."""
 
 from collections import deque
-from typing import Dict, List, Set, Tuple, FrozenSet
+from typing import Dict, FrozenSet, List, Set, Tuple
 
 import numpy as np
 
-from mazerunner.common.types import Cell, MazeGrid
-from mazerunner.generator.placement import choose_start_goal_placed
+from mazerunner.common.types import Cell
 
 
-def _get_neighbors(row: int, col: int, rows: int, cols: int) -> List[Cell]:
-    """Return valid orthogonal neighbors within grid bounds."""
-    neighbors = []
-    for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
-        nr, nc = row + dr, col + dc
-        if 0 <= nr < rows and 0 <= nc < cols:
-            neighbors.append((nr, nc))
-    return neighbors
+def _neighbors(cell: Cell, rows: int, cols: int) -> List[Cell]:
+    """Return valid grid neighbors (up, down, left, right)."""
+    r, c = cell
+    result = []
+    if r > 0:
+        result.append((r - 1, c))
+    if r < rows - 1:
+        result.append((r + 1, c))
+    if c > 0:
+        result.append((r, c - 1))
+    if c < cols - 1:
+        result.append((r, c + 1))
+    return result
 
 
-def generate_maze_dfs(rows: int, cols: int, rng: np.random.Generator) -> Set[FrozenSet[Cell]]:
-    """Generate a perfect maze using randomized DFS with explicit stack."""
+def generate_maze(rows: int, cols: int, rng: np.random.Generator) -> Set[FrozenSet[Cell]]:
+    """Generate a perfect maze using iterative randomized DFS.
+
+    Returns a set of passages (edges) as frozensets of two cells.
+    Invariant: passage count == rows * cols - 1
+    """
     visited = set()
-    passages = set()
-    stack = [(0, 0)]
-    visited.add((0, 0))
+    passages: Set[FrozenSet[Cell]] = set()
+    start = (0, 0)
+    visited.add(start)
+    stack = [start]
 
     while stack:
         current = stack[-1]
-        neighbors = _get_neighbors(current[0], current[1], rows, cols)
-        unvisited = [n for n in neighbors if n not in visited]
+        unvisited = [n for n in _neighbors(current, rows, cols) if n not in visited]
 
-        if unvisited:
-            # Pick a random unvisited neighbor
-            idx = int(rng.integers(0, len(unvisited)))
-            neighbor = unvisited[idx]
-            passages.add(frozenset({current, neighbor}))
-            visited.add(neighbor)
-            stack.append(neighbor)
-        else:
+        if not unvisited:
             stack.pop()
+            continue
+
+        # Shuffle using the provided RNG for determinism
+        indices = rng.permutation(len(unvisited))
+        next_cell = unvisited[indices[0]]
+
+        passages.add(frozenset((current, next_cell)))
+        visited.add(next_cell)
+        stack.append(next_cell)
 
     return passages
 
 
+def _build_adjacency(passages: Set[FrozenSet[Cell]]) -> Dict[Cell, List[Cell]]:
+    """Build adjacency list from passage set."""
+    adj: Dict[Cell, List[Cell]] = {}
+    for edge in passages:
+        a, b = tuple(edge)
+        adj.setdefault(a, []).append(b)
+        adj.setdefault(b, []).append(a)
+    return adj
+
+
 def solve_bfs(
-    rows: int,
-    cols: int,
-    passages: Set[FrozenSet[Cell]],
-    start: Cell,
-    goal: Cell,
+    passages: Set[FrozenSet[Cell]], start: Cell, goal: Cell, rows: int, cols: int
 ) -> List[Cell]:
-    """BFS from start to goal. Returns ordered cell list including start and goal."""
-    parent: Dict[Cell, Cell] = {start: start}
+    """Find shortest path from start to goal using BFS.
+
+    Returns the path as a list of cells from start to goal inclusive.
+    """
+    adj = _build_adjacency(passages)
     queue = deque([start])
+    parent: Dict[Cell, Cell | None] = {start: None}
 
     while queue:
         current = queue.popleft()
         if current == goal:
             break
-        for neighbor in _get_neighbors(current[0], current[1], rows, cols):
-            if neighbor not in parent and frozenset({current, neighbor}) in passages:
+        for neighbor in adj.get(current, []):
+            if neighbor not in parent:
                 parent[neighbor] = current
                 queue.append(neighbor)
 
-    # Reconstruct path
+    if goal not in parent:
+        return []
+
     path = []
-    cell = goal
-    while cell != start:
+    cell: Cell | None = goal
+    while cell is not None:
         path.append(cell)
         cell = parent[cell]
-    path.append(start)
     path.reverse()
     return path
 
 
 def bfs_distances(
-    rows: int,
-    cols: int,
-    passages: Set[FrozenSet[Cell]],
-    start: Cell,
+    passages: Set[FrozenSet[Cell]], start: Cell, rows: int, cols: int
 ) -> Dict[Cell, int]:
-    """BFS from start, return dict mapping each cell to its distance from start."""
-    dist: Dict[Cell, int] = {start: 0}
+    """Compute BFS distances from start to all reachable cells."""
+    adj = _build_adjacency(passages)
+    distances: Dict[Cell, int] = {start: 0}
     queue = deque([start])
 
     while queue:
         current = queue.popleft()
-        for neighbor in _get_neighbors(current[0], current[1], rows, cols):
-            if neighbor not in dist and frozenset({current, neighbor}) in passages:
-                dist[neighbor] = dist[current] + 1
+        for neighbor in adj.get(current, []):
+            if neighbor not in distances:
+                distances[neighbor] = distances[current] + 1
                 queue.append(neighbor)
 
-    return dist
-
-
-def choose_start_goal(
-    rows: int,
-    cols: int,
-    passages: Set[FrozenSet[Cell]],
-    min_distance: int,
-    rng: np.random.Generator,
-) -> Tuple[Cell, Cell]:
-    """Pick random start cell, then pick goal at least min_distance away."""
-    # Pick random start
-    start_row = int(rng.integers(0, rows))
-    start_col = int(rng.integers(0, cols))
-    start = (start_row, start_col)
-
-    distances = bfs_distances(rows, cols, passages, start)
-    candidates = [cell for cell, d in distances.items() if d >= min_distance]
-
-    if not candidates:
-        # Use the farthest cell
-        farthest = max(distances, key=lambda c: distances[c])
-        candidates = [farthest]
-
-    idx = int(rng.integers(0, len(candidates)))
-    goal = candidates[idx]
-    return start, goal
-
-
-def build_maze(
-    rows: int,
-    cols: int,
-    min_solution_length: int,
-    rng: np.random.Generator,
-) -> MazeGrid:
-    """Generate maze, choose start/goal, solve, return MazeGrid."""
-    passages = generate_maze_dfs(rows, cols, rng)
-    start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-        rows, cols, passages, min_solution_length, rng
-    )
-    solution_path = solve_bfs(rows, cols, passages, start, goal)
-    return MazeGrid(
-        rows=rows,
-        cols=cols,
-        passages=passages,
-        start=start,
-        goal=goal,
-        solution_path=solution_path,
-        placement_style=style,
-        start_edge=start_edge,
-        goal_edge=goal_edge,
-    )
+    return distances

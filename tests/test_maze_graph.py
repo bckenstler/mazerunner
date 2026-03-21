@@ -1,156 +1,129 @@
-"""Tests for maze generation and solving."""
-
-from collections import deque
+"""Tests for maze generation and BFS solving."""
 
 import numpy as np
 import pytest
 
-from mazerunner.generator.maze_graph import (
-    build_maze,
-    choose_start_goal,
-    generate_maze_dfs,
-    solve_bfs,
-    bfs_distances,
-    _get_neighbors,
-)
+from mazerunner.generator.maze_graph import generate_maze, solve_bfs, bfs_distances
 from mazerunner.generator.seed_utils import make_rng
 
 
-class TestGenerateMazeDFS:
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (20, 20), (3, 7)])
-    def test_perfect_maze_passage_count(self, rows, cols):
+GRID_SIZES = [(5, 7), (8, 10), (10, 14), (15, 20), (5, 5)]
+
+
+class TestGenerateMaze:
+    @pytest.mark.parametrize("rows,cols", GRID_SIZES)
+    def test_passage_count_invariant(self, rows, cols):
+        """Perfect maze has exactly rows*cols - 1 passages."""
         rng = make_rng(42)
-        passages = generate_maze_dfs(rows, cols, rng)
-        # A perfect maze (spanning tree) has exactly rows*cols - 1 edges
+        passages = generate_maze(rows, cols, rng)
         assert len(passages) == rows * cols - 1
 
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (20, 20)])
+    @pytest.mark.parametrize("rows,cols", GRID_SIZES)
     def test_all_cells_reachable(self, rows, cols):
-        rng = make_rng(99)
-        passages = generate_maze_dfs(rows, cols, rng)
+        """Every cell should be reachable from (0,0)."""
+        rng = make_rng(42)
+        passages = generate_maze(rows, cols, rng)
+        distances = bfs_distances(passages, (0, 0), rows, cols)
+        assert len(distances) == rows * cols
 
-        # BFS from (0,0) should reach all cells
-        visited = set()
-        queue = deque([(0, 0)])
-        visited.add((0, 0))
-
-        while queue:
-            current = queue.popleft()
-            for neighbor in _get_neighbors(current[0], current[1], rows, cols):
-                if neighbor not in visited and frozenset({current, neighbor}) in passages:
-                    visited.add(neighbor)
-                    queue.append(neighbor)
-
-        assert len(visited) == rows * cols
+    def test_passages_are_frozensets(self):
+        rng = make_rng(42)
+        passages = generate_maze(5, 7, rng)
+        for p in passages:
+            assert isinstance(p, frozenset)
+            assert len(p) == 2
 
     def test_passages_connect_adjacent_cells(self):
+        """Each passage should connect cells that differ by 1 in exactly one dimension."""
         rng = make_rng(42)
-        rows, cols = 8, 8
-        passages = generate_maze_dfs(rows, cols, rng)
+        passages = generate_maze(5, 7, rng)
+        for p in passages:
+            cells = list(p)
+            a, b = cells[0], cells[1]
+            dr = abs(a[0] - b[0])
+            dc = abs(a[1] - b[1])
+            assert (dr == 1 and dc == 0) or (dr == 0 and dc == 1)
 
-        for passage in passages:
-            cells = list(passage)
-            assert len(cells) == 2
-            r1, c1 = cells[0]
-            r2, c2 = cells[1]
-            # Must be orthogonal neighbors
-            assert abs(r1 - r2) + abs(c1 - c2) == 1
-            # Must be within bounds
-            assert 0 <= r1 < rows and 0 <= c1 < cols
-            assert 0 <= r2 < rows and 0 <= c2 < cols
+    def test_deterministic(self):
+        """Same seed produces same maze."""
+        rng1 = make_rng(42)
+        rng2 = make_rng(42)
+        p1 = generate_maze(10, 10, rng1)
+        p2 = generate_maze(10, 10, rng2)
+        assert p1 == p2
 
+    def test_different_seeds_different_mazes(self):
+        rng1 = make_rng(42)
+        rng2 = make_rng(99)
+        p1 = generate_maze(10, 10, rng1)
+        p2 = generate_maze(10, 10, rng2)
+        assert p1 != p2
 
-class TestSolveBFS:
-    def test_path_starts_at_start_ends_at_goal(self):
+    def test_small_maze(self):
+        """1x1 maze has no passages."""
         rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        start = (0, 0)
-        goal = (rows - 1, cols - 1)
-        path = solve_bfs(rows, cols, passages, start, goal)
-        assert path[0] == start
-        assert path[-1] == goal
+        passages = generate_maze(1, 1, rng)
+        assert len(passages) == 0
 
-    def test_path_follows_passages(self):
+    def test_2x2_maze(self):
         rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        start = (0, 0)
-        goal = (9, 9)
-        path = solve_bfs(rows, cols, passages, start, goal)
+        passages = generate_maze(2, 2, rng)
+        assert len(passages) == 3
 
+
+class TestSolveBfs:
+    @pytest.mark.parametrize("rows,cols", GRID_SIZES)
+    def test_solution_exists(self, rows, cols):
+        """Any two cells in a perfect maze should be connected."""
+        rng = make_rng(42)
+        passages = generate_maze(rows, cols, rng)
+        path = solve_bfs(passages, (0, 0), (rows - 1, cols - 1), rows, cols)
+        assert len(path) >= 2
+        assert path[0] == (0, 0)
+        assert path[-1] == (rows - 1, cols - 1)
+
+    def test_path_is_valid(self):
+        """Each consecutive pair in the path should be connected by a passage."""
+        rng = make_rng(42)
+        rows, cols = 10, 14
+        passages = generate_maze(rows, cols, rng)
+        path = solve_bfs(passages, (0, 0), (rows - 1, cols - 1), rows, cols)
         for i in range(len(path) - 1):
-            edge = frozenset({path[i], path[i + 1]})
-            assert edge in passages, f"Step {i}: {path[i]} -> {path[i+1]} not in passages"
+            edge = frozenset((path[i], path[i + 1]))
+            assert edge in passages
 
-    def test_path_has_no_cycles(self):
+    def test_path_no_duplicates(self):
         rng = make_rng(42)
-        rows, cols = 8, 8
-        passages = generate_maze_dfs(rows, cols, rng)
-        start = (0, 0)
-        goal = (7, 7)
-        path = solve_bfs(rows, cols, passages, start, goal)
-        # No repeated cells
+        rows, cols = 10, 14
+        passages = generate_maze(rows, cols, rng)
+        path = solve_bfs(passages, (0, 0), (rows - 1, cols - 1), rows, cols)
         assert len(path) == len(set(path))
 
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (20, 20)])
-    def test_solve_various_sizes(self, rows, cols):
-        rng = make_rng(77)
-        passages = generate_maze_dfs(rows, cols, rng)
-        start = (0, 0)
+    def test_same_start_goal(self):
+        rng = make_rng(42)
+        passages = generate_maze(5, 5, rng)
+        path = solve_bfs(passages, (0, 0), (0, 0), 5, 5)
+        assert path == [(0, 0)]
+
+
+class TestBfsDistances:
+    def test_start_distance_zero(self):
+        rng = make_rng(42)
+        passages = generate_maze(5, 7, rng)
+        distances = bfs_distances(passages, (0, 0), 5, 7)
+        assert distances[(0, 0)] == 0
+
+    def test_all_distances_non_negative(self):
+        rng = make_rng(42)
+        passages = generate_maze(5, 7, rng)
+        distances = bfs_distances(passages, (0, 0), 5, 7)
+        assert all(d >= 0 for d in distances.values())
+
+    def test_distances_match_path_length(self):
+        rng = make_rng(42)
+        rows, cols = 8, 10
+        passages = generate_maze(rows, cols, rng)
+        distances = bfs_distances(passages, (0, 0), rows, cols)
         goal = (rows - 1, cols - 1)
-        path = solve_bfs(rows, cols, passages, start, goal)
-        assert len(path) >= 2
-        assert path[0] == start
-        assert path[-1] == goal
-
-
-class TestChooseStartGoal:
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (20, 20)])
-    def test_within_grid_bounds(self, rows, cols):
-        rng = make_rng(42)
-        passages = generate_maze_dfs(rows, cols, rng)
-        start, goal = choose_start_goal(rows, cols, passages, 3, rng)
-        assert 0 <= start[0] < rows and 0 <= start[1] < cols
-        assert 0 <= goal[0] < rows and 0 <= goal[1] < cols
-
-    def test_sufficient_distance(self):
-        rng = make_rng(42)
-        rows, cols = 15, 15
-        passages = generate_maze_dfs(rows, cols, rng)
-        min_dist = 10
-        rng2 = make_rng(42)
-        start, goal = choose_start_goal(rows, cols, passages, min_dist, rng2)
-        distances = bfs_distances(rows, cols, passages, start)
-        assert distances[goal] >= min_dist or distances[goal] == max(distances.values())
-
-    def test_start_and_goal_are_different(self):
-        rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        start, goal = choose_start_goal(rows, cols, passages, 5, rng)
-        assert start != goal
-
-
-class TestBuildMaze:
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (20, 20)])
-    def test_returns_valid_maze_grid(self, rows, cols):
-        rng = make_rng(42)
-        maze = build_maze(rows, cols, 3, rng)
-        assert maze.rows == rows
-        assert maze.cols == cols
-        assert len(maze.passages) == rows * cols - 1
-        assert maze.start != maze.goal
-        assert maze.solution_path[0] == maze.start
-        assert maze.solution_path[-1] == maze.goal
-        assert maze.placement_style in ("edge_to_edge", "edge_to_center", "edge_to_dead_end")
-        assert maze.start_edge in ("top", "bottom", "left", "right")
-        # goal_edge can be empty for interior goals
-        assert maze.goal_edge in ("top", "bottom", "left", "right", "")
-
-    def test_solution_path_follows_passages(self):
-        rng = make_rng(42)
-        maze = build_maze(10, 10, 5, rng)
-        for i in range(len(maze.solution_path) - 1):
-            edge = frozenset({maze.solution_path[i], maze.solution_path[i + 1]})
-            assert edge in maze.passages
+        path = solve_bfs(passages, (0, 0), goal, rows, cols)
+        assert distances[goal] == len(path) - 1

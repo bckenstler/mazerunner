@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigation. It has two main pipelines: **generation** (create maze images + ground truth) and **evaluation** (score submitted paths against ground truth).
+MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigation. The maze generator produces canonical maze graph instances (JSON) across 3 complexity tiers. Rendering and evaluation are separate pipelines (not yet implemented).
 
 ## Commands
 
@@ -11,45 +11,49 @@ MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigat
 pip install -r requirements.txt
 
 # Generate mazes
-python -m mazerunner generate --output-dir data/dev --num-mazes 50 --master-seed 42 --tier-distribution 15,20,15
-
-# Evaluate a submission
-python -m mazerunner evaluate --submission sub.jsonl --gt-dir data/dev/gt --verbose
+python -m mazerunner generate --output-dir data/dev --num-mazes 1000 --master-seed 42 --tier-distribution 300,400,300
 
 # Run tests
 pytest tests/ -v
-
-# Run evaluator validation script
-PYTHONPATH=. python scripts/validate_evaluator.py
 ```
 
 ## Architecture
 
-Two independent pipelines sharing `common/`:
-
 ```
-common/types.py, rle.py  ← shared dataclasses and RLE encoding
-       ↓                        ↓
-generator/               evaluator/
-  maze_graph.py            canonicalize.py  (parse submissions → dense polyline)
-  masks.py                 metrics.py       (score paths using distance transforms)
-  renderer.py              evaluate.py      (orchestrate per-maze evaluation)
-  themes.py                schemas.py       (validate JSON structure)
+mazerunner/
+  common/types.py        ← Cell, DifficultyConfig, MazeGrid, MazeInstance dataclasses
+  generator/
+    seed_utils.py        ← SHA-256 seed derivation + numpy RNG factory
+    maze_graph.py        ← Iterative randomized DFS generation + BFS solving
+    placement.py         ← Start/goal placement (4 endpoint types)
+    difficulty.py        ← 3-tier parameter configs + sampling
+    serialization.py     ← MazeGrid → canonical JSON
+  generate.py            ← CLI entry point + dataset orchestration
+  __main__.py            ← CLI dispatcher
 ```
 
 ### Generator Pipeline
-`seed_utils.derive_seed()` → `difficulty.sample_difficulty_params()` → `maze_graph.build_maze()` → `masks.generate_wall_mask()` → `renderer.MazeRenderer.render()` → save PNG + GT JSON
 
-### Evaluator Pipeline
-`schemas.load_submission()` → `canonicalize.canonicalize()` (parse + clamp + densify) → `metrics.*` (clearance map, success@r, valid_frac, mono_score, etc.) → `EvalResult`
+`seed_utils.derive_seed()` → `difficulty.sample_difficulty_params()` → `maze_graph.generate_maze()` → `placement.place_endpoints()` → `maze_graph.solve_bfs()` → `serialization.maze_grid_to_instance()` → JSON file
 
 ## Key Invariants
 
-- Masks are generated from the logical maze structure, never from rendered images. The renderer and mask generator share the same cell-to-pixel geometry defined in `masks.py`.
-- Cell-to-pixel mapping: `cell_size = corridor_width + wall_thickness`, `maze_origin = chrome_offset + wall_thickness`, cell interior at `origin + col * cell_size`.
-- Densification (max 2px gap) is applied to all submitted paths before scoring to prevent wall-jumping.
-- `check_endpoint` dilates region masks by 4px tolerance using distance transform.
-- Seeds are derived via SHA-256 (`derive_seed`), not Python's random module, for platform independence.
+- Perfect mazes (spanning trees): passage count == rows * cols - 1, all cells reachable
+- Passages stored as `Set[FrozenSet[Cell]]` for O(1) edge lookup
+- Interior endpoints must be dead-end cells (degree 1) for natural placement
+- Edge-edge placement requires start and goal on different borders
+- Seeds derived via SHA-256 (`derive_seed`), not Python's random module, for platform independence
+- Adjacency dicts in JSON output are sorted (keys and neighbor lists) for determinism
+
+## Difficulty Tiers
+
+| Parameter | Tier 1 (Easy) | Tier 2 (Medium) | Tier 3 (Hard) |
+|-----------|---------------|-----------------|----------------|
+| Grid rows | 5-8 | 10-16 | 18-28 |
+| Grid cols | 7-12 | 14-22 | 25-40 |
+| Min solution length | 8 | 20 | 40 |
+
+Difficulty score (1-9): `min(9, 1 + int(8 * path_len / (rows * cols)))`
 
 ## Git Workflow
 
@@ -59,13 +63,13 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, scipy, pytest
+- No external dependencies beyond numpy, pytest
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
 
-97 tests covering: RLE round-trips, maze graph properties (perfect maze, reachability, BFS correctness), seed determinism, canonicalization encodings, all metrics, and end-to-end generation→evaluation. `scripts/validate_evaluator.py` runs 8 synthetic path scenarios (GT path, noisy, reversed, wall-cutting, half path, delta-encoded, cell-route, empty).
+97 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, and end-to-end pipeline determinism + file I/O.
 
 ## Generated Data
 
-Output goes to `data/` (gitignored). Each maze produces `images/{id}.png` and `gt/{id}.json`. The GT JSON contains RLE-encoded boolean masks (start, goal, free_space, wall), the solution polyline in pixel coordinates, and render_config needed for cell_route decoding.
+Output goes to `data/` (gitignored). Each maze is `instances/maze_{i:06d}.json` containing id, grid dimensions, start/goal, sorted adjacency dict, shortest path, and metadata (tier, endpoint_type, difficulty_score, branching_factor).

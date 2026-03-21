@@ -1,186 +1,130 @@
-"""End-to-end tests: generate maze, evaluate GT solution, evaluate bad path."""
+"""End-to-end tests for the maze generation pipeline."""
 
-import math
+import json
+import os
+import tempfile
 
-import numpy as np
 import pytest
 
-from mazerunner.common.rle import encode_rle
-from mazerunner.common.types import RenderConfig
-from mazerunner.evaluator.evaluate import evaluate_single
+from mazerunner.common.types import MazeGrid
+from mazerunner.generate import generate_dataset
 from mazerunner.generator.difficulty import sample_difficulty_params
-from mazerunner.generator.masks import (
-    carve_outer_openings,
-    compute_cell_center,
-    compute_image_size,
-    generate_free_space_mask,
-    generate_region_mask,
-    generate_wall_mask,
-    solution_cells_to_polyline,
-)
-from mazerunner.generator.maze_graph import build_maze
-from mazerunner.generator.placement import opening_center
+from mazerunner.generator.maze_graph import generate_maze, solve_bfs
+from mazerunner.generator.placement import ENDPOINT_TYPES, place_endpoints
 from mazerunner.generator.seed_utils import derive_seed, make_rng
+from mazerunner.generator.serialization import maze_grid_to_instance, instance_to_json
 
 
-def _build_gt_data():
-    """Build a full GT data dict for tier-1 maze with seed=42."""
-    seed = derive_seed(42, 0)
-    rng = make_rng(seed)
-    diff = sample_difficulty_params(1, rng)
+class TestFullPipeline:
+    def test_deterministic_pipeline(self):
+        """Same seed produces identical maze instances."""
+        results = []
+        for _ in range(2):
+            seed = derive_seed(42, 0)
+            rng = make_rng(seed)
+            config = sample_difficulty_params(1, rng)
+            passages = generate_maze(config.grid_rows, config.grid_cols, rng)
+            start, goal = place_endpoints(
+                passages, config.grid_rows, config.grid_cols, "edge-edge", config.min_solution_length, rng
+            )
+            solution = solve_bfs(passages, start, goal, config.grid_rows, config.grid_cols)
+            grid = MazeGrid(
+                rows=config.grid_rows, cols=config.grid_cols, passages=passages,
+                start=start, goal=goal, solution_path=solution, endpoint_type="edge-edge",
+            )
+            instance = maze_grid_to_instance(grid, "test")
+            results.append(instance_to_json(instance))
+        assert results[0] == results[1]
 
-    chrome_height_top = 0
-    chrome_width_left = 0
-    image_width, image_height, render_config = compute_image_size(
-        diff, chrome_height_top, chrome_width_left
-    )
-    render_config = RenderConfig(
-        image_width=image_width,
-        image_height=image_height,
-        corridor_width=render_config.corridor_width,
-        wall_thickness=render_config.wall_thickness,
-        chrome_height_top=chrome_height_top,
-        chrome_width_left=chrome_width_left,
-        theme_name="light_classic",
-    )
-
-    maze = build_maze(diff.grid_rows, diff.grid_cols, diff.min_solution_length, rng)
-    wall_mask = generate_wall_mask(maze, render_config)
-    carve_outer_openings(wall_mask, maze, render_config)
-    free_mask = generate_free_space_mask(wall_mask)
-
-    if maze.start_edge:
-        start_center = opening_center(
-            maze.start, maze.start_edge, render_config, maze.rows, maze.cols
+    def test_solution_valid(self):
+        """Generated solution path is valid."""
+        seed = derive_seed(42, 5)
+        rng = make_rng(seed)
+        config = sample_difficulty_params(2, rng)
+        passages = generate_maze(config.grid_rows, config.grid_cols, rng)
+        endpoint_type = "edge-edge"
+        start, goal = place_endpoints(
+            passages, config.grid_rows, config.grid_cols,
+            endpoint_type, config.min_solution_length, rng,
         )
-    else:
-        start_center = compute_cell_center(
-            maze.start[0], maze.start[1], render_config, maze.rows, maze.cols
+        solution = solve_bfs(passages, start, goal, config.grid_rows, config.grid_cols)
+
+        assert solution[0] == start
+        assert solution[-1] == goal
+        for i in range(len(solution) - 1):
+            assert frozenset((solution[i], solution[i + 1])) in passages
+
+    @pytest.mark.parametrize("tier", [1, 2, 3])
+    def test_all_tiers_solvable(self, tier):
+        """Mazes from all tiers are solvable."""
+        rng = make_rng(42)
+        config = sample_difficulty_params(tier, rng)
+        passages = generate_maze(config.grid_rows, config.grid_cols, rng)
+        start, goal = place_endpoints(
+            passages, config.grid_rows, config.grid_cols,
+            "edge-edge", config.min_solution_length, rng,
         )
-    if maze.goal_edge:
-        goal_center = opening_center(
-            maze.goal, maze.goal_edge, render_config, maze.rows, maze.cols
+        solution = solve_bfs(passages, start, goal, config.grid_rows, config.grid_cols)
+        assert len(solution) >= 2
+
+    @pytest.mark.parametrize("endpoint_type", ENDPOINT_TYPES)
+    def test_all_endpoint_types_solvable(self, endpoint_type):
+        rng = make_rng(42)
+        config = sample_difficulty_params(2, rng)
+        passages = generate_maze(config.grid_rows, config.grid_cols, rng)
+        start, goal = place_endpoints(
+            passages, config.grid_rows, config.grid_cols,
+            endpoint_type, config.min_solution_length, rng,
         )
-    else:
-        goal_center = compute_cell_center(
-            maze.goal[0], maze.goal[1], render_config, maze.rows, maze.cols
-        )
-
-    start_mask = generate_region_mask(
-        start_center, render_config.corridor_width * 0.4, (image_height, image_width)
-    )
-    goal_mask = generate_region_mask(
-        goal_center, render_config.corridor_width * 0.4, (image_height, image_width)
-    )
-
-    solution_polyline = solution_cells_to_polyline(
-        maze.solution_path, render_config, maze.rows, maze.cols,
-        start_edge=maze.start_edge, goal_edge=maze.goal_edge,
-    )
-
-    solution_length = 0.0
-    for i in range(1, len(solution_polyline)):
-        x0, y0 = solution_polyline[i - 1]
-        x1, y1 = solution_polyline[i]
-        solution_length += math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
-
-    gt_data = {
-        "id": "test_000",
-        "image_size": {"w": image_width, "h": image_height},
-        "regions": {
-            "free_space_mask_rle": encode_rle(free_mask),
-            "wall_mask_rle": encode_rle(wall_mask),
-            "start_mask_rle": encode_rle(start_mask),
-            "goal_mask_rle": encode_rle(goal_mask),
-        },
-        "gt": {
-            "solution_polyline": [[float(x), float(y)] for x, y in solution_polyline],
-            "solution_length": solution_length,
-        },
-        "render_config": {
-            "corridor_width": render_config.corridor_width,
-            "wall_thickness": render_config.wall_thickness,
-            "chrome_height_top": render_config.chrome_height_top,
-            "chrome_width_left": render_config.chrome_width_left,
-            "theme_name": render_config.theme_name,
-        },
-    }
-    return gt_data, solution_polyline, start_center, goal_center
+        solution = solve_bfs(passages, start, goal, config.grid_rows, config.grid_cols)
+        assert len(solution) >= 2
 
 
-class TestEndToEndGTSolution:
-    def test_gt_polyline_evaluates_as_success(self):
-        gt_data, solution_polyline, start_center, goal_center = _build_gt_data()
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": gt_data["gt"]["solution_polyline"]},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert result.start_ok is True
-        assert result.goal_ok is True
-        assert result.success["0"] is True
-        assert result.valid_frac["0"] == pytest.approx(1.0, abs=0.01)
+class TestFileIO:
+    def test_generate_dataset(self):
+        """Full dataset generation writes correct files."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generate_dataset(tmpdir, num_mazes=10, master_seed=42, tier_distribution=[3, 4, 3])
+            instances_dir = os.path.join(tmpdir, "instances")
+            assert os.path.isdir(instances_dir)
 
-    def test_gt_polyline_mono_score_near_one(self):
-        gt_data, solution_polyline, _, _ = _build_gt_data()
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": gt_data["gt"]["solution_polyline"]},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert result.mono_score >= 0.99
+            files = sorted(os.listdir(instances_dir))
+            assert len(files) == 10
 
-    def test_gt_polyline_length_regret_near_zero(self):
-        gt_data, solution_polyline, _, _ = _build_gt_data()
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": gt_data["gt"]["solution_polyline"]},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert abs(result.length_regret) < 0.05
+            # Verify each file
+            tiers_seen = set()
+            for fname in files:
+                assert fname.endswith(".json")
+                with open(os.path.join(instances_dir, fname)) as f:
+                    data = json.load(f)
+                assert "id" in data
+                assert "adjacency" in data
+                assert "shortest_path_cells" in data
+                assert "start" in data
+                assert "goal" in data
+                assert "metadata" in data
+                tiers_seen.add(data["metadata"]["tier"])
 
+            assert tiers_seen == {1, 2, 3}
 
-class TestEndToEndBadPath:
-    def test_straight_line_fails_at_r1(self):
-        gt_data, solution_polyline, start_center, goal_center = _build_gt_data()
-        # Straight line from start center to goal center (cuts through walls).
-        # success@0 uses radius=0 (clearance >= 0, always true), so we check
-        # success@1 which requires clearance >= 1 (free space only).
-        straight_line = [
-            [start_center[0], start_center[1]],
-            [goal_center[0], goal_center[1]],
-        ]
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": straight_line},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert result.success["1"] is False
+    def test_dataset_determinism(self):
+        """Same params produce identical datasets."""
+        jsons = []
+        for _ in range(2):
+            with tempfile.TemporaryDirectory() as tmpdir:
+                generate_dataset(tmpdir, num_mazes=5, master_seed=42, tier_distribution=[1, 2, 2])
+                instances_dir = os.path.join(tmpdir, "instances")
+                files = sorted(os.listdir(instances_dir))
+                run_jsons = []
+                for fname in files:
+                    with open(os.path.join(instances_dir, fname)) as f:
+                        run_jsons.append(f.read())
+                jsons.append(run_jsons)
+        assert jsons[0] == jsons[1]
 
-    def test_straight_line_endpoints_ok(self):
-        gt_data, solution_polyline, start_center, goal_center = _build_gt_data()
-        straight_line = [
-            [start_center[0], start_center[1]],
-            [goal_center[0], goal_center[1]],
-        ]
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": straight_line},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert result.start_ok is True
-        assert result.goal_ok is True
-
-    def test_straight_line_valid_frac_below_one_at_r1(self):
-        gt_data, solution_polyline, start_center, goal_center = _build_gt_data()
-        # At radius=1, wall pixels (clearance=0) fail, so valid_frac@1 < 1.0
-        straight_line = [
-            [start_center[0], start_center[1]],
-            [goal_center[0], goal_center[1]],
-        ]
-        prediction = {
-            "encoding": "polyline",
-            "data": {"points": straight_line},
-        }
-        result = evaluate_single(prediction, gt_data)
-        assert result.valid_frac["1"] < 1.0
+    def test_file_naming(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            generate_dataset(tmpdir, num_mazes=3, master_seed=42, tier_distribution=[1, 1, 1])
+            instances_dir = os.path.join(tmpdir, "instances")
+            files = sorted(os.listdir(instances_dir))
+            assert files == ["maze_000000.json", "maze_000001.json", "maze_000002.json"]

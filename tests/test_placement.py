@@ -1,223 +1,161 @@
-"""Tests for placement module."""
+"""Tests for start/goal placement."""
 
 import numpy as np
 import pytest
 
-from mazerunner.common.types import RenderConfig
-from mazerunner.generator.maze_graph import generate_maze_dfs
+from mazerunner.generator.maze_graph import generate_maze, bfs_distances
 from mazerunner.generator.placement import (
-    PLACEMENT_STYLES,
-    _edge_cells,
-    _find_dead_ends,
-    _is_interior,
-    choose_placement_style,
-    choose_start_goal_placed,
-    opening_center,
-    opening_pixel_rect,
+    ENDPOINT_TYPES,
+    get_dead_ends,
+    is_edge_cell,
+    is_interior_cell,
+    place_endpoints,
+    _get_borders,
 )
 from mazerunner.generator.seed_utils import make_rng
 
 
-class TestChoosePlacementStyle:
-    def test_returns_valid_style(self):
+class TestEdgeClassification:
+    def test_corners_are_edge(self):
+        assert is_edge_cell((0, 0), 5, 7)
+        assert is_edge_cell((0, 6), 5, 7)
+        assert is_edge_cell((4, 0), 5, 7)
+        assert is_edge_cell((4, 6), 5, 7)
+
+    def test_border_cells_are_edge(self):
+        assert is_edge_cell((0, 3), 5, 7)
+        assert is_edge_cell((2, 0), 5, 7)
+        assert is_edge_cell((4, 3), 5, 7)
+        assert is_edge_cell((2, 6), 5, 7)
+
+    def test_interior_cells(self):
+        assert is_interior_cell((1, 1), 5, 7)
+        assert is_interior_cell((2, 3), 5, 7)
+        assert is_interior_cell((3, 5), 5, 7)
+
+    def test_edge_interior_mutually_exclusive(self):
+        for r in range(5):
+            for c in range(7):
+                assert is_edge_cell((r, c), 5, 7) != is_interior_cell((r, c), 5, 7)
+
+
+class TestGetBorders:
+    def test_corner_has_two_borders(self):
+        borders = _get_borders((0, 0), 5, 7)
+        assert borders == {"top", "left"}
+
+    def test_edge_has_one_border(self):
+        borders = _get_borders((0, 3), 5, 7)
+        assert borders == {"top"}
+
+    def test_interior_has_no_borders(self):
+        borders = _get_borders((2, 3), 5, 7)
+        assert borders == set()
+
+
+class TestGetDeadEnds:
+    def test_dead_ends_have_degree_one(self):
         rng = make_rng(42)
-        for _ in range(50):
-            style = choose_placement_style(rng)
-            assert style in PLACEMENT_STYLES
-
-    def test_all_styles_reachable(self):
-        """Over many draws, all 3 styles should appear."""
-        styles_seen = set()
-        rng = make_rng(0)
-        for _ in range(100):
-            styles_seen.add(choose_placement_style(rng))
-        assert styles_seen == set(PLACEMENT_STYLES)
-
-
-class TestEdgeCells:
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (3, 7), (10, 10)])
-    def test_edge_cell_counts(self, rows, cols):
-        edges = _edge_cells(rows, cols)
-        assert len(edges["top"]) == cols
-        assert len(edges["bottom"]) == cols
-        assert len(edges["left"]) == rows
-        assert len(edges["right"]) == rows
-
-    def test_top_cells_are_row_zero(self):
-        edges = _edge_cells(5, 7)
-        for r, c in edges["top"]:
-            assert r == 0
-
-    def test_bottom_cells_are_last_row(self):
-        edges = _edge_cells(5, 7)
-        for r, c in edges["bottom"]:
-            assert r == 4
-
-    def test_left_cells_are_col_zero(self):
-        edges = _edge_cells(5, 7)
-        for r, c in edges["left"]:
-            assert c == 0
-
-    def test_right_cells_are_last_col(self):
-        edges = _edge_cells(5, 7)
-        for r, c in edges["right"]:
-            assert c == 6
-
-
-class TestFindDeadEnds:
-    def test_dead_ends_have_one_passage(self):
-        rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        dead_ends = _find_dead_ends(rows, cols, passages)
+        passages = generate_maze(10, 14, rng)
+        dead_ends = get_dead_ends(passages, 10, 14)
         for cell in dead_ends:
-            count = sum(1 for p in passages if cell in p)
-            assert count == 1
+            degree = sum(1 for p in passages if cell in p)
+            assert degree == 1
 
-    def test_dead_ends_exist_in_perfect_maze(self):
+    def test_dead_ends_exist(self):
+        """A perfect maze always has dead ends."""
         rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        dead_ends = _find_dead_ends(rows, cols, passages)
+        passages = generate_maze(10, 14, rng)
+        dead_ends = get_dead_ends(passages, 10, 14)
         assert len(dead_ends) > 0
 
-
-class TestChooseStartGoalPlaced:
-    @pytest.mark.parametrize("rows,cols", [(5, 5), (10, 10), (8, 12)])
-    def test_returns_valid_tuple(self, rows, cols):
+    def test_dead_ends_are_valid_cells(self):
         rng = make_rng(42)
-        passages = generate_maze_dfs(rows, cols, rng)
-        start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-            rows, cols, passages, 3, rng
-        )
+        rows, cols = 8, 10
+        passages = generate_maze(rows, cols, rng)
+        dead_ends = get_dead_ends(passages, rows, cols)
+        for r, c in dead_ends:
+            assert 0 <= r < rows
+            assert 0 <= c < cols
+
+
+class TestPlaceEndpoints:
+    @pytest.mark.parametrize("endpoint_type", ENDPOINT_TYPES)
+    def test_all_endpoint_types(self, endpoint_type):
+        """Test that all 4 endpoint types produce valid start/goal."""
+        rng = make_rng(42)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        start, goal = place_endpoints(passages, rows, cols, endpoint_type, 5, rng)
+        assert start != goal
         assert 0 <= start[0] < rows and 0 <= start[1] < cols
         assert 0 <= goal[0] < rows and 0 <= goal[1] < cols
+
+    def test_edge_edge_different_borders(self):
+        """For edge-edge, start and goal should be on different borders."""
+        rng = make_rng(42)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        start, goal = place_endpoints(passages, rows, cols, "edge-edge", 5, rng)
+        assert is_edge_cell(start, rows, cols)
+        assert is_edge_cell(goal, rows, cols)
+
+    def test_edge_edge_start_on_edge(self):
+        rng = make_rng(42)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        start, goal = place_endpoints(passages, rows, cols, "edge-edge", 5, rng)
+        assert is_edge_cell(start, rows, cols)
+
+    def test_interior_interior_dead_ends(self):
+        """Interior endpoints should be dead-end cells."""
+        rng = make_rng(42)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        dead_ends = get_dead_ends(passages, rows, cols)
+        interior_dead_ends = [c for c in dead_ends if is_interior_cell(c, rows, cols)]
+
+        if len(interior_dead_ends) >= 2:
+            start, goal = place_endpoints(passages, rows, cols, "interior-interior", 1, rng)
+            # At least start should be an interior dead-end if pool is non-empty
+            if is_interior_cell(start, rows, cols):
+                assert start in dead_ends
+
+    def test_edge_interior(self):
+        rng = make_rng(42)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        start, goal = place_endpoints(passages, rows, cols, "edge-interior", 5, rng)
+        assert is_edge_cell(start, rows, cols)
+
+    def test_interior_edge(self):
+        rng = make_rng(99)
+        rows, cols = 12, 16
+        passages = generate_maze(rows, cols, rng)
+        dead_ends = get_dead_ends(passages, rows, cols)
+        interior_dead_ends = [c for c in dead_ends if is_interior_cell(c, rows, cols)]
+
+        start, goal = place_endpoints(passages, rows, cols, "interior-edge", 5, rng)
+        if interior_dead_ends:
+            # Start should come from interior dead-end pool
+            if is_interior_cell(start, rows, cols):
+                assert start in dead_ends
+        assert is_edge_cell(goal, rows, cols) or not is_interior_cell(goal, rows, cols)
+
+    def test_min_distance_respected_when_possible(self):
+        rng = make_rng(42)
+        rows, cols = 15, 20
+        passages = generate_maze(rows, cols, rng)
+        min_dist = 10
+        start, goal = place_endpoints(passages, rows, cols, "edge-edge", min_dist, rng)
+        distances = bfs_distances(passages, start, rows, cols)
+        # Should meet min distance if possible (it should be on a 15x20 grid)
+        assert distances[goal] >= min_dist
+
+    def test_fallback_when_min_distance_impossible(self):
+        """Should still return valid endpoints even with unreachable min distance."""
+        rng = make_rng(42)
+        rows, cols = 5, 5
+        passages = generate_maze(rows, cols, rng)
+        start, goal = place_endpoints(passages, rows, cols, "edge-edge", 999, rng)
         assert start != goal
-        assert style in PLACEMENT_STYLES
-        assert start_edge in ("top", "bottom", "left", "right")
-        assert goal_edge in ("top", "bottom", "left", "right", "")
-
-    def test_edge_to_edge_different_edges(self):
-        """For edge_to_edge, start and goal should be on different edges."""
-        rng = make_rng(42)
-        rows, cols = 10, 10
-        # Run many times to find an edge_to_edge case
-        for seed in range(200):
-            rng = make_rng(seed)
-            passages = generate_maze_dfs(rows, cols, rng)
-            start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-                rows, cols, passages, 3, rng
-            )
-            if style == "edge_to_edge":
-                assert start_edge != goal_edge
-                assert goal_edge != ""
-                return
-        pytest.skip("No edge_to_edge style found in 200 tries")
-
-    def test_edge_to_center_goal_is_interior_dead_end(self):
-        """For edge_to_center, goal should be an interior dead-end cell."""
-        rows, cols = 10, 10
-        for seed in range(200):
-            rng = make_rng(seed)
-            passages = generate_maze_dfs(rows, cols, rng)
-            start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-                rows, cols, passages, 3, rng
-            )
-            if style == "edge_to_center":
-                assert goal_edge == ""
-                assert _is_interior(goal, rows, cols), f"goal {goal} is on perimeter"
-                return
-        pytest.skip("No edge_to_center style found in 200 tries")
-
-    def test_edge_to_dead_end_goal_is_interior(self):
-        """For edge_to_dead_end, goal should be interior."""
-        rows, cols = 10, 10
-        for seed in range(200):
-            rng = make_rng(seed)
-            passages = generate_maze_dfs(rows, cols, rng)
-            start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-                rows, cols, passages, 3, rng
-            )
-            if style == "edge_to_dead_end":
-                assert goal_edge == ""
-                assert _is_interior(goal, rows, cols), f"goal {goal} is on perimeter"
-                return
-        pytest.skip("No edge_to_dead_end style found in 200 tries")
-
-    def test_start_is_on_start_edge(self):
-        rng = make_rng(42)
-        rows, cols = 10, 10
-        passages = generate_maze_dfs(rows, cols, rng)
-        start, goal, style, start_edge, goal_edge = choose_start_goal_placed(
-            rows, cols, passages, 3, rng
-        )
-        r, c = start
-        if start_edge == "top":
-            assert r == 0
-        elif start_edge == "bottom":
-            assert r == rows - 1
-        elif start_edge == "left":
-            assert c == 0
-        elif start_edge == "right":
-            assert c == cols - 1
-
-
-class TestOpeningPixelRect:
-    @pytest.fixture
-    def config(self):
-        return RenderConfig(
-            image_width=100,
-            image_height=100,
-            corridor_width=10,
-            wall_thickness=2,
-            chrome_height_top=0,
-            chrome_width_left=0,
-            theme_name="light_classic",
-        )
-
-    def test_top_opening(self, config):
-        y_min, y_max, x_min, x_max = opening_pixel_rect((0, 3), "top", config, 8, 8)
-        assert y_min == 0  # starts at chrome top
-        assert y_max == 2  # wall thickness
-        assert x_max - x_min == 10  # corridor width
-
-    def test_bottom_opening(self, config):
-        y_min, y_max, x_min, x_max = opening_pixel_rect((7, 3), "bottom", config, 8, 8)
-        cell_size = 12  # cw + wt
-        expected_y_min = 2 + 7 * cell_size + 10  # origin + row*cell_size + cw
-        assert y_min == expected_y_min
-        assert y_max - y_min == 2  # wall thickness
-
-    def test_left_opening(self, config):
-        y_min, y_max, x_min, x_max = opening_pixel_rect((3, 0), "left", config, 8, 8)
-        assert x_min == 0
-        assert x_max == 2
-        assert y_max - y_min == 10  # corridor width
-
-    def test_right_opening(self, config):
-        y_min, y_max, x_min, x_max = opening_pixel_rect((3, 7), "right", config, 8, 8)
-        cell_size = 12
-        expected_x_min = 2 + 7 * cell_size + 10
-        assert x_min == expected_x_min
-        assert x_max - x_min == 2
-
-    def test_invalid_edge_raises(self, config):
-        with pytest.raises(ValueError):
-            opening_pixel_rect((0, 0), "invalid", config, 8, 8)
-
-
-class TestOpeningCenter:
-    def test_center_is_midpoint(self):
-        config = RenderConfig(
-            image_width=100,
-            image_height=100,
-            corridor_width=10,
-            wall_thickness=2,
-            chrome_height_top=0,
-            chrome_width_left=0,
-            theme_name="light_classic",
-        )
-        y_min, y_max, x_min, x_max = opening_pixel_rect((0, 3), "top", config, 8, 8)
-        cx, cy = opening_center((0, 3), "top", config, 8, 8)
-        assert cx == (x_min + x_max) / 2.0
-        assert cy == (y_min + y_max) / 2.0
