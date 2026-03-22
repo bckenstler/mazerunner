@@ -1,15 +1,16 @@
 #!/usr/bin/env python
 """Run agent eval across all three modes against mazes in data/dev.
 
-Loads OPENAI_API_KEY from .env (overriding any existing env var), then runs
-a small eval (3 episodes each) in text_grid, vision_grid, and vision_drag
-modes using gpt-5.4 with medium reasoning effort. Saves results to
-data/eval_results/ and prints a summary.
+Loads API keys from .env (overriding existing env vars), then runs a small
+eval (3 episodes each) in text_grid, vision_grid, and vision_drag modes.
+Supports OpenAI, Anthropic, Gemini, and Fireworks providers.
 
 Usage:
-    uv run python scripts/e2e_agent_eval.py
-    uv run python scripts/e2e_agent_eval.py -v          # verbose trajectory
-    uv run python scripts/e2e_agent_eval.py --modes text_grid --num-episodes 1 -v
+    uv run python scripts/e2e_agent_eval.py                                    # OpenAI default
+    uv run python scripts/e2e_agent_eval.py -v --num-episodes 1                # verbose
+    uv run python scripts/e2e_agent_eval.py --provider anthropic --model claude-sonnet-4-6
+    uv run python scripts/e2e_agent_eval.py --provider gemini --model gemini-2.5-flash
+    uv run python scripts/e2e_agent_eval.py --provider fireworks --model accounts/fireworks/models/deepseek-r1
 """
 
 import argparse
@@ -57,9 +58,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reasoning-effort", default=REASONING_EFFORT,
                         choices=["low", "medium", "high"])
     parser.add_argument("--provider", default="openai",
-                        choices=["openai", "anthropic", "fireworks"])
+                        choices=["openai", "anthropic", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None,
-                        help="Fireworks thinking budget_tokens")
+                        help="Gemini/Fireworks thinking budget tokens")
+    parser.add_argument("--thinking-level", default=None,
+                        choices=["low", "medium", "high"],
+                        help="Gemini 3 thinking level")
+    parser.add_argument("--single-step", action="store_true",
+                        help="Restrict navigate to one direction per call")
     return parser.parse_args()
 
 
@@ -85,6 +91,8 @@ def run_mode_eval(
         reasoning_effort=args.reasoning_effort,
         provider=args.provider,
         thinking_budget=args.thinking_budget,
+        thinking_level=args.thinking_level,
+        single_step=args.single_step,
     )
     runner = get_runner(config, verbose=args.verbose)
 
@@ -129,14 +137,16 @@ def main():
         sys.exit(1)
 
     # Validate API key for the chosen provider
-    if args.provider == "fireworks":
-        if not os.environ.get("FIREWORKS_API_KEY"):
-            print("ERROR: FIREWORKS_API_KEY not found in .env or environment", file=sys.stderr)
-            sys.exit(1)
-    else:
-        if not os.environ.get("OPENAI_API_KEY"):
-            print("ERROR: OPENAI_API_KEY not found in .env or environment", file=sys.stderr)
-            sys.exit(1)
+    key_map = {
+        "openai": "OPENAI_API_KEY",
+        "anthropic": "ANTHROPIC_API_KEY",
+        "gemini": "GEMINI_API_KEY",
+        "fireworks": "FIREWORKS_API_KEY",
+    }
+    required_key = key_map.get(args.provider, "OPENAI_API_KEY")
+    if not os.environ.get(required_key):
+        print(f"ERROR: {required_key} not found in .env or environment", file=sys.stderr)
+        sys.exit(1)
 
     print(f"Found {len(instance_paths)} maze instances in {INSTANCE_DIR}")
     print(f"Running {args.num_episodes} episodes per mode with {args.model} (provider: {args.provider}, reasoning: {args.reasoning_effort})")
