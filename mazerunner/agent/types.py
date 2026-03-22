@@ -14,7 +14,12 @@ class AgentConfig:
     max_turns: int = 100
     system_prompt: str = ""
     temperature: float = 0.0
+    provider: str = "openai"
+    # OpenAI-specific
     reasoning_effort: str = "medium"
+    # Gemini-specific
+    thinking_budget: int | None = None     # Gemini 2.5: token count (0=off for flash, 128-32768)
+    thinking_level: str | None = None      # Gemini 3: "LOW"/"MEDIUM"/"HIGH"
 
 
 @dataclass

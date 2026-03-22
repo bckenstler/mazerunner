@@ -10,17 +10,16 @@ def _run_agent():
     parser = argparse.ArgumentParser(description="Run agent on maze instances")
     parser.add_argument("--mode", required=True, choices=["text_grid", "vision_grid", "vision_drag"])
     parser.add_argument("--instance-dir", required=True, help="Directory containing maze instances")
-    parser.add_argument("--model", default="gpt-5.4", help="OpenAI model name")
+    parser.add_argument("--model", default="gpt-5.4", help="Model name")
     parser.add_argument("--num-episodes", type=int, default=1, help="Number of episodes to run")
     parser.add_argument("--max-turns", type=int, default=100, help="Max turns per episode")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
+    parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
+    parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
+    parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
     args = parser.parse_args()
 
-    import json
-    from pathlib import Path
-
-    from mazerunner.agent.openai_loop import run_openai_episode
     from mazerunner.agent.types import AgentConfig
     from mazerunner.openenv.server.maze_environment import MazeEnvironment
 
@@ -30,12 +29,25 @@ def _run_agent():
         max_turns=args.max_turns,
         temperature=args.temperature,
         reasoning_effort=args.reasoning_effort,
+        provider=args.provider,
+        thinking_budget=args.thinking_budget,
+        thinking_level=args.thinking_level,
     )
 
     env = MazeEnvironment(mode=args.mode, instance_dir=args.instance_dir)
 
+    if config.provider == "gemini":
+        from mazerunner.agent.gemini_loop import run_gemini_episode
+        run_episode = run_gemini_episode
+    elif config.provider == "fireworks":
+        from mazerunner.agent.fireworks_loop import run_fireworks_episode
+        run_episode = run_fireworks_episode
+    else:
+        from mazerunner.agent.openai_loop import run_openai_episode
+        run_episode = run_openai_episode
+
     for i in range(args.num_episodes):
-        result = run_openai_episode(config, env)
+        result = run_episode(config, env)
         status = "SUCCESS" if result.success else "FAIL"
         print(f"Episode {i + 1}: {status} | maze={result.maze_id} turns={result.total_turns} reward={result.total_reward:.2f}")
 
@@ -47,7 +59,7 @@ def _run_eval():
     parser = argparse.ArgumentParser(description="Run evaluation harness")
     parser.add_argument("--mode", required=True, choices=["text_grid", "vision_grid", "vision_drag"])
     parser.add_argument("--instance-dir", required=True, help="Directory containing maze instances")
-    parser.add_argument("--model", default="gpt-5.4", help="OpenAI model name")
+    parser.add_argument("--model", default="gpt-5.4", help="Model name")
     parser.add_argument("--num-episodes", type=int, default=None, help="Limit number of episodes")
     parser.add_argument("--max-steps", type=int, default=100)
     parser.add_argument("--max-turns", type=int, default=100)
@@ -55,12 +67,14 @@ def _run_eval():
     parser.add_argument("--output", required=True, help="Output JSON path for results")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
+    parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
+    parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
+    parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
     args = parser.parse_args()
 
-    import json
     from pathlib import Path
 
-    from mazerunner.agent.runner import OpenAIAgentRunner
+    from mazerunner.agent.runner import get_runner
     from mazerunner.agent.types import AgentConfig
     from mazerunner.eval.harness import run_eval
     from mazerunner.eval.io import save_eval_result
@@ -79,8 +93,11 @@ def _run_eval():
         max_turns=args.max_turns,
         temperature=args.temperature,
         reasoning_effort=args.reasoning_effort,
+        provider=args.provider,
+        thinking_budget=args.thinking_budget,
+        thinking_level=args.thinking_level,
     )
-    runner = OpenAIAgentRunner(config)
+    runner = get_runner(config)
 
     result = run_eval(
         runner=runner,

@@ -66,7 +66,7 @@ _GET_MAZE_INFO_SCHEMA = {
 
 
 def get_tool_schemas(mode: str) -> list[dict]:
-    """Get tool schemas for the given mode.
+    """Get tool schemas for the given mode (OpenAI Responses API format).
 
     Args:
         mode: One of text_grid, vision_grid, vision_drag.
@@ -80,3 +80,54 @@ def get_tool_schemas(mode: str) -> list[dict]:
         return [_DRAG_SCHEMA]
     else:
         raise ValueError(f"Unknown mode: {mode}")
+
+
+def get_chat_tool_schemas(mode: str) -> list[dict]:
+    """Get tool schemas in Chat Completions format (Fireworks / OpenAI Chat).
+
+    Wraps the Responses API schemas in the ``{"type":"function","function":{...}}``
+    envelope expected by the Chat Completions API.
+
+    Args:
+        mode: One of text_grid, vision_grid, vision_drag.
+
+    Returns:
+        List of Chat Completions tool definitions.
+    """
+    schemas = get_tool_schemas(mode)
+    return [
+        {
+            "type": "function",
+            "function": {
+                "name": s["name"],
+                "description": s["description"],
+                "parameters": s["parameters"],
+            },
+        }
+        for s in schemas
+    ]
+
+
+def get_gemini_tools(mode: str):
+    """Get Gemini tool declarations for the given mode.
+
+    Converts the existing schemas into Gemini FunctionDeclaration objects
+    wrapped in a Tool.
+
+    Args:
+        mode: One of text_grid, vision_grid, vision_drag.
+
+    Returns:
+        A google.genai.types.Tool with appropriate function declarations.
+    """
+    from google.genai import types
+
+    schemas = get_tool_schemas(mode)
+    declarations = []
+    for schema in schemas:
+        declarations.append(types.FunctionDeclaration(
+            name=schema["name"],
+            description=schema["description"],
+            parameters_json_schema=schema["parameters"],
+        ))
+    return types.Tool(function_declarations=declarations)
