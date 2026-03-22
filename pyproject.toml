@@ -9,6 +9,7 @@ dependencies = [
     "openenv-core",
     "fastmcp",
     "uvicorn",
+    "openai",
 ]
 
 [project.scripts]
