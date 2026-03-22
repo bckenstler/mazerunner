@@ -202,15 +202,23 @@ def run_anthropic_episode(
 
     # Thinking configuration
     if config.thinking_type == "adaptive":
-        api_kwargs["thinking"] = {"type": "adaptive"}
+        thinking_param: dict[str, Any] = {"type": "adaptive"}
+        if config.thinking_display:
+            thinking_param["display"] = config.thinking_display
+        api_kwargs["thinking"] = thinking_param
     elif config.thinking_type == "enabled" and config.thinking_budget_tokens:
-        api_kwargs["thinking"] = {
+        thinking_param = {
             "type": "enabled",
             "budget_tokens": config.thinking_budget_tokens,
         }
+        if config.thinking_display:
+            thinking_param["display"] = config.thinking_display
+        api_kwargs["thinking"] = thinking_param
+    elif config.thinking_type == "disabled":
+        api_kwargs["thinking"] = {"type": "disabled"}
 
-    # Effort configuration
-    if config.effort:
+    # Effort configuration (only send when explicitly set)
+    if config.effort is not None:
         api_kwargs["output_config"] = {"effort": config.effort}
 
     # Temperature — not supported with thinking

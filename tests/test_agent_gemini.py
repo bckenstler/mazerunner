@@ -13,6 +13,14 @@ class TestAgentConfigProvider:
         config = AgentConfig(model="gpt-5.4", mode="text_grid")
         assert config.provider == "openai"
 
+    def test_openai_reasoning_summary_default(self):
+        config = AgentConfig(model="gpt-5.4", mode="text_grid")
+        assert config.reasoning_summary == "auto"
+
+    def test_openai_reasoning_summary_custom(self):
+        config = AgentConfig(model="gpt-5.4", mode="text_grid", reasoning_summary="concise")
+        assert config.reasoning_summary == "concise"
+
     def test_gemini_provider(self):
         config = AgentConfig(model="gemini-2.5-flash", mode="text_grid", provider="gemini")
         assert config.provider == "gemini"

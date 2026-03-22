@@ -14,11 +14,19 @@ def _run_agent():
     parser.add_argument("--num-episodes", type=int, default=1, help="Number of episodes to run")
     parser.add_argument("--max-turns", type=int, default=100, help="Max turns per episode")
     parser.add_argument("--temperature", type=float, default=0.0)
-    parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
+    parser.add_argument("--reasoning-effort", default="medium",
+                        help="OpenAI/Fireworks: none|minimal|low|medium|high|xhigh")
     parser.add_argument("--provider", default="openai", choices=["openai", "anthropic", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
-    parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
+    parser.add_argument("--thinking-level", default=None,
+                        help="Gemini 3: minimal|low|medium|high")
     parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")
+    # Anthropic-specific
+    parser.add_argument("--effort", default=None, help="Anthropic: low|medium|high|max")
+    parser.add_argument("--thinking-type", default="adaptive", help="Anthropic: adaptive|enabled|disabled")
+    parser.add_argument("--thinking-display", default=None, help="Anthropic: summarized|omitted")
+    # OpenAI-specific
+    parser.add_argument("--reasoning-summary", default="auto", help="OpenAI: auto|concise|detailed")
     args = parser.parse_args()
 
     from mazerunner.agent.types import AgentConfig
@@ -30,9 +38,13 @@ def _run_agent():
         max_turns=args.max_turns,
         temperature=args.temperature,
         reasoning_effort=args.reasoning_effort,
+        reasoning_summary=args.reasoning_summary,
         provider=args.provider,
         thinking_budget=args.thinking_budget,
         thinking_level=args.thinking_level,
+        thinking_type=args.thinking_type,
+        thinking_display=args.thinking_display,
+        effort=args.effort,
         single_step=args.single_step,
     )
 
@@ -71,11 +83,17 @@ def _run_eval():
     parser.add_argument("--reward-mode", default="sparse", choices=["sparse", "shaped", "efficiency"])
     parser.add_argument("--output", required=True, help="Output JSON path for results")
     parser.add_argument("--temperature", type=float, default=0.0)
-    parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
+    parser.add_argument("--reasoning-effort", default="medium",
+                        help="OpenAI/Fireworks: none|minimal|low|medium|high|xhigh")
     parser.add_argument("--provider", default="openai", choices=["openai", "anthropic", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
-    parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
+    parser.add_argument("--thinking-level", default=None,
+                        help="Gemini 3: minimal|low|medium|high")
     parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")
+    parser.add_argument("--effort", default=None, help="Anthropic: low|medium|high|max")
+    parser.add_argument("--thinking-type", default="adaptive", help="Anthropic: adaptive|enabled|disabled")
+    parser.add_argument("--thinking-display", default=None, help="Anthropic: summarized|omitted")
+    parser.add_argument("--reasoning-summary", default="auto", help="OpenAI: auto|concise|detailed")
     args = parser.parse_args()
 
     from pathlib import Path
@@ -99,9 +117,13 @@ def _run_eval():
         max_turns=args.max_turns,
         temperature=args.temperature,
         reasoning_effort=args.reasoning_effort,
+        reasoning_summary=args.reasoning_summary,
         provider=args.provider,
         thinking_budget=args.thinking_budget,
         thinking_level=args.thinking_level,
+        thinking_type=args.thinking_type,
+        thinking_display=args.thinking_display,
+        effort=args.effort,
         single_step=args.single_step,
     )
     runner = get_runner(config)
