@@ -38,6 +38,10 @@ uv run python -m mazerunner eval --mode text_grid --instance-dir data/dev --mode
 # Run e2e agent eval across all modes (requires OPENAI_API_KEY in .env)
 uv run python scripts/e2e_agent_eval.py                    # 3 episodes per mode
 uv run python scripts/e2e_agent_eval.py -v --num-episodes 1 # verbose single episode
+
+# Launch eval viewer (replay saved evals + live mode)
+uv run python -m mazerunner viewer                         # http://localhost:8080
+uv run python -m mazerunner viewer --port 3000 --eval-dir data/eval_results
 ```
 
 ## Architecture
@@ -86,7 +90,10 @@ mazerunner/
     metrics.py           ← compute_metrics() — success rate, efficiency, etc.
     harness.py           ← run_eval() — orchestrates episodes across instances
     io.py                ← JSON save/load for EvalResult
-  __main__.py            ← CLI dispatcher (generate, visualize, serve, agent, eval)
+  viewer/
+    app.py               ← FastAPI viewer app (replay + live WebSocket)
+    static/              ← HTML/CSS/JS single-page viewer UI
+  __main__.py            ← CLI dispatcher (generate, visualize, serve, agent, eval, viewer)
 ```
 
 ### Generator Pipeline

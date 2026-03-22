@@ -150,7 +150,7 @@ def main():
     """Dispatch CLI subcommands."""
     if len(sys.argv) < 2:
         print("Usage: python -m mazerunner <command> [options]", file=sys.stderr)
-        print("Commands: generate, visualize, serve, agent, eval", file=sys.stderr)
+        print("Commands: generate, visualize, serve, agent, eval, viewer", file=sys.stderr)
         sys.exit(1)
 
     command = sys.argv[1]
@@ -169,9 +169,18 @@ def main():
         _run_agent()
     elif command == "eval":
         _run_eval()
+    elif command == "viewer":
+        import argparse
+        parser = argparse.ArgumentParser(description="Eval trajectory viewer")
+        parser.add_argument("--host", default="0.0.0.0")
+        parser.add_argument("--port", type=int, default=8080)
+        parser.add_argument("--eval-dir", default=None, help="Directory with eval JSON files")
+        vargs = parser.parse_args()
+        from mazerunner.viewer.app import main as viewer_main
+        viewer_main(host=vargs.host, port=vargs.port, eval_dir=vargs.eval_dir)
     else:
         print(f"Unknown command: {command}", file=sys.stderr)
-        print("Commands: generate, visualize, serve, agent, eval", file=sys.stderr)
+        print("Commands: generate, visualize, serve, agent, eval, viewer", file=sys.stderr)
         sys.exit(1)
 
 

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MazeRunner Eval Viewer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header>
+        <h1>MazeRunner Eval Viewer</h1>
+        <div id="mode-tabs">
+            <button class="tab active" data-mode="replay" onclick="switchMode('replay')">Replay</button>
+            <button class="tab" data-mode="live" onclick="switchMode('live')">Live</button>
+        </div>
+    </header>
+
+    <div id="controls">
+        <!-- Replay controls -->
+        <div id="replay-controls">
+            <select id="eval-select" onchange="loadEval(this.value)">
+                <option value="">Select eval file...</option>
+            </select>
+            <select id="episode-select" onchange="loadEpisode(this.value)" disabled>
+                <option value="">Select episode...</option>
+            </select>
+            <span id="episode-meta"></span>
+        </div>
+
+        <!-- Live controls -->
+        <div id="live-controls" style="display:none">
+            <select id="live-provider">
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="gemini">Gemini</option>
+                <option value="fireworks">Fireworks</option>
+            </select>
+            <input id="live-model" type="text" placeholder="Model name" value="gpt-5.4">
+            <select id="live-mode">
+                <option value="text_grid">text_grid</option>
+                <option value="vision_grid">vision_grid</option>
+                <option value="vision_drag">vision_drag</option>
+            </select>
+            <select id="live-instance">
+                <option value="">Select maze...</option>
+            </select>
+            <label><input type="checkbox" id="live-single-step"> Single-step</label>
+            <input id="live-max-turns" type="number" value="30" min="1" max="200" style="width:60px" title="Max turns">
+            <button id="live-start-btn" onclick="startLive()">Start</button>
+        </div>
+    </div>
+
+    <main>
+        <div id="trajectory-panel">
+            <div id="trajectory-header">
+                <h2>Trajectory</h2>
+            </div>
+            <div id="trajectory-list"></div>
+            <div id="step-controls">
+                <button onclick="prevStep()" id="btn-prev" disabled>&laquo; Prev</button>
+                <span id="step-counter">-</span>
+                <button onclick="nextStep()" id="btn-next" disabled>Next &raquo;</button>
+                <button onclick="toggleAutoplay()" id="btn-play">&#9654; Play</button>
+            </div>
+        </div>
+
+        <div id="state-panel">
+            <div id="state-header">
+                <h2>Maze State</h2>
+                <span id="state-meta"></span>
+            </div>
+            <div id="state-display">
+                <p class="placeholder">Select an eval file and episode to view</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>
