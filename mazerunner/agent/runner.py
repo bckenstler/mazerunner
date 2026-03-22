@@ -103,12 +103,37 @@ class FireworksAgentRunner:
         return _result_to_record(result, maze_id)
 
 
+class AnthropicAgentRunner:
+    """Adapts run_anthropic_episode to the EpisodeRunner protocol."""
+
+    def __init__(
+        self,
+        config: AgentConfig,
+        client: Any | None = None,
+        verbose: bool = False,
+    ) -> None:
+        self._config = config
+        self._client = client
+        self._verbose = verbose
+
+    def run_episode(self, env: MazeEnvironment, maze_id: str) -> EpisodeRecord:
+        """Run a single episode and return an EpisodeRecord."""
+        from mazerunner.agent.anthropic_loop import run_anthropic_episode
+
+        result = run_anthropic_episode(
+            self._config, env, self._client, verbose=self._verbose,
+        )
+        return _result_to_record(result, maze_id)
+
+
 def get_runner(
     config: AgentConfig,
     client: Any | None = None,
     verbose: bool = False,
-) -> OpenAIAgentRunner | GeminiAgentRunner | FireworksAgentRunner:
+) -> OpenAIAgentRunner | GeminiAgentRunner | FireworksAgentRunner | AnthropicAgentRunner:
     """Factory that returns the appropriate runner for the configured provider."""
+    if config.provider == "anthropic":
+        return AnthropicAgentRunner(config, client, verbose)
     if config.provider == "gemini":
         return GeminiAgentRunner(config, client, verbose)
     if config.provider == "fireworks":

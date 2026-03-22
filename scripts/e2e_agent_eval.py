@@ -57,7 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--reasoning-effort", default=REASONING_EFFORT,
                         choices=["low", "medium", "high"])
     parser.add_argument("--provider", default="openai",
-                        choices=["openai", "fireworks"])
+                        choices=["openai", "anthropic", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None,
                         help="Fireworks thinking budget_tokens")
     return parser.parse_args()
