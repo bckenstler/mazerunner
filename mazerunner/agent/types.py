@@ -16,15 +16,17 @@ class AgentConfig:
     temperature: float = 0.0
     provider: str = "openai"
     # OpenAI-specific
-    reasoning_effort: str = "medium"
+    reasoning_effort: str = "medium"       # "none"|"minimal"|"low"|"medium"|"high"|"xhigh" (or "" to disable)
+    reasoning_summary: str = "auto"        # "auto"|"concise"|"detailed"
     # Anthropic-specific
-    thinking_type: str = "adaptive"        # "adaptive" (Opus/Sonnet 4.6) or "enabled" (older)
-    thinking_budget_tokens: int | None = None  # Only for type="enabled" on older models
+    thinking_type: str = "adaptive"        # "adaptive"|"enabled"|"disabled"
+    thinking_budget_tokens: int | None = None  # Required when type="enabled"; must be < max_tokens
+    thinking_display: str | None = None    # "summarized" (default) or "omitted"
     max_tokens: int = 16000                # Required for Anthropic API
-    effort: str = "high"                   # "low" | "medium" | "high" | "max"
+    effort: str | None = None              # "low"|"medium"|"high"|"max" (None = don't send)
     # Gemini-specific
-    thinking_budget: int | None = None     # Gemini 2.5: token count (0=off for flash, 128-32768)
-    thinking_level: str | None = None      # Gemini 3: "LOW"/"MEDIUM"/"HIGH"
+    thinking_budget: int | None = None     # Gemini 2.5: token count (0=off for flash, 128-32768, -1=dynamic)
+    thinking_level: str | None = None      # Gemini 3: "minimal"|"low"|"medium"|"high"
     # Navigation mode
     single_step: bool = False              # If True, navigate accepts only one direction per call
 

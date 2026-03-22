@@ -31,7 +31,18 @@ class TestAgentConfigAnthropic:
 
     def test_effort_default(self):
         config = AgentConfig(model="claude-sonnet-4-6", mode="text_grid", provider="anthropic")
-        assert config.effort == "high"
+        assert config.effort is None
+
+    def test_thinking_display_default(self):
+        config = AgentConfig(model="claude-sonnet-4-6", mode="text_grid", provider="anthropic")
+        assert config.thinking_display is None
+
+    def test_thinking_display_omitted(self):
+        config = AgentConfig(
+            model="claude-sonnet-4-6", mode="text_grid",
+            provider="anthropic", thinking_display="omitted",
+        )
+        assert config.thinking_display == "omitted"
 
     def test_effort_custom(self):
         config = AgentConfig(

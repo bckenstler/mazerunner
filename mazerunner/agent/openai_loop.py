@@ -124,7 +124,7 @@ def run_openai_episode(
     if config.reasoning_effort:
         api_kwargs["reasoning"] = {
             "effort": config.reasoning_effort,
-            "summary": "auto",
+            "summary": config.reasoning_summary or "auto",
         }
     # temperature is not supported with reasoning models
     if not config.reasoning_effort and config.temperature != 0.0:
