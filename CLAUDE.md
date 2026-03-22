@@ -18,6 +18,10 @@ python -m mazerunner visualize --input-dir data/dev --output-dir data/dev/render
 
 # Run tests
 pytest tests/ -v
+
+# Serve maze environment (OpenEnv)
+python -m mazerunner serve
+# Configure via env vars: MAZE_MODE, MAZE_INSTANCE_DIR, MAZE_REWARD_MODE, MAZE_MAX_STEPS, MAZE_SEED
 ```
 
 ## Architecture
@@ -43,7 +47,14 @@ mazerunner/
     rendering.py         ← State overlay rendering (X marker, dotted breadcrumbs)
   generate.py            ← CLI entry point + dataset orchestration
   visualize.py           ← Batch-render CLI (vision_drag, vision_grid, text_grid)
-  __main__.py            ← CLI dispatcher (generate, visualize)
+  openenv/
+    models.py            ← MazeObservation Pydantic model
+    reward.py            ← compute_reward() — sparse / shaped / efficiency modes
+    client.py            ← MazeEnvClient(MCPToolClient) thin wrapper
+    server/
+      maze_environment.py ← MazeEnvironment(MCPEnvironment) — core OpenEnv environment
+      app.py             ← create_app() FastAPI entry point + uvicorn main
+  __main__.py            ← CLI dispatcher (generate, visualize, serve)
 ```
 
 ### Generator Pipeline
@@ -77,12 +88,14 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, pytest
+- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
 
-255 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), batch CLI integration, and navigator module (grid movement/wall rejection, drag pixel paths/collision mask, history tracking, X marker overlays, breadcrumb rendering).
+280 unit tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), batch CLI integration, navigator module (grid movement/wall rejection, drag pixel paths/collision mask, history tracking, X marker overlays, breadcrumb rendering), and OpenEnv integration (reward functions, environment reset/step/tools, maze loading, image encoding).
+
+5 e2e test scripts (`scripts/e2e_*.py`) covering: text_grid full episode with BFS solve, vision_grid PNG rendering, vision_drag pixel-path navigation, all 3 reward modes, and max_steps cutoff. Run with `python scripts/e2e_all.py`.
 
 ## Generated Data
 
