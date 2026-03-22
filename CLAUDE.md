@@ -36,6 +36,11 @@ mazerunner/
     vision_drag.py       ← Corridor maze image + cell_to_pixel_center/rect (eval API)
     vision_grid.py       ← Cell-and-wall grid image
     text_grid.py         ← ASCII text grid rendering
+  navigator/
+    base.py              ← InteractionResult, HistoryEntry dataclasses + MazeNavigator ABC
+    grid_navigator.py    ← GridNavigator — L/R/U/D cell movement with wall validation
+    drag_navigator.py    ← DragNavigator — pixel path movement with collision mask
+    rendering.py         ← State overlay rendering (X marker, dotted breadcrumbs)
   generate.py            ← CLI entry point + dataset orchestration
   visualize.py           ← Batch-render CLI (vision_drag, vision_grid, text_grid)
   __main__.py            ← CLI dispatcher (generate, visualize)
@@ -77,7 +82,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 ## Testing
 
-198 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), and batch CLI integration.
+255 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), batch CLI integration, and navigator module (grid movement/wall rejection, drag pixel paths/collision mask, history tracking, X marker overlays, breadcrumb rendering).
 
 ## Generated Data
 
