@@ -19,7 +19,17 @@ def _str_to_cell(s: str) -> tuple:
 
 
 def maze_grid_to_adjacency(grid: MazeGrid) -> Dict[str, list]:
-    """Convert passages set to sorted adjacency dict."""
+    """Convert passages set to a sorted adjacency dict.
+
+    Keys are ``"row,col"`` strings for all cells in the grid. Neighbor lists
+    and keys are sorted lexicographically for deterministic JSON output.
+
+    Args:
+        grid: The maze grid to convert.
+
+    Returns:
+        Sorted adjacency dict mapping cell keys to sorted neighbor key lists.
+    """
     adj: Dict[str, list] = {}
 
     # Initialize all cells
@@ -45,7 +55,14 @@ def maze_grid_to_adjacency(grid: MazeGrid) -> Dict[str, list]:
 
 
 def compute_branching_factor(adjacency: Dict[str, list]) -> float:
-    """Compute average branching factor (average degree)."""
+    """Compute average branching factor (average number of passages per cell).
+
+    Args:
+        adjacency: Adjacency dict mapping cell keys to neighbor key lists.
+
+    Returns:
+        Average degree across all cells, or 0.0 if adjacency is empty.
+    """
     if not adjacency:
         return 0.0
     total = sum(len(neighbors) for neighbors in adjacency.values())
@@ -55,7 +72,19 @@ def compute_branching_factor(adjacency: Dict[str, list]) -> float:
 def maze_grid_to_instance(
     grid: MazeGrid, maze_id: str, color_schema: Dict[str, str] | None = None
 ) -> MazeInstance:
-    """Convert a MazeGrid to a serializable MazeInstance."""
+    """Convert a MazeGrid to a serializable MazeInstance.
+
+    The returned instance has ``metadata["tier"]`` set to 0; the caller is
+    responsible for setting the correct tier value.
+
+    Args:
+        grid: The in-memory maze grid.
+        maze_id: Unique identifier for this maze (e.g. "maze_000042").
+        color_schema: Optional color schema dict to embed in metadata.
+
+    Returns:
+        A MazeInstance with computed adjacency, difficulty score, and metadata.
+    """
     adjacency = maze_grid_to_adjacency(grid)
     path_length = len(grid.solution_path)
     difficulty_score = compute_difficulty_score(path_length, grid.rows, grid.cols)
@@ -85,7 +114,16 @@ def maze_grid_to_instance(
 
 
 def instance_to_dict(instance: MazeInstance) -> Dict[str, Any]:
-    """Convert a MazeInstance to a JSON-serializable dict."""
+    """Convert a MazeInstance to a JSON-serializable dict.
+
+    Cell coordinates are converted to ``"row,col"`` strings.
+
+    Args:
+        instance: The maze instance to convert.
+
+    Returns:
+        A dict suitable for ``json.dumps()``.
+    """
     return {
         "id": instance.id,
         "grid_rows": instance.grid_rows,
@@ -99,5 +137,13 @@ def instance_to_dict(instance: MazeInstance) -> Dict[str, Any]:
 
 
 def instance_to_json(instance: MazeInstance, indent: int = 2) -> str:
-    """Serialize a MazeInstance to JSON string."""
+    """Serialize a MazeInstance to a JSON string.
+
+    Args:
+        instance: The maze instance to serialize.
+        indent: JSON indentation level.
+
+    Returns:
+        A formatted JSON string.
+    """
     return json.dumps(instance_to_dict(instance), indent=indent)

@@ -16,7 +16,20 @@ from mazerunner.renderer.base import (
 def cell_to_pixel_center(
     row: int, col: int, config: DragRenderConfig, margin: int = 0
 ) -> Tuple[float, float]:
-    """Return the pixel center of a cell's corridor area."""
+    """Return the pixel center of a cell's corridor area in logical image space.
+
+    This is part of the eval API — coordinates correspond to the final rendered
+    image (after antialiasing downsampling, if enabled).
+
+    Args:
+        row: Cell row index (0-indexed).
+        col: Cell column index (0-indexed).
+        config: Drag rendering configuration.
+        margin: Additional margin offset in pixels.
+
+    Returns:
+        (x, y) pixel coordinates of the corridor center.
+    """
     wt = config.wall_thickness
     cw = config.corridor_width
     cs = config.cell_size
@@ -28,7 +41,20 @@ def cell_to_pixel_center(
 def cell_to_pixel_rect(
     row: int, col: int, config: DragRenderConfig, margin: int = 0
 ) -> Tuple[int, int, int, int]:
-    """Return the bounding box (x0, y0, x1, y1) of a cell's corridor area."""
+    """Return the bounding box of a cell's corridor area in logical image space.
+
+    This is part of the eval API — coordinates correspond to the final rendered
+    image (after antialiasing downsampling, if enabled).
+
+    Args:
+        row: Cell row index (0-indexed).
+        col: Cell column index (0-indexed).
+        config: Drag rendering configuration.
+        margin: Additional margin offset in pixels.
+
+    Returns:
+        (x0, y0, x1, y1) bounding box with inclusive coordinates.
+    """
     wt = config.wall_thickness
     cw = config.corridor_width
     cs = config.cell_size
@@ -50,7 +76,19 @@ def _image_dimensions(rows: int, cols: int, config: DragRenderConfig) -> Tuple[i
 def render_vision_drag(
     instance: Dict[str, Any], config: DragRenderConfig | None = None
 ) -> Image.Image:
-    """Render a maze instance as a corridor-style PIL Image."""
+    """Render a maze instance as a corridor-style PIL Image.
+
+    When antialiasing is enabled, renders at 2x resolution and downsamples
+    with LANCZOS for smooth edges. Start and goal are marked with "S" and "G"
+    letters. Edge endpoints get border openings.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        config: Rendering configuration. Uses defaults if None.
+
+    Returns:
+        A PIL Image of the rendered maze.
+    """
     if config is None:
         config = DragRenderConfig()
 

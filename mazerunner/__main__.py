@@ -4,6 +4,7 @@ import sys
 
 
 def main():
+    """Dispatch CLI subcommands to generate or visualize entry points."""
     if len(sys.argv) < 2:
         print("Usage: python -m mazerunner <command> [options]", file=sys.stderr)
         print("Commands: generate, visualize, serve", file=sys.stderr)

@@ -26,7 +26,19 @@ def _image_dimensions(rows: int, cols: int, config: GridRenderConfig) -> Tuple[i
 def render_vision_grid(
     instance: Dict[str, Any], config: GridRenderConfig | None = None
 ) -> Image.Image:
-    """Render a maze instance as a cell-and-wall grid PIL Image."""
+    """Render a maze instance as a cell-and-wall grid PIL Image.
+
+    Unlike vision_drag, cells are drawn as explicit squares separated by wall
+    segments. Thin gridlines are drawn through passages to visually delineate
+    cell boundaries. Start and goal are marked with "S" and "G" letters.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        config: Rendering configuration. Uses defaults if None.
+
+    Returns:
+        A PIL Image of the rendered maze.
+    """
     if config is None:
         config = GridRenderConfig()
 

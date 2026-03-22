@@ -48,7 +48,17 @@ def render_grid_state(
     mode: str = "text_grid",
     config: GridRenderConfig | None = None,
 ) -> Union[str, Image.Image]:
-    """Render current grid navigator state with X marker overlay."""
+    """Render current grid navigator state with X marker overlay.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        position: Current cell position as (row, col).
+        mode: "text_grid" for ASCII output, "vision_grid" for PIL Image.
+        config: Optional GridRenderConfig for vision_grid mode.
+
+    Returns:
+        ASCII string (text_grid) or PIL Image (vision_grid) with X at position.
+    """
     if mode == "text_grid":
         return _render_text_grid_state(instance, position)
     else:
@@ -112,7 +122,20 @@ def render_drag_state(
     position: Tuple[float, float],
     config: DragRenderConfig | None = None,
 ) -> Image.Image:
-    """Render current drag navigator state with breadcrumbs and X marker."""
+    """Render current drag navigator state with breadcrumbs and X marker.
+
+    Draws dotted breadcrumbs along the accumulated path and an X marker
+    at the current pixel position.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        path: List of (x, y) pixel coordinates visited so far.
+        position: Current (x, y) pixel position.
+        config: Optional DragRenderConfig. Uses defaults if None.
+
+    Returns:
+        PIL Image with breadcrumb trail and X marker.
+    """
     if config is None:
         config = DragRenderConfig()
     img = render_vision_drag(instance, config)

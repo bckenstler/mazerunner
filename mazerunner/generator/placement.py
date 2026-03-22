@@ -22,7 +22,16 @@ def is_interior_cell(cell: Cell, rows: int, cols: int) -> bool:
 
 
 def get_dead_ends(passages: Set[FrozenSet[Cell]], rows: int, cols: int) -> List[Cell]:
-    """Return all cells with exactly 1 passage neighbor (dead ends)."""
+    """Return all cells with exactly 1 passage neighbor (dead ends).
+
+    Args:
+        passages: Set of passage edges (frozensets of two cells).
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+
+    Returns:
+        List of cells that have exactly one connected neighbor (degree 1).
+    """
     degree: Dict[Cell, int] = {}
     for edge in passages:
         for cell in edge:
@@ -47,7 +56,27 @@ def place_endpoints(
     min_solution_length: int,
     rng: np.random.Generator,
 ) -> Tuple[Cell, Cell]:
-    """Place start and goal according to endpoint type and min distance."""
+    """Place start and goal cells according to endpoint type and minimum distance.
+
+    Supports 4 endpoint types: "edge-edge" (both on grid border, different borders),
+    "interior-interior" (both interior dead-ends), "edge-interior", and "interior-edge".
+    Interior endpoints must be dead-end cells (degree 1).
+
+    Falls back to edge cells if no interior dead-ends are available, and to the
+    farthest reachable cell if no candidates meet the minimum solution length.
+
+    Args:
+        passages: Set of passage edges (frozensets of two cells).
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+        endpoint_type: One of "edge-edge", "interior-interior", "edge-interior",
+            or "interior-edge".
+        min_solution_length: Minimum BFS distance required between start and goal.
+        rng: numpy random Generator for deterministic selection.
+
+    Returns:
+        A (start, goal) tuple of cell coordinates.
+    """
     all_cells = [(r, c) for r in range(rows) for c in range(cols)]
     edge_cells = [c for c in all_cells if is_edge_cell(c, rows, cols)]
     dead_ends = get_dead_ends(passages, rows, cols)

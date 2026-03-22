@@ -88,6 +88,16 @@ def get_opening_side(r: int, c: int, rows: int, cols: int) -> str | None:
 
 @dataclass
 class DragRenderConfig:
+    """Rendering configuration for vision_drag (corridor-style) mode.
+
+    Attributes:
+        wall_thickness: Width of wall segments in pixels.
+        corridor_width: Width of corridor passages in pixels.
+        margin: Outer margin around the maze in pixels.
+        marker_radius_frac: Fraction of corridor width used for marker radius.
+        antialias: If True, render at 2x and downsample with LANCZOS.
+    """
+
     wall_thickness: int = 4
     corridor_width: int = 20
     margin: int = 0
@@ -96,11 +106,23 @@ class DragRenderConfig:
 
     @property
     def cell_size(self) -> int:
+        """Total cell size including one wall edge: ``corridor_width + wall_thickness``."""
         return self.corridor_width + self.wall_thickness
 
 
 @dataclass
 class GridRenderConfig:
+    """Rendering configuration for vision_grid (cell-and-wall) mode.
+
+    Attributes:
+        cell_size: Width/height of each cell square in pixels.
+        wall_thickness: Width of wall segments in pixels.
+        margin: Outer margin around the maze in pixels.
+        marker_radius_frac: Fraction of cell size used for marker radius.
+        antialias: If True, render at 2x and downsample with LANCZOS.
+        gridline_thickness: Width of thin gridlines drawn through passages.
+    """
+
     cell_size: int = 30
     wall_thickness: int = 4
     margin: int = 0

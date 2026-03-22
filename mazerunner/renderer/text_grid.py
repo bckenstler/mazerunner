@@ -8,7 +8,8 @@ from mazerunner.renderer.base import get_color_schema, get_opening_side, has_wal
 def render_text_grid(instance: Dict[str, Any]) -> str:
     """Render a maze instance as an ASCII text grid.
 
-    Output format (2*rows+1 lines, 4*cols+1 chars per line):
+    Output format (2*rows+1 lines, 4*cols+1 chars per line)::
+
         +---+---+---+
         | S |   |   |
         +   +---+   +
@@ -16,6 +17,12 @@ def render_text_grid(instance: Dict[str, Any]) -> str:
         +---+---+---+
 
     Edge start/goal cells get border openings (wall replaced with space).
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+
+    Returns:
+        Multi-line ASCII string representing the maze.
     """
     rows = instance["grid_rows"]
     cols = instance["grid_cols"]

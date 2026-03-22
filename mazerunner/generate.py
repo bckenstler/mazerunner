@@ -15,7 +15,19 @@ from mazerunner.generator.serialization import maze_grid_to_instance, instance_t
 
 
 def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_distribution: list):
-    """Generate a dataset of maze instances."""
+    """Generate a dataset of maze instances and write them as JSON files.
+
+    Orchestrates the full pipeline: seed derivation, difficulty sampling,
+    maze generation, endpoint placement, BFS solving, and serialization.
+    Output is written to ``{output_dir}/instances/maze_{i:06d}.json``.
+
+    Args:
+        output_dir: Root output directory.
+        num_mazes: Total number of mazes to generate.
+        master_seed: Master seed for deterministic generation.
+        tier_distribution: List of 3 counts specifying how many mazes per tier
+            (e.g. [300, 400, 300]).
+    """
     instances_dir = os.path.join(output_dir, "instances")
     os.makedirs(instances_dir, exist_ok=True)
 
@@ -85,6 +97,7 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
 
 
 def main():
+    """Parse CLI arguments and run dataset generation."""
     parser = argparse.ArgumentParser(description="Generate maze benchmark dataset")
     parser.add_argument("--output-dir", required=True, help="Output directory")
     parser.add_argument("--num-mazes", type=int, required=True, help="Number of mazes to generate")

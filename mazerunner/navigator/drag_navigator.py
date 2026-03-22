@@ -17,7 +17,20 @@ from mazerunner.renderer.vision_drag import (
 
 
 class DragNavigator(MazeNavigator):
-    """Navigate a maze using pixel coordinate drag paths."""
+    """Navigate a maze using pixel coordinate drag paths.
+
+    Actions are lists of [x, y] coordinate pairs representing a drag path.
+    A collision mask is built from a non-antialiased render — any pixel that
+    is not wall-colored is passable.
+
+    The first interaction must start within the start cell's corridor rectangle.
+    Subsequent interactions must continue from within 1px of the current position.
+    All path segments must pass through passable pixels only.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        config: Optional DragRenderConfig. Uses defaults if None.
+    """
 
     def __init__(
         self,
@@ -98,6 +111,18 @@ class DragNavigator(MazeNavigator):
         return result
 
     def interact(self, action: List[List[float]]) -> InteractionResult:
+        """Process a drag path action as a list of [x, y] coordinate pairs.
+
+        Validates that: the path has at least 2 points, the first point is in
+        a valid starting location, and all segments pass through passable pixels.
+
+        Args:
+            action: List of [x, y] coordinate pairs defining the drag path.
+
+        Returns:
+            InteractionResult with the outcome. ``steps_applied`` is the number
+            of path segments (points - 1) if valid, 0 otherwise.
+        """
         if len(action) < 2:
             return self._make_invalid(action)
 
@@ -140,6 +165,12 @@ class DragNavigator(MazeNavigator):
         return result
 
     def render(self) -> Image.Image:
+        """Render the maze with breadcrumb trail and X marker at current position.
+
+        Returns:
+            PIL Image with dotted breadcrumbs along the path and an X at the
+            current position.
+        """
         return render_drag_state(
             self._instance,
             self._path,

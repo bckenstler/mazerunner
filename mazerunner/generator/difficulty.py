@@ -13,7 +13,19 @@ TIER_PARAMS = {
 
 
 def sample_difficulty_params(tier: int, rng: np.random.Generator) -> DifficultyConfig:
-    """Sample grid dimensions for a given difficulty tier."""
+    """Sample grid dimensions for a given difficulty tier.
+
+    Args:
+        tier: Difficulty tier (1, 2, or 3).
+        rng: numpy random Generator for deterministic sampling.
+
+    Returns:
+        A DifficultyConfig with sampled grid dimensions and the tier's
+        minimum solution length.
+
+    Raises:
+        ValueError: If tier is not 1, 2, or 3.
+    """
     if tier not in TIER_PARAMS:
         raise ValueError(f"Invalid tier: {tier}. Must be 1, 2, or 3.")
 
@@ -33,5 +45,16 @@ def sample_difficulty_params(tier: int, rng: np.random.Generator) -> DifficultyC
 
 
 def compute_difficulty_score(path_length: int, rows: int, cols: int) -> int:
-    """Compute difficulty score (1-9) from path length and grid size."""
+    """Compute difficulty score (1-9) from path length and grid size.
+
+    Formula: ``min(9, 1 + int(8 * path_length / (rows * cols)))``
+
+    Args:
+        path_length: Length of the BFS shortest path.
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+
+    Returns:
+        Integer difficulty score from 1 (easiest) to 9 (hardest).
+    """
     return min(9, 1 + int(8 * path_length / (rows * cols)))
