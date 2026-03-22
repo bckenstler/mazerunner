@@ -368,6 +368,47 @@ class TestImageEncoding:
         assert "X" in rendered
 
 
+# ─── Single-Step Enforcement ─────────────────────────────────────
+
+
+class TestSingleStepEnforcement:
+    def test_single_step_rejects_multi_char(self):
+        instance = _make_simple_instance(rows=1, cols=3)
+        env = MazeEnvironment(mode="text_grid", instance=instance, single_step=True)
+        env.reset()
+        obs = env.step(CallToolAction(tool_name="navigate", arguments={"directions": "RR"}))
+        data = obs.result.structured_content
+        assert data["valid"] is False
+        assert data["steps_applied"] == 0
+        assert data["position"] == [0, 0]
+
+    def test_single_step_accepts_single_char(self):
+        instance = _make_simple_instance(rows=1, cols=3)
+        env = MazeEnvironment(mode="text_grid", instance=instance, single_step=True)
+        env.reset()
+        obs = env.step(CallToolAction(tool_name="navigate", arguments={"directions": "R"}))
+        data = obs.result.structured_content
+        assert data["valid"] is True
+        assert data["position"] == [0, 1]
+
+    def test_multi_step_default_accepts_multi_char(self):
+        instance = _make_simple_instance(rows=1, cols=3)
+        env = MazeEnvironment(mode="text_grid", instance=instance)
+        env.reset()
+        obs = env.step(CallToolAction(tool_name="navigate", arguments={"directions": "RR"}))
+        data = obs.result.structured_content
+        assert data["valid"] is True
+        assert data["position"] == [0, 2]
+
+    def test_single_step_does_not_increment_step_count(self):
+        instance = _make_simple_instance(rows=1, cols=3)
+        env = MazeEnvironment(mode="text_grid", instance=instance, single_step=True)
+        env.reset()
+        obs = env.step(CallToolAction(tool_name="navigate", arguments={"directions": "RR"}))
+        data = obs.result.structured_content
+        assert data["step_count"] == 0  # rejected, no step counted
+
+
 # ─── MazeObservation Model ───────────────────────────────────────
 
 

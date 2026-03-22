@@ -18,6 +18,7 @@ def _run_agent():
     parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
     parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
+    parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")
     args = parser.parse_args()
 
     from mazerunner.agent.types import AgentConfig
@@ -32,9 +33,10 @@ def _run_agent():
         provider=args.provider,
         thinking_budget=args.thinking_budget,
         thinking_level=args.thinking_level,
+        single_step=args.single_step,
     )
 
-    env = MazeEnvironment(mode=args.mode, instance_dir=args.instance_dir)
+    env = MazeEnvironment(mode=args.mode, instance_dir=args.instance_dir, single_step=args.single_step)
 
     if config.provider == "gemini":
         from mazerunner.agent.gemini_loop import run_gemini_episode
@@ -70,6 +72,7 @@ def _run_eval():
     parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
     parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
+    parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")
     args = parser.parse_args()
 
     from pathlib import Path
@@ -96,6 +99,7 @@ def _run_eval():
         provider=args.provider,
         thinking_budget=args.thinking_budget,
         thinking_level=args.thinking_level,
+        single_step=args.single_step,
     )
     runner = get_runner(config)
 
@@ -107,6 +111,7 @@ def _run_eval():
         reward_mode=args.reward_mode,
         num_episodes=args.num_episodes,
         model=args.model,
+        single_step=args.single_step,
     )
 
     save_eval_result(result, args.output)

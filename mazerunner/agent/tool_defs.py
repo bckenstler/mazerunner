@@ -24,6 +24,27 @@ _NAVIGATE_SCHEMA = {
     },
 }
 
+_NAVIGATE_SINGLE_SCHEMA = {
+    "type": "function",
+    "name": "navigate",
+    "description": (
+        "Move one step in the maze. "
+        "Pass a single direction: U (up), D (down), L (left), or R (right)."
+    ),
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "directions": {
+                "type": "string",
+                "enum": ["U", "D", "L", "R"],
+                "description": "A single direction character.",
+            }
+        },
+        "required": ["directions"],
+        "additionalProperties": False,
+    },
+}
+
 _DRAG_SCHEMA = {
     "type": "function",
     "name": "drag",
@@ -65,24 +86,25 @@ _GET_MAZE_INFO_SCHEMA = {
 }
 
 
-def get_tool_schemas(mode: str) -> list[dict]:
+def get_tool_schemas(mode: str, single_step: bool = False) -> list[dict]:
     """Get tool schemas for the given mode (OpenAI Responses API format).
 
     Args:
         mode: One of text_grid, vision_grid, vision_drag.
+        single_step: If True, use single-step navigate schema for grid modes.
 
     Returns:
         List of OpenAI Responses API tool definitions.
     """
     if mode in ("text_grid", "vision_grid"):
-        return [_NAVIGATE_SCHEMA]
+        return [_NAVIGATE_SINGLE_SCHEMA if single_step else _NAVIGATE_SCHEMA]
     elif mode == "vision_drag":
         return [_DRAG_SCHEMA]
     else:
         raise ValueError(f"Unknown mode: {mode}")
 
 
-def get_chat_tool_schemas(mode: str) -> list[dict]:
+def get_chat_tool_schemas(mode: str, single_step: bool = False) -> list[dict]:
     """Get tool schemas in Chat Completions format (Fireworks / OpenAI Chat).
 
     Wraps the Responses API schemas in the ``{"type":"function","function":{...}}``
@@ -90,11 +112,12 @@ def get_chat_tool_schemas(mode: str) -> list[dict]:
 
     Args:
         mode: One of text_grid, vision_grid, vision_drag.
+        single_step: If True, use single-step navigate schema for grid modes.
 
     Returns:
         List of Chat Completions tool definitions.
     """
-    schemas = get_tool_schemas(mode)
+    schemas = get_tool_schemas(mode, single_step=single_step)
     return [
         {
             "type": "function",
@@ -108,7 +131,7 @@ def get_chat_tool_schemas(mode: str) -> list[dict]:
     ]
 
 
-def get_gemini_tools(mode: str):
+def get_gemini_tools(mode: str, single_step: bool = False):
     """Get Gemini tool declarations for the given mode.
 
     Converts the existing schemas into Gemini FunctionDeclaration objects
@@ -116,13 +139,14 @@ def get_gemini_tools(mode: str):
 
     Args:
         mode: One of text_grid, vision_grid, vision_drag.
+        single_step: If True, use single-step navigate schema for grid modes.
 
     Returns:
         A google.genai.types.Tool with appropriate function declarations.
     """
     from google.genai import types
 
-    schemas = get_tool_schemas(mode)
+    schemas = get_tool_schemas(mode, single_step=single_step)
     declarations = []
     for schema in schemas:
         declarations.append(types.FunctionDeclaration(

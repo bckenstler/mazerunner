@@ -20,6 +20,8 @@ class AgentConfig:
     # Gemini-specific
     thinking_budget: int | None = None     # Gemini 2.5: token count (0=off for flash, 128-32768)
     thinking_level: str | None = None      # Gemini 3: "LOW"/"MEDIUM"/"HIGH"
+    # Navigation mode
+    single_step: bool = False              # If True, navigate accepts only one direction per call
 
 
 @dataclass

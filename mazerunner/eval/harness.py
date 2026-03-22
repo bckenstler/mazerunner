@@ -21,6 +21,7 @@ def run_eval(
     num_episodes: int | None = None,
     run_id: str | None = None,
     model: str = "",
+    single_step: bool = False,
 ) -> EvalResult:
     """Run evaluation across maze instances.
 
@@ -54,6 +55,7 @@ def run_eval(
             instance=instance,
             reward_mode=reward_mode,
             max_steps=max_steps,
+            single_step=single_step,
         )
         record = runner.run_episode(env, maze_id)
         records.append(record)

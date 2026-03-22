@@ -29,6 +29,9 @@ uv run python -m mazerunner agent --mode text_grid --instance-dir data/dev --mod
 # Run agent with Gemini (requires GEMINI_API_KEY)
 uv run python -m mazerunner agent --provider gemini --mode text_grid --instance-dir data/dev --model gemini-2.5-flash --num-episodes 1
 
+# Single-step mode (one direction per tool call, harder eval)
+uv run python -m mazerunner agent --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 1 --single-step
+
 # Run eval harness (requires OPENAI_API_KEY)
 uv run python -m mazerunner eval --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 10 --output eval_results.json
 

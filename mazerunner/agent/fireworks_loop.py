@@ -87,7 +87,7 @@ def run_fireworks_episode(
     else:
         _log(f"--- Initial observation --- [image {len(rendered)} chars b64]\n")
 
-    tools = get_chat_tool_schemas(mode)
+    tools = get_chat_tool_schemas(mode, single_step=config.single_step)
     turns: list[TurnRecord] = []
     total_reward = 0.0
     success = False

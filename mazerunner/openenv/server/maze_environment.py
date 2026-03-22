@@ -58,6 +58,7 @@ class MazeEnvironment(MCPEnvironment):
         reward_mode: str = "sparse",
         max_steps: int = 100,
         seed: int = 42,
+        single_step: bool = False,
     ) -> None:
         if instance_dir is None and instance is None:
             raise ValueError("Must provide either instance_dir or instance")
@@ -65,6 +66,7 @@ class MazeEnvironment(MCPEnvironment):
             raise ValueError(f"Unknown mode: {mode}")
 
         self._mode = mode
+        self._single_step = single_step
         self._instance_dir = instance_dir
         self._fixed_instance = instance
         self._reward_mode = reward_mode
@@ -164,6 +166,20 @@ class MazeEnvironment(MCPEnvironment):
     def _handle_navigate(self, directions: str) -> dict:
         if self._navigator is None:
             return {"error": "No maze loaded. Call reset() first."}
+
+        # Enforce single-step mode
+        if self._single_step and len(directions) > 1:
+            rendered = _render_to_string(self._navigator, self._mode)
+            return {
+                "valid": False,
+                "position": list(self._navigator.position),
+                "finished": False,
+                "steps_applied": 0,
+                "rendered": rendered,
+                "reward": 0.0,
+                "step_count": self._step_count,
+                "done": self._step_count >= self._max_steps,
+            }
 
         self._prev_position = self._navigator.position
         result = self._navigator.interact(directions)

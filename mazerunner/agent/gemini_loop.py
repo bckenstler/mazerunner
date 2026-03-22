@@ -157,7 +157,7 @@ def run_gemini_episode(
         _log(f"--- Initial observation --- [image {len(rendered)} chars b64]\n")
 
     # Build tools
-    tool = get_gemini_tools(mode)
+    tool = get_gemini_tools(mode, single_step=config.single_step)
 
     # Build generation config
     thinking_config = None
