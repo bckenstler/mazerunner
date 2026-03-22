@@ -26,6 +26,9 @@ uv run python -m mazerunner serve
 # Run agent on mazes (requires OPENAI_API_KEY)
 uv run python -m mazerunner agent --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 1
 
+# Run agent with Gemini (requires GEMINI_API_KEY)
+uv run python -m mazerunner agent --provider gemini --mode text_grid --instance-dir data/dev --model gemini-2.5-flash --num-episodes 1
+
 # Run eval harness (requires OPENAI_API_KEY)
 uv run python -m mazerunner eval --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 10 --output eval_results.json
 
@@ -71,8 +74,9 @@ mazerunner/
     chat_context.py      ← ChatCompletionsContext — Chat Completions API context manager
     tool_defs.py         ← Tool schemas (Responses API + Chat Completions formats)
     openai_loop.py       ← Main agent loop using OpenAI Responses API
+    gemini_loop.py       ← Agent loop using Google Gemini API
     fireworks_loop.py    ← Agent loop using Fireworks Chat Completions API
-    runner.py            ← OpenAI/Fireworks runners + get_runner() factory
+    runner.py            ← OpenAI/Gemini/Fireworks runners + get_runner() factory
   eval/
     protocol.py          ← EpisodeRunner Protocol, StepRecord, EpisodeRecord, EvalResult
     metrics.py           ← compute_metrics() — success rate, efficiency, etc.
@@ -112,7 +116,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai, fireworks-ai
+- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai, google-genai, fireworks-ai
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
@@ -121,7 +125,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 5 e2e test scripts (`scripts/e2e_*.py`) covering: text_grid full episode with BFS solve, vision_grid PNG rendering, vision_drag pixel-path navigation, all 3 reward modes, and max_steps cutoff. Run with `python scripts/e2e_all.py`.
 
-`scripts/e2e_agent_eval.py` runs agent eval across all 3 modes using OpenAI API (loads key from `.env`). Supports `-v` for verbose trajectory streaming, `--modes`, `--num-episodes`, `--model`, `--reasoning-effort`.
+`scripts/e2e_agent_eval.py` runs agent eval across all 3 modes (loads keys from `.env`). Supports `-v` for verbose trajectory streaming, `--modes`, `--num-episodes`, `--model`, `--reasoning-effort`, `--provider` (openai/gemini/fireworks), `--thinking-budget`, `--thinking-level`.
 
 ## Generated Data
 
