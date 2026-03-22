@@ -79,7 +79,7 @@ def _apply_image_window(contents: list, mode: str) -> None:
         new_parts = []
         for part in contents[idx].parts:
             if getattr(part, "inline_data", None) is not None:
-                new_parts.append(types.Part.from_text("[Previous maze image omitted]"))
+                new_parts.append(types.Part.from_text(text="[Previous maze image omitted]"))
             else:
                 new_parts.append(part)
         contents[idx] = types.Content(role="user", parts=new_parts)
@@ -134,12 +134,12 @@ def run_gemini_episode(
 
     # Build initial user message
     if mode == "text_grid":
-        initial_parts = [types.Part.from_text(
+        initial_parts = [types.Part.from_text(text=
             f"Here is the maze. Navigate from X to G.\n\n{rendered}"
         )]
     else:
         initial_parts = [
-            types.Part.from_text("Here is the maze. Navigate from X to G."),
+            types.Part.from_text(text="Here is the maze. Navigate from X to G."),
             types.Part.from_bytes(data=base64.b64decode(rendered), mime_type="image/png"),
         ]
 
@@ -244,14 +244,11 @@ def run_gemini_episode(
         finished = raw_result.get("valid", False) and raw_result.get("finished", False)
 
         # Build tool result Content
-        fc_id = getattr(fc, "id", None)
-        fn_response_kwargs = {"name": tool_name, "response": {"result": feedback_text}}
-        if fc_id:
-            fn_response_kwargs["id"] = fc_id
-
         tool_result_content = types.Content(
             role="tool",
-            parts=[types.Part.from_function_response(**fn_response_kwargs)],
+            parts=[types.Part.from_function_response(
+                name=tool_name, response={"result": feedback_text},
+            )],
         )
         contents.append(tool_result_content)
 
@@ -260,7 +257,7 @@ def run_gemini_episode(
             image_content = types.Content(
                 role="user",
                 parts=[
-                    types.Part.from_text(feedback_text),
+                    types.Part.from_text(text=feedback_text),
                     types.Part.from_bytes(
                         data=base64.b64decode(rendered_state),
                         mime_type="image/png",
@@ -272,7 +269,7 @@ def run_gemini_episode(
             # For text mode, append ASCII rendering as user message
             text_content = types.Content(
                 role="user",
-                parts=[types.Part.from_text(f"{feedback_text}\n{rendered_state}")],
+                parts=[types.Part.from_text(text=f"{feedback_text}\n{rendered_state}")],
             )
             contents.append(text_content)
 
