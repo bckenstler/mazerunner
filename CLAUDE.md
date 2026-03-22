@@ -22,6 +22,16 @@ uv run pytest tests/ -v
 # Serve maze environment (OpenEnv)
 uv run python -m mazerunner serve
 # Configure via env vars: MAZE_MODE, MAZE_INSTANCE_DIR, MAZE_REWARD_MODE, MAZE_MAX_STEPS, MAZE_SEED
+
+# Run agent on mazes (requires OPENAI_API_KEY)
+uv run python -m mazerunner agent --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 1
+
+# Run eval harness (requires OPENAI_API_KEY)
+uv run python -m mazerunner eval --mode text_grid --instance-dir data/dev --model gpt-5.4 --num-episodes 10 --output eval_results.json
+
+# Run e2e agent eval across all modes (requires OPENAI_API_KEY in .env)
+uv run python scripts/e2e_agent_eval.py                    # 3 episodes per mode
+uv run python scripts/e2e_agent_eval.py -v --num-episodes 1 # verbose single episode
 ```
 
 ## Architecture
@@ -54,7 +64,19 @@ mazerunner/
     server/
       maze_environment.py ← MazeEnvironment(MCPEnvironment) — core OpenEnv environment
       app.py             ← create_app() FastAPI entry point + uvicorn main
-  __main__.py            ← CLI dispatcher (generate, visualize, serve)
+  agent/
+    types.py             ← AgentConfig, TurnRecord, EpisodeResult dataclasses
+    tool_transform.py    ← Raw tool result → model-facing content (strips internals)
+    context_manager.py   ← SlidingWindowContext — image windowing for vision modes
+    tool_defs.py         ← OpenAI Responses API tool schemas per mode
+    openai_loop.py       ← Main agent loop using OpenAI Responses API
+    runner.py            ← OpenAIAgentRunner — bridges agent loop to eval protocol
+  eval/
+    protocol.py          ← EpisodeRunner Protocol, StepRecord, EpisodeRecord, EvalResult
+    metrics.py           ← compute_metrics() — success rate, efficiency, etc.
+    harness.py           ← run_eval() — orchestrates episodes across instances
+    io.py                ← JSON save/load for EvalResult
+  __main__.py            ← CLI dispatcher (generate, visualize, serve, agent, eval)
 ```
 
 ### Generator Pipeline
@@ -88,14 +110,16 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn
+- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
 
-280 unit tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), batch CLI integration, navigator module (grid movement/wall rejection, drag pixel paths/collision mask, history tracking, X marker overlays, breadcrumb rendering), and OpenEnv integration (reward functions, environment reset/step/tools, maze loading, image encoding).
+280+ unit tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), batch CLI integration, navigator module (grid movement/wall rejection, drag pixel paths/collision mask, history tracking, X marker overlays, breadcrumb rendering), OpenEnv integration (reward functions, environment reset/step/tools, maze loading, image encoding), agent tool transform (output stripping, vision content blocks, sliding window context, tool schema validation), and eval harness (metrics computation, IO roundtrip, protocol conformance, harness orchestration).
 
 5 e2e test scripts (`scripts/e2e_*.py`) covering: text_grid full episode with BFS solve, vision_grid PNG rendering, vision_drag pixel-path navigation, all 3 reward modes, and max_steps cutoff. Run with `python scripts/e2e_all.py`.
+
+`scripts/e2e_agent_eval.py` runs agent eval across all 3 modes using OpenAI API (loads key from `.env`). Supports `-v` for verbose trajectory streaming, `--modes`, `--num-episodes`, `--model`, `--reasoning-effort`.
 
 ## Generated Data
 
