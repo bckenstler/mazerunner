@@ -86,7 +86,6 @@ def generate_dataset(output_dir: str, num_mazes: int, master_seed: int, tier_dis
 
 def main():
     parser = argparse.ArgumentParser(description="Generate maze benchmark dataset")
-    parser.add_argument("command", choices=["generate"], help="Command to run")
     parser.add_argument("--output-dir", required=True, help="Output directory")
     parser.add_argument("--num-mazes", type=int, required=True, help="Number of mazes to generate")
     parser.add_argument("--master-seed", type=int, default=42, help="Master random seed")
