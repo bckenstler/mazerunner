@@ -21,7 +21,7 @@ def _format_action_str(tool_name: str, tool_arguments: dict) -> str:
 
 
 def _make_image_content(text: str, rendered_b64: str) -> list[dict]:
-    """Build content blocks with text and a base64 PNG image."""
+    """Build content blocks with text and a base64 PNG image (Responses API)."""
     return [
         {"type": "input_text", "text": text},
         {
@@ -32,11 +32,23 @@ def _make_image_content(text: str, rendered_b64: str) -> list[dict]:
     ]
 
 
+def _make_chat_image_content(text: str, rendered_b64: str) -> list[dict]:
+    """Build content blocks with text and image (Chat Completions API)."""
+    return [
+        {"type": "text", "text": text},
+        {
+            "type": "image_url",
+            "image_url": {"url": f"data:image/png;base64,{rendered_b64}"},
+        },
+    ]
+
+
 def transform_tool_output(
     tool_name: str,
     tool_arguments: dict,
     raw_result: dict,
     mode: str,
+    format: str = "responses",
 ) -> str | list[dict]:
     """Transform a raw tool result into model-facing content.
 
@@ -90,4 +102,6 @@ def transform_tool_output(
         return f"{text}\n{rendered}"
 
     # Vision modes: return content blocks with image
+    if format == "chat":
+        return _make_chat_image_content(text, rendered)
     return _make_image_content(text, rendered)

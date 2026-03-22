@@ -68,9 +68,11 @@ mazerunner/
     types.py             ← AgentConfig, TurnRecord, EpisodeResult dataclasses
     tool_transform.py    ← Raw tool result → model-facing content (strips internals)
     context_manager.py   ← SlidingWindowContext — image windowing for vision modes
-    tool_defs.py         ← OpenAI Responses API tool schemas per mode
+    chat_context.py      ← ChatCompletionsContext — Chat Completions API context manager
+    tool_defs.py         ← Tool schemas (Responses API + Chat Completions formats)
     openai_loop.py       ← Main agent loop using OpenAI Responses API
-    runner.py            ← OpenAIAgentRunner — bridges agent loop to eval protocol
+    fireworks_loop.py    ← Agent loop using Fireworks Chat Completions API
+    runner.py            ← OpenAI/Fireworks runners + get_runner() factory
   eval/
     protocol.py          ← EpisodeRunner Protocol, StepRecord, EpisodeRecord, EvalResult
     metrics.py           ← compute_metrics() — success rate, efficiency, etc.
@@ -110,7 +112,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai
+- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai, fireworks-ai
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing

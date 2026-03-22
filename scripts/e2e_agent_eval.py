@@ -32,13 +32,7 @@ if env_path.exists():
             key, _, value = line.partition("=")
             os.environ[key.strip()] = value.strip()
 
-if not os.environ.get("OPENAI_API_KEY"):
-    print("ERROR: OPENAI_API_KEY not found in .env or environment", file=sys.stderr)
-    sys.exit(1)
-
-from openai import OpenAI
-
-from mazerunner.agent.runner import OpenAIAgentRunner
+from mazerunner.agent.runner import get_runner
 from mazerunner.agent.types import AgentConfig
 from mazerunner.eval.harness import run_eval
 from mazerunner.eval.io import save_eval_result
@@ -62,6 +56,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--model", default=MODEL)
     parser.add_argument("--reasoning-effort", default=REASONING_EFFORT,
                         choices=["low", "medium", "high"])
+    parser.add_argument("--provider", default="openai",
+                        choices=["openai", "fireworks"])
+    parser.add_argument("--thinking-budget", type=int, default=None,
+                        help="Fireworks thinking budget_tokens")
     return parser.parse_args()
 
 
@@ -76,7 +74,6 @@ def discover_instances() -> list[str]:
 def run_mode_eval(
     mode: str,
     instance_paths: list[str],
-    client: OpenAI,
     args: argparse.Namespace,
 ) -> dict:
     """Run eval for a single mode and return metrics."""
@@ -86,8 +83,10 @@ def run_mode_eval(
         max_turns=args.max_turns,
         temperature=0.0,
         reasoning_effort=args.reasoning_effort,
+        provider=args.provider,
+        thinking_budget=args.thinking_budget,
     )
-    runner = OpenAIAgentRunner(config, client=client, verbose=args.verbose)
+    runner = get_runner(config, verbose=args.verbose)
 
     result = run_eval(
         runner=runner,
@@ -129,14 +128,23 @@ def main():
         print(f"ERROR: No maze instances found in {INSTANCE_DIR}", file=sys.stderr)
         sys.exit(1)
 
+    # Validate API key for the chosen provider
+    if args.provider == "fireworks":
+        if not os.environ.get("FIREWORKS_API_KEY"):
+            print("ERROR: FIREWORKS_API_KEY not found in .env or environment", file=sys.stderr)
+            sys.exit(1)
+    else:
+        if not os.environ.get("OPENAI_API_KEY"):
+            print("ERROR: OPENAI_API_KEY not found in .env or environment", file=sys.stderr)
+            sys.exit(1)
+
     print(f"Found {len(instance_paths)} maze instances in {INSTANCE_DIR}")
-    print(f"Running {args.num_episodes} episodes per mode with {args.model} (reasoning: {args.reasoning_effort})")
+    print(f"Running {args.num_episodes} episodes per mode with {args.model} (provider: {args.provider}, reasoning: {args.reasoning_effort})")
     print(f"Modes: {', '.join(args.modes)}")
     if args.verbose:
         print("Verbose trajectory output enabled")
     print()
 
-    client = OpenAI()
     all_results = []
     total_start = time.monotonic()
 
@@ -147,7 +155,7 @@ def main():
 
         start = time.monotonic()
         try:
-            result = run_mode_eval(mode, instance_paths, client, args)
+            result = run_mode_eval(mode, instance_paths, args)
             elapsed = time.monotonic() - start
             all_results.append((mode, result, elapsed, None))
 

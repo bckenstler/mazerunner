@@ -1,9 +1,12 @@
 """Tests for agent tool transform, context manager, and tool defs."""
 
+import json
+
 import pytest
 
+from mazerunner.agent.chat_context import ChatCompletionsContext
 from mazerunner.agent.context_manager import SlidingWindowContext
-from mazerunner.agent.tool_defs import get_tool_schemas
+from mazerunner.agent.tool_defs import get_chat_tool_schemas, get_tool_schemas
 from mazerunner.agent.tool_transform import transform_tool_output
 
 
@@ -283,3 +286,194 @@ class TestToolDefs:
         assert len(get_tool_schemas("text_grid")) == 1
         assert len(get_tool_schemas("vision_grid")) == 1
         assert len(get_tool_schemas("vision_drag")) == 1
+
+
+# ─── Chat Tool Schemas ──────────────────────────────────────────
+
+
+class TestChatToolSchemas:
+    def test_wraps_in_function_key(self):
+        schemas = get_chat_tool_schemas("text_grid")
+        assert len(schemas) == 1
+        s = schemas[0]
+        assert s["type"] == "function"
+        assert "function" in s
+        assert s["function"]["name"] == "navigate"
+        assert "parameters" in s["function"]
+
+    def test_drag_schema_wrapped(self):
+        schemas = get_chat_tool_schemas("vision_drag")
+        s = schemas[0]
+        assert s["function"]["name"] == "drag"
+        assert "points" in s["function"]["parameters"]["properties"]
+
+    def test_preserves_descriptions(self):
+        responses_schemas = get_tool_schemas("text_grid")
+        chat_schemas = get_chat_tool_schemas("text_grid")
+        assert chat_schemas[0]["function"]["description"] == responses_schemas[0]["description"]
+
+    def test_unknown_mode_raises(self):
+        with pytest.raises(ValueError, match="Unknown mode"):
+            get_chat_tool_schemas("unknown")
+
+
+# ─── Chat Format Transform ──────────────────────────────────────
+
+
+class TestTransformChatFormat:
+    def test_vision_uses_chat_image_format(self):
+        raw = {
+            "valid": True,
+            "position": [0, 1],
+            "finished": False,
+            "steps_applied": 1,
+            "rendered": "iVBORw0KGgo=",
+            "reward": 0.0,
+            "step_count": 1,
+            "done": False,
+        }
+        result = transform_tool_output("navigate", {"directions": "R"}, raw, "vision_grid", format="chat")
+        assert isinstance(result, list)
+        assert result[0]["type"] == "text"
+        assert "Valid action" in result[0]["text"]
+        assert result[1]["type"] == "image_url"
+        assert "data:image/png;base64," in result[1]["image_url"]["url"]
+
+    def test_text_grid_unchanged(self):
+        raw = {
+            "valid": True,
+            "position": [0, 1],
+            "finished": False,
+            "steps_applied": 1,
+            "rendered": "+--+\n|X |\n+--+",
+            "reward": 0.0,
+            "step_count": 1,
+            "done": False,
+        }
+        result = transform_tool_output("navigate", {"directions": "R"}, raw, "text_grid", format="chat")
+        assert isinstance(result, str)
+        assert "Valid action" in result
+
+    def test_finished_unchanged(self):
+        raw = {
+            "valid": True,
+            "position": [2, 2],
+            "finished": True,
+            "steps_applied": 1,
+            "rendered": "...",
+            "reward": 1.0,
+            "step_count": 5,
+            "done": True,
+        }
+        result = transform_tool_output("navigate", {"directions": "R"}, raw, "vision_grid", format="chat")
+        assert result == "Maze complete! You reached the goal."
+
+
+# ─── Chat Completions Context ───────────────────────────────────
+
+
+class TestChatCompletionsContext:
+    def test_system_message(self):
+        ctx = ChatCompletionsContext("text_grid")
+        ctx.add_system("System prompt")
+        assert ctx.messages[0]["role"] == "system"
+        assert ctx.messages[0]["content"] == "System prompt"
+
+    def test_user_message_string(self):
+        ctx = ChatCompletionsContext("text_grid")
+        ctx.add_user_message("Hello")
+        assert ctx.messages[0]["role"] == "user"
+        assert ctx.messages[0]["content"] == "Hello"
+
+    def test_user_message_multimodal(self):
+        ctx = ChatCompletionsContext("vision_grid")
+        content = [
+            {"type": "text", "text": "Look at this"},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAA"}},
+        ]
+        ctx.add_user_message(content)
+        assert ctx.messages[0]["content"] == content
+
+    def test_assistant_message_preserves_tool_calls(self):
+        ctx = ChatCompletionsContext("text_grid")
+        msg = {
+            "role": "assistant",
+            "content": None,
+            "tool_calls": [{"id": "tc_1", "type": "function", "function": {"name": "navigate", "arguments": '{"directions":"R"}'}}],
+        }
+        ctx.add_assistant_message(msg)
+        assert ctx.messages[0]["tool_calls"][0]["id"] == "tc_1"
+
+    def test_assistant_message_preserves_reasoning_content(self):
+        ctx = ChatCompletionsContext("text_grid")
+        msg = {
+            "role": "assistant",
+            "content": None,
+            "reasoning_content": "I think I should go right.",
+            "tool_calls": [],
+        }
+        ctx.add_assistant_message(msg)
+        assert ctx.messages[0]["reasoning_content"] == "I think I should go right."
+
+    def test_tool_result_string(self):
+        ctx = ChatCompletionsContext("text_grid")
+        ctx.add_tool_result("tc_1", "Valid action.\nMaze here")
+        msg = ctx.messages[0]
+        assert msg["role"] == "tool"
+        assert msg["tool_call_id"] == "tc_1"
+        assert msg["content"] == "Valid action.\nMaze here"
+
+    def test_tool_result_list_serialized(self):
+        ctx = ChatCompletionsContext("vision_grid")
+        content = [
+            {"type": "text", "text": "Valid action."},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAA"}},
+        ]
+        ctx.add_tool_result("tc_1", content)
+        msg = ctx.messages[0]
+        assert msg["role"] == "tool"
+        assert isinstance(msg["content"], str)
+        parsed = json.loads(msg["content"])
+        assert parsed[1]["type"] == "image_url"
+
+    def test_text_mode_no_windowing(self):
+        ctx = ChatCompletionsContext("text_grid")
+        ctx.add_tool_result("tc_1", "Maze 1")
+        ctx.add_tool_result("tc_2", "Maze 2")
+        msgs = [m for m in ctx.messages if m["role"] == "tool"]
+        assert "Maze 1" in msgs[0]["content"]
+        assert "Maze 2" in msgs[1]["content"]
+
+    def test_vision_mode_removes_old_images(self):
+        ctx = ChatCompletionsContext("vision_grid")
+        content1 = [
+            {"type": "text", "text": "Valid action."},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,AAA"}},
+        ]
+        content2 = [
+            {"type": "text", "text": "Valid action."},
+            {"type": "image_url", "image_url": {"url": "data:image/png;base64,BBB"}},
+        ]
+        ctx.add_tool_result("tc_1", content1)
+        ctx.add_tool_result("tc_2", content2)
+
+        msgs = [m for m in ctx.messages if m["role"] == "tool"]
+        first_blocks = json.loads(msgs[0]["content"])
+        assert any("[Previous maze image omitted]" in b.get("text", "") for b in first_blocks)
+        assert not any(b.get("type") == "image_url" for b in first_blocks)
+        second_blocks = json.loads(msgs[1]["content"])
+        assert any(b.get("type") == "image_url" for b in second_blocks)
+
+    def test_three_images_only_last_kept(self):
+        ctx = ChatCompletionsContext("vision_grid")
+        for i in range(3):
+            ctx.add_tool_result(f"tc_{i}", [
+                {"type": "text", "text": f"Action {i}"},
+                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,IMG{i}"}},
+            ])
+        msgs = [m for m in ctx.messages if m["role"] == "tool"]
+        for m in msgs[:-1]:
+            blocks = json.loads(m["content"])
+            assert not any(b.get("type") == "image_url" for b in blocks)
+        last_blocks = json.loads(msgs[-1]["content"])
+        assert any(b.get("type") == "image_url" for b in last_blocks)
