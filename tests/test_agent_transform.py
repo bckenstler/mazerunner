@@ -288,6 +288,43 @@ class TestToolDefs:
         assert len(get_tool_schemas("vision_drag")) == 1
 
 
+# ─── Single-Step Tool Schemas ────────────────────────────────────
+
+
+class TestSingleStepSchemas:
+    def test_single_step_has_enum(self):
+        schemas = get_tool_schemas("text_grid", single_step=True)
+        nav = schemas[0]
+        assert nav["name"] == "navigate"
+        assert "enum" in nav["parameters"]["properties"]["directions"]
+        assert set(nav["parameters"]["properties"]["directions"]["enum"]) == {"U", "D", "L", "R"}
+
+    def test_single_step_description_differs(self):
+        multi = get_tool_schemas("text_grid", single_step=False)[0]
+        single = get_tool_schemas("text_grid", single_step=True)[0]
+        assert multi["description"] != single["description"]
+        assert "single" in single["description"].lower() or "one step" in single["description"].lower()
+
+    def test_single_step_no_effect_on_drag(self):
+        schemas = get_tool_schemas("vision_drag", single_step=True)
+        assert schemas[0]["name"] == "drag"
+
+    def test_default_is_multi_step(self):
+        schemas = get_tool_schemas("text_grid")
+        nav = schemas[0]
+        assert "enum" not in nav["parameters"]["properties"]["directions"]
+
+    def test_single_step_chat_schemas(self):
+        schemas = get_chat_tool_schemas("text_grid", single_step=True)
+        nav = schemas[0]["function"]
+        assert "enum" in nav["parameters"]["properties"]["directions"]
+
+    def test_single_step_gemini_tools(self):
+        from mazerunner.agent.tool_defs import get_gemini_tools
+        tool = get_gemini_tools("text_grid", single_step=True)
+        assert tool.function_declarations[0].name == "navigate"
+
+
 # ─── Chat Tool Schemas ──────────────────────────────────────────
 
 
