@@ -2,6 +2,8 @@
 
 from mazerunner.agent.anthropic_loop import run_anthropic_episode
 from mazerunner.agent.context_manager import SlidingWindowContext
+from mazerunner.agent.fireworks_loop import run_fireworks_episode
+from mazerunner.agent.gemini_loop import run_gemini_episode
 from mazerunner.agent.openai_loop import run_openai_episode
 from mazerunner.agent.runner import (
     AnthropicAgentRunner,
@@ -21,6 +23,8 @@ __all__ = [
     "SlidingWindowContext",
     "run_openai_episode",
     "run_anthropic_episode",
+    "run_gemini_episode",
+    "run_fireworks_episode",
     "OpenAIAgentRunner",
     "AnthropicAgentRunner",
     "GeminiAgentRunner",
