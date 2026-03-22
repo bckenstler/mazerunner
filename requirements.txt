@@ -1,3 +1,6 @@
 numpy
 Pillow
 pytest
+openenv-core
+fastmcp
+uvicorn
