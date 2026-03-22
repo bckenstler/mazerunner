@@ -15,7 +15,7 @@ def _run_agent():
     parser.add_argument("--max-turns", type=int, default=100, help="Max turns per episode")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
-    parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
+    parser.add_argument("--provider", default="openai", choices=["openai", "anthropic", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
     parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
     parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")
@@ -38,7 +38,10 @@ def _run_agent():
 
     env = MazeEnvironment(mode=args.mode, instance_dir=args.instance_dir, single_step=args.single_step)
 
-    if config.provider == "gemini":
+    if config.provider == "anthropic":
+        from mazerunner.agent.anthropic_loop import run_anthropic_episode
+        run_episode = run_anthropic_episode
+    elif config.provider == "gemini":
         from mazerunner.agent.gemini_loop import run_gemini_episode
         run_episode = run_gemini_episode
     elif config.provider == "fireworks":
@@ -69,7 +72,7 @@ def _run_eval():
     parser.add_argument("--output", required=True, help="Output JSON path for results")
     parser.add_argument("--temperature", type=float, default=0.0)
     parser.add_argument("--reasoning-effort", default="medium", choices=["low", "medium", "high"])
-    parser.add_argument("--provider", default="openai", choices=["openai", "gemini", "fireworks"])
+    parser.add_argument("--provider", default="openai", choices=["openai", "anthropic", "gemini", "fireworks"])
     parser.add_argument("--thinking-budget", type=int, default=None, help="Gemini/Fireworks thinking budget tokens")
     parser.add_argument("--thinking-level", default=None, choices=["low", "medium", "high"], help="Gemini 3 thinking level")
     parser.add_argument("--single-step", action="store_true", help="Restrict navigate to one direction per call")

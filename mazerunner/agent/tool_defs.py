@@ -104,6 +104,30 @@ def get_tool_schemas(mode: str, single_step: bool = False) -> list[dict]:
         raise ValueError(f"Unknown mode: {mode}")
 
 
+def get_anthropic_tool_schemas(mode: str, single_step: bool = False) -> list[dict]:
+    """Get tool schemas in Anthropic Messages API format.
+
+    Uses ``input_schema`` instead of ``parameters`` and omits the
+    ``type: "function"`` wrapper.
+
+    Args:
+        mode: One of text_grid, vision_grid, vision_drag.
+        single_step: If True, use single-step navigate schema for grid modes.
+
+    Returns:
+        List of Anthropic tool definitions with input_schema.
+    """
+    schemas = get_tool_schemas(mode, single_step=single_step)
+    return [
+        {
+            "name": s["name"],
+            "description": s["description"],
+            "input_schema": s["parameters"],
+        }
+        for s in schemas
+    ]
+
+
 def get_chat_tool_schemas(mode: str, single_step: bool = False) -> list[dict]:
     """Get tool schemas in Chat Completions format (Fireworks / OpenAI Chat).
 

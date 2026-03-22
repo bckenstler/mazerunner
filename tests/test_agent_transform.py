@@ -6,7 +6,7 @@ import pytest
 
 from mazerunner.agent.chat_context import ChatCompletionsContext
 from mazerunner.agent.context_manager import SlidingWindowContext
-from mazerunner.agent.tool_defs import get_chat_tool_schemas, get_tool_schemas
+from mazerunner.agent.tool_defs import get_anthropic_tool_schemas, get_chat_tool_schemas, get_tool_schemas
 from mazerunner.agent.tool_transform import transform_tool_output
 
 
@@ -514,3 +514,37 @@ class TestChatCompletionsContext:
             assert not any(b.get("type") == "image_url" for b in blocks)
         last_blocks = json.loads(msgs[-1]["content"])
         assert any(b.get("type") == "image_url" for b in last_blocks)
+
+
+# ─── Anthropic Tool Defs ────────────────────────────────────────
+
+
+class TestAnthropicToolDefs:
+    def test_text_grid_schemas(self):
+        schemas = get_anthropic_tool_schemas("text_grid")
+        assert len(schemas) == 1
+        assert schemas[0]["name"] == "navigate"
+        assert "input_schema" in schemas[0]
+        assert "type" not in schemas[0]
+
+    def test_vision_drag_schemas(self):
+        schemas = get_anthropic_tool_schemas("vision_drag")
+        assert len(schemas) == 1
+        assert schemas[0]["name"] == "drag"
+        assert "input_schema" in schemas[0]
+
+    def test_navigate_schema_structure(self):
+        schemas = get_anthropic_tool_schemas("text_grid")
+        nav = schemas[0]
+        assert "directions" in nav["input_schema"]["properties"]
+        assert "directions" in nav["input_schema"]["required"]
+
+    def test_drag_schema_structure(self):
+        schemas = get_anthropic_tool_schemas("vision_drag")
+        drag = schemas[0]
+        assert "points" in drag["input_schema"]["properties"]
+        assert "points" in drag["input_schema"]["required"]
+
+    def test_unknown_mode_raises(self):
+        with pytest.raises(ValueError, match="Unknown mode"):
+            get_anthropic_tool_schemas("unknown")

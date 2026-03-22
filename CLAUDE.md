@@ -75,11 +75,12 @@ mazerunner/
     tool_transform.py    ← Raw tool result → model-facing content (strips internals)
     context_manager.py   ← SlidingWindowContext — image windowing for vision modes
     chat_context.py      ← ChatCompletionsContext — Chat Completions API context manager
-    tool_defs.py         ← Tool schemas (Responses API + Chat Completions formats)
+    tool_defs.py         ← Tool schemas (Responses API, Anthropic, Chat Completions, Gemini formats)
     openai_loop.py       ← Main agent loop using OpenAI Responses API
+    anthropic_loop.py    ← Main agent loop using Anthropic Messages API
     gemini_loop.py       ← Agent loop using Google Gemini API
     fireworks_loop.py    ← Agent loop using Fireworks Chat Completions API
-    runner.py            ← OpenAI/Gemini/Fireworks runners + get_runner() factory
+    runner.py            ← OpenAI/Anthropic/Gemini/Fireworks runners + get_runner() factory
   eval/
     protocol.py          ← EpisodeRunner Protocol, StepRecord, EpisodeRecord, EvalResult
     metrics.py           ← compute_metrics() — success rate, efficiency, etc.
@@ -119,7 +120,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai, google-genai, fireworks-ai
+- No external dependencies beyond numpy, Pillow, pytest, openenv-core, fastmcp, uvicorn, openai, anthropic, google-genai, fireworks-ai
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
@@ -128,7 +129,7 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 5 e2e test scripts (`scripts/e2e_*.py`) covering: text_grid full episode with BFS solve, vision_grid PNG rendering, vision_drag pixel-path navigation, all 3 reward modes, and max_steps cutoff. Run with `python scripts/e2e_all.py`.
 
-`scripts/e2e_agent_eval.py` runs agent eval across all 3 modes (loads keys from `.env`). Supports `-v` for verbose trajectory streaming, `--modes`, `--num-episodes`, `--model`, `--reasoning-effort`, `--provider` (openai/gemini/fireworks), `--thinking-budget`, `--thinking-level`.
+`scripts/e2e_agent_eval.py` runs agent eval across all 3 modes (loads keys from `.env`). Supports `-v` for verbose trajectory streaming, `--modes`, `--num-episodes`, `--model`, `--reasoning-effort`, `--provider` (openai/anthropic/gemini/fireworks), `--thinking-budget`, `--thinking-level`.
 
 ## Generated Data
 

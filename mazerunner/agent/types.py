@@ -17,6 +17,11 @@ class AgentConfig:
     provider: str = "openai"
     # OpenAI-specific
     reasoning_effort: str = "medium"
+    # Anthropic-specific
+    thinking_type: str = "adaptive"        # "adaptive" (Opus/Sonnet 4.6) or "enabled" (older)
+    thinking_budget_tokens: int | None = None  # Only for type="enabled" on older models
+    max_tokens: int = 16000                # Required for Anthropic API
+    effort: str = "high"                   # "low" | "medium" | "high" | "max"
     # Gemini-specific
     thinking_budget: int | None = None     # Gemini 2.5: token count (0=off for flash, 128-32768)
     thinking_level: str | None = None      # Gemini 3: "LOW"/"MEDIUM"/"HIGH"
