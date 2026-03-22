@@ -18,7 +18,17 @@ MODES = ["vision_drag", "vision_grid", "text_grid", "all"]
 
 
 def _auto_scale_config(instance: dict) -> tuple[DragRenderConfig, GridRenderConfig]:
-    """Auto-scale render configs based on grid size."""
+    """Auto-scale render configs based on grid size.
+
+    Selects wall thickness and corridor width appropriate for the maze dimensions
+    to keep rendered images at a reasonable size.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+
+    Returns:
+        A (DragRenderConfig, GridRenderConfig) tuple with scaled parameters.
+    """
     rows = instance["grid_rows"]
     cols = instance["grid_cols"]
     max_dim = max(rows, cols)
@@ -36,7 +46,16 @@ def _auto_scale_config(instance: dict) -> tuple[DragRenderConfig, GridRenderConf
 
 
 def render_batch(input_dir: str, output_dir: str, mode: str) -> None:
-    """Discover maze JSONs and render them."""
+    """Discover maze JSON files and render them in the specified mode(s).
+
+    Reads all ``*.json`` files from ``{input_dir}/instances/`` and writes
+    rendered outputs to subdirectories of ``output_dir``.
+
+    Args:
+        input_dir: Directory containing an ``instances/`` subfolder with maze JSONs.
+        output_dir: Output directory for rendered files.
+        mode: One of "vision_drag", "vision_grid", "text_grid", or "all".
+    """
     instances_dir = os.path.join(input_dir, "instances")
     json_files = sorted(glob.glob(os.path.join(instances_dir, "*.json")))
 
@@ -74,6 +93,7 @@ def render_batch(input_dir: str, output_dir: str, mode: str) -> None:
 
 
 def main():
+    """Parse CLI arguments and run batch rendering."""
     parser = argparse.ArgumentParser(description="Batch-render maze instances")
     parser.add_argument("--input-dir", required=True, help="Directory containing instances/ folder")
     parser.add_argument("--output-dir", required=True, help="Output directory for renderings")

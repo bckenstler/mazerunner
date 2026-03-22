@@ -103,13 +103,31 @@ SCHEMA_NAMES = [s["name"] for s in COLOR_SCHEMAS]
 
 
 def sample_color_schema(rng: np.random.Generator) -> Dict[str, str]:
-    """Sample a random color schema from the predefined list."""
+    """Sample a random color schema from the predefined list.
+
+    Args:
+        rng: numpy random Generator for deterministic selection.
+
+    Returns:
+        A copy of a randomly selected color schema dict with keys: name, wall,
+        corridor, start, goal, solution_path, background.
+    """
     idx = int(rng.integers(len(COLOR_SCHEMAS)))
     return COLOR_SCHEMAS[idx].copy()
 
 
 def get_color_schema(name: str) -> Dict[str, str]:
-    """Get a color schema by name."""
+    """Get a color schema by name.
+
+    Args:
+        name: Schema name (e.g. "classic", "ocean", "forest").
+
+    Returns:
+        A copy of the matching color schema dict.
+
+    Raises:
+        ValueError: If no schema with the given name exists.
+    """
     for schema in COLOR_SCHEMAS:
         if schema["name"] == name:
             return schema.copy()

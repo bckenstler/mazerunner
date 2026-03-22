@@ -18,7 +18,17 @@ DIRECTION_MAP = {
 
 
 class GridNavigator(MazeNavigator):
-    """Navigate a maze using L/R/U/D cell steps."""
+    """Navigate a maze using L/R/U/D cell steps.
+
+    Actions are strings of direction characters (e.g. "RRD" for right, right, down).
+    Movement has atomic semantics: if any step in a multi-character action hits a wall
+    or goes out of bounds, the entire action is rejected and no steps are applied.
+
+    Args:
+        instance: Maze instance dict (as loaded from JSON).
+        render_mode: Rendering mode for ``render()`` — "text_grid" or "vision_grid".
+        config: Optional GridRenderConfig for vision_grid rendering.
+    """
 
     def __init__(
         self,
@@ -36,6 +46,18 @@ class GridNavigator(MazeNavigator):
         return self._position_cell
 
     def interact(self, action: str) -> InteractionResult:
+        """Process a direction string action (e.g. "RRDU").
+
+        All steps are validated before any are applied. If any character is
+        invalid, hits a wall, or goes out of bounds, the entire action is
+        rejected with ``steps_applied=0``.
+
+        Args:
+            action: String of direction characters (U/D/L/R).
+
+        Returns:
+            InteractionResult with the outcome.
+        """
         # Simulate all steps first
         r, c = self._position_cell
         for ch in action:
@@ -85,6 +107,11 @@ class GridNavigator(MazeNavigator):
         return result
 
     def render(self) -> Union[str, Image.Image]:
+        """Render the maze with an X marker at the current position.
+
+        Returns:
+            ASCII string (text_grid mode) or PIL Image (vision_grid mode).
+        """
         return render_grid_state(
             self._instance,
             self._position_cell,

@@ -26,8 +26,16 @@ def _neighbors(cell: Cell, rows: int, cols: int) -> List[Cell]:
 def generate_maze(rows: int, cols: int, rng: np.random.Generator) -> Set[FrozenSet[Cell]]:
     """Generate a perfect maze using iterative randomized DFS.
 
-    Returns a set of passages (edges) as frozensets of two cells.
-    Invariant: passage count == rows * cols - 1
+    Uses an iterative (not recursive) approach to avoid stack overflow on large grids.
+
+    Args:
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+        rng: numpy random Generator for deterministic shuffling.
+
+    Returns:
+        A set of passages (edges) as frozensets of two adjacent cells.
+        Invariant: ``len(passages) == rows * cols - 1`` (spanning tree).
     """
     visited = set()
     passages: Set[FrozenSet[Cell]] = set()
@@ -69,7 +77,16 @@ def solve_bfs(
 ) -> List[Cell]:
     """Find shortest path from start to goal using BFS.
 
-    Returns the path as a list of cells from start to goal inclusive.
+    Args:
+        passages: Set of passage edges (frozensets of two cells).
+        start: Starting cell.
+        goal: Goal cell.
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+
+    Returns:
+        The shortest path as a list of cells from start to goal inclusive,
+        or an empty list if no path exists.
     """
     adj = _build_adjacency(passages)
     queue = deque([start])
@@ -99,7 +116,17 @@ def solve_bfs(
 def bfs_distances(
     passages: Set[FrozenSet[Cell]], start: Cell, rows: int, cols: int
 ) -> Dict[Cell, int]:
-    """Compute BFS distances from start to all reachable cells."""
+    """Compute BFS distances from start to all reachable cells.
+
+    Args:
+        passages: Set of passage edges (frozensets of two cells).
+        start: Starting cell for distance computation.
+        rows: Number of rows in the grid.
+        cols: Number of columns in the grid.
+
+    Returns:
+        Dict mapping each reachable cell to its BFS distance from start.
+    """
     adj = _build_adjacency(passages)
     distances: Dict[Cell, int] = {start: 0}
     queue = deque([start])
