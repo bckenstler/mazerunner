@@ -7,20 +7,20 @@ MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigat
 ## Commands
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# Install dependencies (creates .venv and installs everything)
+uv sync
 
 # Generate mazes
-python -m mazerunner generate --output-dir data/dev --num-mazes 1000 --master-seed 42 --tier-distribution 300,400,300
+uv run python -m mazerunner generate --output-dir data/dev --num-mazes 1000 --master-seed 42 --tier-distribution 300,400,300
 
 # Render mazes (modes: vision_drag, vision_grid, text_grid, all)
-python -m mazerunner visualize --input-dir data/dev --output-dir data/dev/renderings --mode all
+uv run python -m mazerunner visualize --input-dir data/dev --output-dir data/dev/renderings --mode all
 
 # Run tests
-pytest tests/ -v
+uv run pytest tests/ -v
 
 # Serve maze environment (OpenEnv)
-python -m mazerunner serve
+uv run python -m mazerunner serve
 # Configure via env vars: MAZE_MODE, MAZE_INSTANCE_DIR, MAZE_REWARD_MODE, MAZE_MAX_STEPS, MAZE_SEED
 ```
 
