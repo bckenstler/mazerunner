@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigation. The maze generator produces canonical maze graph instances (JSON) across 3 complexity tiers. Rendering and evaluation are separate pipelines (not yet implemented).
+MazeRunner is a benchmark for evaluating vision-based GUI agents on maze navigation. The maze generator produces canonical maze graph instances (JSON) across 3 complexity tiers. The renderer module produces 3 benchmark modes (vision drag, vision grid, text grid) and is decoupled from the CLI for reuse at eval time.
 
 ## Commands
 
@@ -12,6 +12,9 @@ pip install -r requirements.txt
 
 # Generate mazes
 python -m mazerunner generate --output-dir data/dev --num-mazes 1000 --master-seed 42 --tier-distribution 300,400,300
+
+# Render mazes (modes: vision_drag, vision_grid, text_grid, all)
+python -m mazerunner visualize --input-dir data/dev --output-dir data/dev/renderings --mode all
 
 # Run tests
 pytest tests/ -v
@@ -28,8 +31,14 @@ mazerunner/
     placement.py         ← Start/goal placement (4 endpoint types)
     difficulty.py        ← 3-tier parameter configs + sampling
     serialization.py     ← MazeGrid → canonical JSON
+  renderer/
+    base.py              ← Shared utilities: parse_cell, hex_to_rgb, has_wall, config dataclasses
+    vision_drag.py       ← Corridor maze image + cell_to_pixel_center/rect (eval API)
+    vision_grid.py       ← Cell-and-wall grid image
+    text_grid.py         ← ASCII text grid rendering
   generate.py            ← CLI entry point + dataset orchestration
-  __main__.py            ← CLI dispatcher
+  visualize.py           ← Batch-render CLI (vision_drag, vision_grid, text_grid)
+  __main__.py            ← CLI dispatcher (generate, visualize)
 ```
 
 ### Generator Pipeline
@@ -63,12 +72,12 @@ Always checkout a new branch for every new feature before committing changes. Ne
 
 - Python 3.11+, type hints on function signatures
 - Dataclasses for structured data (`types.py`)
-- No external dependencies beyond numpy, pytest
+- No external dependencies beyond numpy, Pillow, pytest
 - Tests use pytest with class-based grouping and parametrize for grid sizes
 
 ## Testing
 
-97 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, and end-to-end pipeline determinism + file I/O.
+198 tests covering: seed determinism/uniqueness, maze graph properties (perfect maze invariant, reachability, BFS correctness), all 4 endpoint types with dead-end constraints, difficulty tier parameter ranges, serialization symmetry/sorting/schema, end-to-end pipeline determinism + file I/O, renderer utilities (parse_cell, hex_to_rgb, has_wall), text/vision_drag/vision_grid rendering (dimensions, pixel colors, markers, antialias), and batch CLI integration.
 
 ## Generated Data
 
