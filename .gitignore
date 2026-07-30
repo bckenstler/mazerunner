@@ -7,6 +7,9 @@ datasets/*/qc-test-hidden*.png
 __pycache__/
 *.pyc
 results/
+# ...except written findings, which are documents rather than run output.
+!results/*.md
+!results/*.txt
 .pytest_cache/
 # Archived attempt traces ARE tracked (archive/runs/**/attempts.jsonl.gz, ~39MB).
 # Overlay tarballs are not: 165MB of PNGs that are derived artifacts, fully
