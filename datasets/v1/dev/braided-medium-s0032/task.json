@@ -1,0 +1,318 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1330319389,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "dungeon-pebble",
+    "style_seed": 1845006700,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        41,
+        39,
+        36
+      ],
+      "corridor_fill": [
+        57,
+        56,
+        53
+      ],
+      "corridor_noise": [
+        49,
+        48,
+        45
+      ],
+      "corridor_extra": [
+        [
+          49,
+          48,
+          45
+        ]
+      ],
+      "pebble_shades": [
+        [
+          147,
+          145,
+          135
+        ],
+        [
+          128,
+          120,
+          109
+        ],
+        [
+          157,
+          154,
+          144
+        ],
+        [
+          139,
+          132,
+          123
+        ]
+      ],
+      "pebble_outline": [
+        16,
+        16,
+        14
+      ],
+      "outline_color": [
+        13,
+        13,
+        12
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.5006,
+    "y": 0.9234
+  },
+  "goal": {
+    "x": 0.856,
+    "y": 0.6818
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 15,
+    "optimal_length_px": 1376.54,
+    "optimal_length_px_geometric": 1221.28,
+    "corner_cut_headroom_px": 155.27,
+    "min_clearance_px": 11.31,
+    "optimal_path": [
+      {
+        "x": 0.5006,
+        "y": 0.9229
+      },
+      {
+        "x": 0.4906,
+        "y": 0.6969
+      },
+      {
+        "x": 0.4894,
+        "y": 0.6955
+      },
+      {
+        "x": 0.4881,
+        "y": 0.6942
+      },
+      {
+        "x": 0.4869,
+        "y": 0.6928
+      },
+      {
+        "x": 0.4831,
+        "y": 0.6915
+      },
+      {
+        "x": 0.3955,
+        "y": 0.6915
+      },
+      {
+        "x": 0.393,
+        "y": 0.6942
+      },
+      {
+        "x": 0.3917,
+        "y": 0.6955
+      },
+      {
+        "x": 0.3905,
+        "y": 0.7009
+      },
+      {
+        "x": 0.3705,
+        "y": 0.7876
+      },
+      {
+        "x": 0.368,
+        "y": 0.7903
+      },
+      {
+        "x": 0.3642,
+        "y": 0.7916
+      },
+      {
+        "x": 0.2778,
+        "y": 0.7916
+      },
+      {
+        "x": 0.2753,
+        "y": 0.7889
+      },
+      {
+        "x": 0.2741,
+        "y": 0.7876
+      },
+      {
+        "x": 0.2728,
+        "y": 0.7821
+      },
+      {
+        "x": 0.2728,
+        "y": 0.456
+      },
+      {
+        "x": 0.2741,
+        "y": 0.4547
+      },
+      {
+        "x": 0.2753,
+        "y": 0.4533
+      },
+      {
+        "x": 0.2766,
+        "y": 0.452
+      },
+      {
+        "x": 0.2804,
+        "y": 0.4506
+      },
+      {
+        "x": 0.3667,
+        "y": 0.4506
+      },
+      {
+        "x": 0.3705,
+        "y": 0.4547
+      },
+      {
+        "x": 0.3717,
+        "y": 0.4587
+      },
+      {
+        "x": 0.3917,
+        "y": 0.5453
+      },
+      {
+        "x": 0.3942,
+        "y": 0.548
+      },
+      {
+        "x": 0.3992,
+        "y": 0.5494
+      },
+      {
+        "x": 0.6045,
+        "y": 0.571
+      },
+      {
+        "x": 0.6058,
+        "y": 0.5724
+      },
+      {
+        "x": 0.607,
+        "y": 0.5737
+      },
+      {
+        "x": 0.6083,
+        "y": 0.5751
+      },
+      {
+        "x": 0.6095,
+        "y": 0.5792
+      },
+      {
+        "x": 0.6295,
+        "y": 0.6671
+      },
+      {
+        "x": 0.632,
+        "y": 0.6698
+      },
+      {
+        "x": 0.637,
+        "y": 0.6712
+      },
+      {
+        "x": 0.8561,
+        "y": 0.682
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 32,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1330319389,
+    "style_seed": 1845006700,
+    "augmentation_seed": 1151350893,
+    "sampler_seed": 1086757595,
+    "family": "braided",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 8,
+      "rows": 7,
+      "corridor": 26,
+      "loops": 12,
+      "endpoint_quantile": 0.847
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.946
+    },
+    "measures": {
+      "geodesic_length_px": 1221.28,
+      "normalized_length": 1.1207,
+      "turns": 13,
+      "route_branches": 7,
+      "difficulty_score": 2.904,
+      "tier": "medium"
+    },
+    "graph_hash": "f76811e040af3792a580bba2c1f03841438c9f3a8cf4d26f8b4719e0f902541a",
+    "mask_sha256": "b0657c5dd44cd577e9f523b62ad32548bbf97be24e199a51134ba28a47efa709",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 148.75,
+        "goal_marker_contrast": 129.6
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,233 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 72851401,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "desert-canyon",
+    "style_seed": 280300585,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "strata": [
+        [
+          81,
+          55,
+          38
+        ],
+        [
+          129,
+          94,
+          63
+        ],
+        [
+          138,
+          92,
+          57
+        ],
+        [
+          97,
+          57,
+          31
+        ]
+      ],
+      "band": [
+        9,
+        29
+      ],
+      "corridor_fill": [
+        238,
+        218,
+        184
+      ],
+      "corridor_extra": [
+        [
+          226,
+          206,
+          172
+        ]
+      ],
+      "outline_color": [
+        41,
+        31,
+        19
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8419,
+    "y": 0.1876
+  },
+  "goal": {
+    "x": 0.6218,
+    "y": 0.839
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 5,
+    "optimal_length_px": 1112.07,
+    "optimal_length_px_geometric": 934.73,
+    "corner_cut_headroom_px": 177.34,
+    "min_clearance_px": 8.54,
+    "optimal_path": [
+      {
+        "x": 0.8423,
+        "y": 0.1881
+      },
+      {
+        "x": 0.7284,
+        "y": 0.1786
+      },
+      {
+        "x": 0.7171,
+        "y": 0.1664
+      },
+      {
+        "x": 0.7121,
+        "y": 0.1651
+      },
+      {
+        "x": 0.6671,
+        "y": 0.1651
+      },
+      {
+        "x": 0.6295,
+        "y": 0.2057
+      },
+      {
+        "x": 0.6283,
+        "y": 0.2111
+      },
+      {
+        "x": 0.6133,
+        "y": 0.4411
+      },
+      {
+        "x": 0.582,
+        "y": 0.475
+      },
+      {
+        "x": 0.577,
+        "y": 0.4763
+      },
+      {
+        "x": 0.4881,
+        "y": 0.4844
+      },
+      {
+        "x": 0.428,
+        "y": 0.5061
+      },
+      {
+        "x": 0.3955,
+        "y": 0.5413
+      },
+      {
+        "x": 0.3942,
+        "y": 0.5453
+      },
+      {
+        "x": 0.3942,
+        "y": 0.7916
+      },
+      {
+        "x": 0.398,
+        "y": 0.7957
+      },
+      {
+        "x": 0.4593,
+        "y": 0.8322
+      },
+      {
+        "x": 0.4643,
+        "y": 0.8336
+      },
+      {
+        "x": 0.622,
+        "y": 0.839
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 111,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 72851401,
+    "style_seed": 280300585,
+    "augmentation_seed": 1138783307,
+    "sampler_seed": 488391359,
+    "family": "rooms",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 18,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.821
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 1.019
+    },
+    "measures": {
+      "geodesic_length_px": 934.73,
+      "normalized_length": 0.8577,
+      "turns": 7,
+      "route_branches": 4,
+      "difficulty_score": 1.8411,
+      "tier": "medium"
+    },
+    "graph_hash": "dd47cdd6c14d8e9c3ead007284ddea89d97d54d715730ba98bfd6b439e234364",
+    "mask_sha256": "afdffecfeded8320426280c2f7681eab80bb2f139440d824ae303a12ea809a71",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 73.13,
+        "goal_marker_contrast": 69.97
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2117802086,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "notebook",
+    "style_seed": 1604238412,
+    "marker": {
+      "radius": 14,
+      "halo": 3
+    },
+    "params": {
+      "paper": [
+        243,
+        236,
+        218
+      ],
+      "rule": [
+        148,
+        177,
+        224
+      ],
+      "rule_spacing": 28,
+      "margin": [
+        228,
+        144,
+        140
+      ],
+      "corridor_fill": [
+        250,
+        249,
+        247
+      ],
+      "outline_color": [
+        74,
+        50,
+        24
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.1972,
+    "y": 0.8641
+  },
+  "goal": {
+    "x": 0.8022,
+    "y": 0.5142
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 4,
+    "optimal_length_px": 878.09,
+    "optimal_length_px_geometric": 760.7,
+    "corner_cut_headroom_px": 117.38,
+    "min_clearance_px": 12.21,
+    "optimal_path": [
+      {
+        "x": 0.1971,
+        "y": 0.8639
+      },
+      {
+        "x": 0.5287,
+        "y": 0.8524
+      },
+      {
+        "x": 0.5391,
+        "y": 0.8395
+      },
+      {
+        "x": 0.5422,
+        "y": 0.8383
+      },
+      {
+        "x": 0.5819,
+        "y": 0.8151
+      },
+      {
+        "x": 0.5829,
+        "y": 0.8139
+      },
+      {
+        "x": 0.5839,
+        "y": 0.8126
+      },
+      {
+        "x": 0.6027,
+        "y": 0.7754
+      },
+      {
+        "x": 0.6038,
+        "y": 0.7715
+      },
+      {
+        "x": 0.6215,
+        "y": 0.5687
+      },
+      {
+        "x": 0.6465,
+        "y": 0.5379
+      },
+      {
+        "x": 0.6507,
+        "y": 0.5366
+      },
+      {
+        "x": 0.7122,
+        "y": 0.5237
+      },
+      {
+        "x": 0.8019,
+        "y": 0.5148
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 271,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2117802086,
+    "style_seed": 1604238412,
+    "augmentation_seed": 1977307256,
+    "sampler_seed": 1350320135,
+    "family": "rooms",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 22,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.467
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 1.112
+    },
+    "measures": {
+      "geodesic_length_px": 760.7,
+      "normalized_length": 0.615,
+      "turns": 3,
+      "route_branches": 2,
+      "difficulty_score": 1.065,
+      "tier": "easy"
+    },
+    "graph_hash": "e4b767afea4f5717b81d8ac516a4d7466e570c8bae24433184f5e59741f3169b",
+    "mask_sha256": "1207a7fc49236e6740c5b5d8c00846be7ecd9ee0467c7d58e6e665dbc49d6362",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 106.18,
+        "goal_marker_contrast": 111.24
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

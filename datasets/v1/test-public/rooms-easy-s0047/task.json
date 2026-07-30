@@ -1,0 +1,184 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2065904935,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "notebook",
+    "style_seed": 183381635,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "paper": [
+        241,
+        238,
+        227
+      ],
+      "rule": [
+        152,
+        188,
+        201
+      ],
+      "rule_spacing": 28,
+      "margin": [
+        201,
+        136,
+        144
+      ],
+      "corridor_fill": [
+        252,
+        251,
+        244
+      ],
+      "outline_color": [
+        33,
+        54,
+        60
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.2679,
+    "y": 0.1351
+  },
+  "goal": {
+    "x": 0.4773,
+    "y": 0.6461
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 3,
+    "optimal_length_px": 603.61,
+    "optimal_length_px_geometric": 545.64,
+    "corner_cut_headroom_px": 57.97,
+    "min_clearance_px": 8.06,
+    "optimal_path": [
+      {
+        "x": 0.2681,
+        "y": 0.1345
+      },
+      {
+        "x": 0.2614,
+        "y": 0.2303
+      },
+      {
+        "x": 0.2581,
+        "y": 0.2346
+      },
+      {
+        "x": 0.2425,
+        "y": 0.2532
+      },
+      {
+        "x": 0.2414,
+        "y": 0.2546
+      },
+      {
+        "x": 0.2403,
+        "y": 0.2604
+      },
+      {
+        "x": 0.2403,
+        "y": 0.5765
+      },
+      {
+        "x": 0.2792,
+        "y": 0.6266
+      },
+      {
+        "x": 0.2825,
+        "y": 0.628
+      },
+      {
+        "x": 0.4761,
+        "y": 0.6452
+      },
+      {
+        "x": 0.4772,
+        "y": 0.6466
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 47,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2065904935,
+    "style_seed": 183381635,
+    "augmentation_seed": 1420619054,
+    "sampler_seed": 1159257147,
+    "family": "rooms",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 22,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.519
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.952
+    },
+    "measures": {
+      "geodesic_length_px": 545.64,
+      "normalized_length": 0.4786,
+      "turns": 4,
+      "route_branches": 2,
+      "difficulty_score": 1.0119,
+      "tier": "easy"
+    },
+    "graph_hash": "9837276150adad3a394026b51681a522911bf2f079b65b8b8e528c8c1f363eb9",
+    "mask_sha256": "274399044a362a7b07837bd3a0d886f01cd2f3d5faa818d4ba089f4b6f00b10b",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 106.84,
+        "goal_marker_contrast": 117.95
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

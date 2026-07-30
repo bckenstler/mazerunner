@@ -1,0 +1,479 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 824445870,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "parchment-chart",
+    "style_seed": 1989589071,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        20,
+        19,
+        34
+      ],
+      "star": [
+        235,
+        232,
+        244
+      ],
+      "star_faint": [
+        64,
+        62,
+        98
+      ],
+      "corridor_fill": [
+        235,
+        216,
+        189
+      ],
+      "corridor_noise": [
+        223,
+        204,
+        177
+      ],
+      "corridor_extra": [
+        [
+          223,
+          204,
+          177
+        ]
+      ],
+      "outline_color": [
+        31,
+        44,
+        66
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.6591,
+    "y": 0.2979
+  },
+  "goal": {
+    "x": 0.3483,
+    "y": 0.4606
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 20,
+    "optimal_length_px": 1724.8,
+    "optimal_length_px_geometric": 1445.25,
+    "corner_cut_headroom_px": 279.55,
+    "min_clearance_px": 12.53,
+    "optimal_path": [
+      {
+        "x": 0.6596,
+        "y": 0.2976
+      },
+      {
+        "x": 0.6151,
+        "y": 0.269
+      },
+      {
+        "x": 0.6007,
+        "y": 0.2575
+      },
+      {
+        "x": 0.5806,
+        "y": 0.2461
+      },
+      {
+        "x": 0.5784,
+        "y": 0.2475
+      },
+      {
+        "x": 0.5773,
+        "y": 0.2489
+      },
+      {
+        "x": 0.5762,
+        "y": 0.2504
+      },
+      {
+        "x": 0.5751,
+        "y": 0.2546
+      },
+      {
+        "x": 0.5918,
+        "y": 0.3519
+      },
+      {
+        "x": 0.6073,
+        "y": 0.372
+      },
+      {
+        "x": 0.6185,
+        "y": 0.3891
+      },
+      {
+        "x": 0.6207,
+        "y": 0.3934
+      },
+      {
+        "x": 0.6229,
+        "y": 0.4006
+      },
+      {
+        "x": 0.5918,
+        "y": 0.4406
+      },
+      {
+        "x": 0.5907,
+        "y": 0.4449
+      },
+      {
+        "x": 0.6018,
+        "y": 0.5007
+      },
+      {
+        "x": 0.6396,
+        "y": 0.5494
+      },
+      {
+        "x": 0.6407,
+        "y": 0.5551
+      },
+      {
+        "x": 0.624,
+        "y": 0.6481
+      },
+      {
+        "x": 0.6307,
+        "y": 0.6567
+      },
+      {
+        "x": 0.6541,
+        "y": 0.681
+      },
+      {
+        "x": 0.6574,
+        "y": 0.6824
+      },
+      {
+        "x": 0.6596,
+        "y": 0.681
+      },
+      {
+        "x": 0.6607,
+        "y": 0.6795
+      },
+      {
+        "x": 0.6618,
+        "y": 0.6781
+      },
+      {
+        "x": 0.663,
+        "y": 0.6767
+      },
+      {
+        "x": 0.6641,
+        "y": 0.6753
+      },
+      {
+        "x": 0.6652,
+        "y": 0.6738
+      },
+      {
+        "x": 0.6707,
+        "y": 0.6652
+      },
+      {
+        "x": 0.6741,
+        "y": 0.6581
+      },
+      {
+        "x": 0.683,
+        "y": 0.6423
+      },
+      {
+        "x": 0.6874,
+        "y": 0.6309
+      },
+      {
+        "x": 0.6941,
+        "y": 0.6152
+      },
+      {
+        "x": 0.6974,
+        "y": 0.6052
+      },
+      {
+        "x": 0.7041,
+        "y": 0.5794
+      },
+      {
+        "x": 0.7075,
+        "y": 0.5665
+      },
+      {
+        "x": 0.7108,
+        "y": 0.5408
+      },
+      {
+        "x": 0.733,
+        "y": 0.4549
+      },
+      {
+        "x": 0.7341,
+        "y": 0.4535
+      },
+      {
+        "x": 0.7353,
+        "y": 0.4521
+      },
+      {
+        "x": 0.7386,
+        "y": 0.4506
+      },
+      {
+        "x": 0.7709,
+        "y": 0.4349
+      },
+      {
+        "x": 0.772,
+        "y": 0.4335
+      },
+      {
+        "x": 0.7731,
+        "y": 0.432
+      },
+      {
+        "x": 0.7742,
+        "y": 0.4263
+      },
+      {
+        "x": 0.762,
+        "y": 0.3276
+      },
+      {
+        "x": 0.6908,
+        "y": 0.2361
+      },
+      {
+        "x": 0.6752,
+        "y": 0.2189
+      },
+      {
+        "x": 0.6574,
+        "y": 0.2017
+      },
+      {
+        "x": 0.6541,
+        "y": 0.1989
+      },
+      {
+        "x": 0.6507,
+        "y": 0.196
+      },
+      {
+        "x": 0.6329,
+        "y": 0.1831
+      },
+      {
+        "x": 0.624,
+        "y": 0.1774
+      },
+      {
+        "x": 0.6073,
+        "y": 0.1674
+      },
+      {
+        "x": 0.6007,
+        "y": 0.1645
+      },
+      {
+        "x": 0.5962,
+        "y": 0.1617
+      },
+      {
+        "x": 0.5895,
+        "y": 0.1588
+      },
+      {
+        "x": 0.5617,
+        "y": 0.1488
+      },
+      {
+        "x": 0.5362,
+        "y": 0.1431
+      },
+      {
+        "x": 0.5083,
+        "y": 0.1402
+      },
+      {
+        "x": 0.3849,
+        "y": 0.1431
+      },
+      {
+        "x": 0.307,
+        "y": 0.2418
+      },
+      {
+        "x": 0.3059,
+        "y": 0.2432
+      },
+      {
+        "x": 0.3048,
+        "y": 0.2446
+      },
+      {
+        "x": 0.3037,
+        "y": 0.2461
+      },
+      {
+        "x": 0.3026,
+        "y": 0.2475
+      },
+      {
+        "x": 0.3014,
+        "y": 0.2489
+      },
+      {
+        "x": 0.3003,
+        "y": 0.2504
+      },
+      {
+        "x": 0.2992,
+        "y": 0.2518
+      },
+      {
+        "x": 0.2981,
+        "y": 0.2532
+      },
+      {
+        "x": 0.2759,
+        "y": 0.2861
+      },
+      {
+        "x": 0.2603,
+        "y": 0.3162
+      },
+      {
+        "x": 0.257,
+        "y": 0.3247
+      },
+      {
+        "x": 0.2536,
+        "y": 0.3319
+      },
+      {
+        "x": 0.2414,
+        "y": 0.3648
+      },
+      {
+        "x": 0.238,
+        "y": 0.3777
+      },
+      {
+        "x": 0.2369,
+        "y": 0.382
+      },
+      {
+        "x": 0.238,
+        "y": 0.3848
+      },
+      {
+        "x": 0.2392,
+        "y": 0.3863
+      },
+      {
+        "x": 0.2403,
+        "y": 0.3877
+      },
+      {
+        "x": 0.2414,
+        "y": 0.3891
+      },
+      {
+        "x": 0.3482,
+        "y": 0.4607
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 189,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 824445870,
+    "style_seed": 1989589071,
+    "augmentation_seed": 24262077,
+    "sampler_seed": 1808139737,
+    "family": "radial",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 4,
+      "corridor": 24,
+      "endpoint_quantile": 0.61
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 6.82,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.1
+    },
+    "measures": {
+      "geodesic_length_px": 1445.25,
+      "normalized_length": 1.2676,
+      "turns": 13,
+      "route_branches": 4,
+      "difficulty_score": 2.7509,
+      "tier": "medium"
+    },
+    "graph_hash": "c99758d2e11d812a2ff5d6a7173d3d959245d460f168328c6617f5883564582f",
+    "mask_sha256": "7b62c5362be09238199530b42fbbaf7c6e38a30ced81dfd29b2e42476e0eb68c",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 133.92,
+        "goal_marker_contrast": 37.78
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

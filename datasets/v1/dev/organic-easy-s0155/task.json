@@ -1,0 +1,292 @@
+{
+  "id": "organic",
+  "type": "Organic",
+  "style": "Enchanted forest",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1373140817,
+  "generator": "Curved graph embedding",
+  "style_record": {
+    "archetype": "hedge-garden",
+    "style_seed": 1634815686,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "grass": [
+        74,
+        143,
+        88
+      ],
+      "hedge": [
+        [
+          30,
+          67,
+          32
+        ],
+        [
+          28,
+          70,
+          32
+        ],
+        [
+          19,
+          46,
+          26
+        ]
+      ],
+      "corridor_fill": [
+        216,
+        204,
+        190
+      ],
+      "corridor_extra": [
+        [
+          204,
+          192,
+          178
+        ]
+      ],
+      "outline_color": [
+        12,
+        28,
+        14
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7605,
+    "y": 0.911
+  },
+  "goal": {
+    "x": 0.2259,
+    "y": 0.5856
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 4,
+    "optimal_length_px": 819.2,
+    "optimal_length_px_geometric": 728.03,
+    "corner_cut_headroom_px": 91.17,
+    "min_clearance_px": 15.0,
+    "optimal_path": [
+      {
+        "x": 0.7602,
+        "y": 0.9114
+      },
+      {
+        "x": 0.5099,
+        "y": 0.9037
+      },
+      {
+        "x": 0.5089,
+        "y": 0.9024
+      },
+      {
+        "x": 0.5078,
+        "y": 0.9012
+      },
+      {
+        "x": 0.5016,
+        "y": 0.896
+      },
+      {
+        "x": 0.4901,
+        "y": 0.887
+      },
+      {
+        "x": 0.4599,
+        "y": 0.8626
+      },
+      {
+        "x": 0.4505,
+        "y": 0.8562
+      },
+      {
+        "x": 0.4411,
+        "y": 0.8498
+      },
+      {
+        "x": 0.4296,
+        "y": 0.8421
+      },
+      {
+        "x": 0.4181,
+        "y": 0.8344
+      },
+      {
+        "x": 0.4098,
+        "y": 0.8293
+      },
+      {
+        "x": 0.3712,
+        "y": 0.8074
+      },
+      {
+        "x": 0.3462,
+        "y": 0.7946
+      },
+      {
+        "x": 0.3316,
+        "y": 0.7882
+      },
+      {
+        "x": 0.3285,
+        "y": 0.7869
+      },
+      {
+        "x": 0.3107,
+        "y": 0.7805
+      },
+      {
+        "x": 0.17,
+        "y": 0.7394
+      },
+      {
+        "x": 0.1689,
+        "y": 0.7381
+      },
+      {
+        "x": 0.1679,
+        "y": 0.7368
+      },
+      {
+        "x": 0.1668,
+        "y": 0.7317
+      },
+      {
+        "x": 0.2263,
+        "y": 0.5854
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 155,
+    "attempt": 4,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1373140817,
+    "style_seed": 1634815686,
+    "augmentation_seed": 53179991,
+    "sampler_seed": 1629971723,
+    "family": "organic",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "nodes": 18,
+      "corridor": 24,
+      "min_dist": 118,
+      "loops": 1,
+      "endpoint_quantile": 0.509
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": 6.95,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 1.075
+    },
+    "measures": {
+      "geodesic_length_px": 728.03,
+      "normalized_length": 0.5886,
+      "turns": 4,
+      "route_branches": 0,
+      "difficulty_score": 0.9219,
+      "tier": "easy"
+    },
+    "graph_hash": "69081dbb4c8c91e5c5c92f7bc3c4e97e4eaf85c96360b3b840548efc2b779716",
+    "mask_sha256": "7e7896b7d4c1380fc128e699625fbdcc8e3885e69870f5630805873c74ed56ae",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 90.2,
+        "goal_marker_contrast": 84.73
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 940137975,
+          "style_seed": 1055407092,
+          "augmentation_seed": 1604554598,
+          "sampler_seed": 584566850
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 64143418,
+          "style_seed": 2066471372,
+          "augmentation_seed": 64720894,
+          "sampler_seed": 1659413821
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1576657134,
+          "style_seed": 935670869,
+          "augmentation_seed": 1468257218,
+          "sampler_seed": 1952761878
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 67684459,
+          "style_seed": 1100502629,
+          "augmentation_seed": 1858607692,
+          "sampler_seed": 761933630
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "python": "3.13.3",
+  "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+  "packages": {
+    "numpy": "2.5.1",
+    "pillow": "12.3.0",
+    "scipy": "1.18.0"
+  },
+  "tasks": [
+    {
+      "id": "rectilinear",
+      "type": "Rectilinear",
+      "style": "Notebook ink",
+      "seed": 11,
+      "nodes": 56,
+      "edges": 55,
+      "optimal_length_steps": 37,
+      "optimal_length_px": 3614.29,
+      "mask_sha256": "e219cffce28d7a114101d81c95cd9f6581d598b7af7d95b2219a15338f08464a",
+      "input_sha256": "e7055967cfe5e0f0397b8b29f4832324109cb2097e5acf5b3d0929ad8bc53f44"
+    },
+    {
+      "id": "braided",
+      "type": "Braided",
+      "style": "Dungeon stone",
+      "seed": 23,
+      "nodes": 56,
+      "edges": 67,
+      "optimal_length_steps": 14,
+      "optimal_length_px": 1348.57,
+      "mask_sha256": "65ad082c60799a9d7ad92554d22591947df391f3055a61ce47de0b15dc06685f",
+      "input_sha256": "2a397b58592d4f8ec32b59dd4f5447f072fbf1641b4cad871b8592685b3fb833"
+    },
+    {
+      "id": "rooms",
+      "type": "Rooms and corridors",
+      "style": "Architect's plan",
+      "seed": 7,
+      "nodes": 12,
+      "edges": 12,
+      "optimal_length_steps": 8,
+      "optimal_length_px": 1714.5,
+      "mask_sha256": "5a50afdca286081a094bb24c2e2f09462b3f9a97daeb11395e62b74901783bf9",
+      "input_sha256": "5338ccd6aca09bfbff73b75b09fd3d05a267a3c46939ccb96e26e011dfdaa72a"
+    },
+    {
+      "id": "organic",
+      "type": "Organic",
+      "style": "Enchanted forest",
+      "seed": 5,
+      "nodes": 30,
+      "edges": 30,
+      "optimal_length_steps": 20,
+      "optimal_length_px": 2639.82,
+      "mask_sha256": "19e37a13ecbde3829131af642d5d571026bcc9e9e1346288a9216f764b1d78d7",
+      "input_sha256": "4c1667ca250e3b46f193343775a6dbce38121b691ecf696b6414b26506b434fd"
+    },
+    {
+      "id": "cave",
+      "type": "Cave",
+      "style": "Bioluminescent cavern",
+      "seed": 45,
+      "nodes": 311,
+      "edges": 526,
+      "optimal_length_steps": 59,
+      "optimal_length_px": 1180.0,
+      "mask_sha256": "ce5a2af89ddfb5207cb9a137f79e40706e6f1fdfa959d335e0188d3162e8b8a2",
+      "input_sha256": "66e693843f32fbf2e17e946f1589c3c023e3f03a274d146f0f42f49d6a391931"
+    },
+    {
+      "id": "radial",
+      "type": "Radial",
+      "style": "Astronomer's chart",
+      "seed": 17,
+      "nodes": 65,
+      "edges": 65,
+      "optimal_length_steps": 30,
+      "optimal_length_px": 2504.08,
+      "mask_sha256": "4f33a668ebd9b74b6f7ff942643c2633c3e00317813c7f80d59c4b37232f886b",
+      "input_sha256": "23cfec95823413a27badea803eb3bfdc2b77ab1d8b5cc5c3c68b7a01931b7bb6"
+    },
+    {
+      "id": "island",
+      "type": "Island path",
+      "style": "Watercolor archipelago",
+      "seed": 29,
+      "nodes": 16,
+      "edges": 17,
+      "optimal_length_steps": 7,
+      "optimal_length_px": 1115.47,
+      "mask_sha256": "2bfa6707993572c97058e1322df5c32f45e589b116af1acd6a9c6fcc3fede028",
+      "input_sha256": "4c61fb67fbc19f0e179fa6eb834f17363cf8eefe678fb2a229460935d859dd82"
+    },
+    {
+      "id": "pipes",
+      "type": "Pipes",
+      "style": "Neon factory",
+      "seed": 3,
+      "nodes": 30,
+      "edges": 33,
+      "optimal_length_steps": 10,
+      "optimal_length_px": 1282.0,
+      "mask_sha256": "37a8ffcab0f623d9f8ffde72f87b1a8184fec8f00436aad3a0061f942d259272",
+      "input_sha256": "d937032a9cdb296611d4ff147260b180ae21004f76a084e823cfe7086eaab71c"
+    }
+  ]
+}

@@ -1,0 +1,293 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1027860512,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "candy-pastel",
+    "style_seed": 161422157,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        218,
+        201,
+        163
+      ],
+      "stripe_spacing": 22,
+      "corridor_fill": [
+        234,
+        252,
+        245
+      ],
+      "sprinkles": [
+        [
+          203,
+          42,
+          52
+        ],
+        [
+          220,
+          169,
+          67
+        ],
+        [
+          36,
+          152,
+          191
+        ],
+        [
+          184,
+          52,
+          206
+        ]
+      ],
+      "outline_color": [
+        71,
+        45,
+        27
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.4426,
+    "y": 0.722
+  },
+  "goal": {
+    "x": 0.5943,
+    "y": 0.7113
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 9,
+    "optimal_length_px": 785.63,
+    "optimal_length_px_geometric": 635.48,
+    "corner_cut_headroom_px": 150.15,
+    "min_clearance_px": 16.12,
+    "optimal_path": [
+      {
+        "x": 0.4425,
+        "y": 0.7222
+      },
+      {
+        "x": 0.4601,
+        "y": 0.6433
+      },
+      {
+        "x": 0.4208,
+        "y": 0.5845
+      },
+      {
+        "x": 0.4533,
+        "y": 0.5131
+      },
+      {
+        "x": 0.456,
+        "y": 0.4743
+      },
+      {
+        "x": 0.4384,
+        "y": 0.403
+      },
+      {
+        "x": 0.4425,
+        "y": 0.3992
+      },
+      {
+        "x": 0.4479,
+        "y": 0.3967
+      },
+      {
+        "x": 0.4533,
+        "y": 0.3942
+      },
+      {
+        "x": 0.4614,
+        "y": 0.3917
+      },
+      {
+        "x": 0.4668,
+        "y": 0.3905
+      },
+      {
+        "x": 0.479,
+        "y": 0.388
+      },
+      {
+        "x": 0.4858,
+        "y": 0.3867
+      },
+      {
+        "x": 0.5521,
+        "y": 0.388
+      },
+      {
+        "x": 0.5927,
+        "y": 0.4255
+      },
+      {
+        "x": 0.6008,
+        "y": 0.4343
+      },
+      {
+        "x": 0.6049,
+        "y": 0.4406
+      },
+      {
+        "x": 0.6089,
+        "y": 0.4468
+      },
+      {
+        "x": 0.6184,
+        "y": 0.4668
+      },
+      {
+        "x": 0.6225,
+        "y": 0.4869
+      },
+      {
+        "x": 0.6238,
+        "y": 0.5106
+      },
+      {
+        "x": 0.6076,
+        "y": 0.6133
+      },
+      {
+        "x": 0.594,
+        "y": 0.7109
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 173,
+    "attempt": 4,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1027860512,
+    "style_seed": 161422157,
+    "augmentation_seed": 871577954,
+    "sampler_seed": 1905532676,
+    "family": "radial",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 3,
+      "corridor": 26,
+      "endpoint_quantile": 0.468
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 1.52,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 0.997
+    },
+    "measures": {
+      "geodesic_length_px": 635.48,
+      "normalized_length": 0.5831,
+      "turns": 4,
+      "route_branches": 2,
+      "difficulty_score": 1.1165,
+      "tier": "easy"
+    },
+    "graph_hash": "74c417d80979a7d41293aa796d92f5f22d07cfc53f1a55b90e9df2493c5cb8a3",
+    "mask_sha256": "9eb1fea5f4be0c2735c5cec8d29f75c19c0154df7b77673c49908f2e3009408d",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00521,
+        "start_marker_contrast": 57.88,
+        "goal_marker_contrast": 64.68
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 183160582,
+          "style_seed": 922027168,
+          "augmentation_seed": 291053742,
+          "sampler_seed": 190048884
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 130398930,
+          "style_seed": 866540862,
+          "augmentation_seed": 923459192,
+          "sampler_seed": 1428265675
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 820405770,
+          "style_seed": 526725611,
+          "augmentation_seed": 795922759,
+          "sampler_seed": 1423895897
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1677772157,
+          "style_seed": 760009918,
+          "augmentation_seed": 767901814,
+          "sampler_seed": 578657805
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,308 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 280291562,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "parchment-chart",
+    "style_seed": 1707510042,
+    "marker": {
+      "radius": 12,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        16,
+        15,
+        35
+      ],
+      "star": [
+        235,
+        232,
+        244
+      ],
+      "star_faint": [
+        88,
+        92,
+        121
+      ],
+      "corridor_fill": [
+        230,
+        217,
+        180
+      ],
+      "corridor_noise": [
+        218,
+        205,
+        168
+      ],
+      "corridor_extra": [
+        [
+          218,
+          205,
+          168
+        ]
+      ],
+      "outline_color": [
+        87,
+        54,
+        37
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.3625,
+    "y": 0.4759
+  },
+  "goal": {
+    "x": 0.3143,
+    "y": 0.3517
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 10,
+    "optimal_length_px": 972.64,
+    "optimal_length_px_geometric": 728.97,
+    "corner_cut_headroom_px": 243.67,
+    "min_clearance_px": 16.49,
+    "optimal_path": [
+      {
+        "x": 0.3627,
+        "y": 0.4756
+      },
+      {
+        "x": 0.4479,
+        "y": 0.4731
+      },
+      {
+        "x": 0.4493,
+        "y": 0.4718
+      },
+      {
+        "x": 0.4506,
+        "y": 0.4706
+      },
+      {
+        "x": 0.452,
+        "y": 0.4693
+      },
+      {
+        "x": 0.4533,
+        "y": 0.4656
+      },
+      {
+        "x": 0.4506,
+        "y": 0.3992
+      },
+      {
+        "x": 0.456,
+        "y": 0.3942
+      },
+      {
+        "x": 0.4682,
+        "y": 0.3905
+      },
+      {
+        "x": 0.4804,
+        "y": 0.388
+      },
+      {
+        "x": 0.4966,
+        "y": 0.3867
+      },
+      {
+        "x": 0.6062,
+        "y": 0.3905
+      },
+      {
+        "x": 0.6198,
+        "y": 0.403
+      },
+      {
+        "x": 0.6238,
+        "y": 0.4043
+      },
+      {
+        "x": 0.6631,
+        "y": 0.3917
+      },
+      {
+        "x": 0.6793,
+        "y": 0.3767
+      },
+      {
+        "x": 0.6806,
+        "y": 0.373
+      },
+      {
+        "x": 0.6238,
+        "y": 0.2841
+      },
+      {
+        "x": 0.6211,
+        "y": 0.2816
+      },
+      {
+        "x": 0.6198,
+        "y": 0.2766
+      },
+      {
+        "x": 0.6049,
+        "y": 0.2103
+      },
+      {
+        "x": 0.6022,
+        "y": 0.2078
+      },
+      {
+        "x": 0.6008,
+        "y": 0.2065
+      },
+      {
+        "x": 0.5927,
+        "y": 0.204
+      },
+      {
+        "x": 0.5629,
+        "y": 0.1965
+      },
+      {
+        "x": 0.5453,
+        "y": 0.194
+      },
+      {
+        "x": 0.5101,
+        "y": 0.1915
+      },
+      {
+        "x": 0.4723,
+        "y": 0.1915
+      },
+      {
+        "x": 0.4668,
+        "y": 0.1965
+      },
+      {
+        "x": 0.4249,
+        "y": 0.2641
+      },
+      {
+        "x": 0.4235,
+        "y": 0.2653
+      },
+      {
+        "x": 0.4222,
+        "y": 0.2666
+      },
+      {
+        "x": 0.3139,
+        "y": 0.3517
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 29,
+    "attempt": 2,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 280291562,
+    "style_seed": 1707510042,
+    "augmentation_seed": 1902660045,
+    "sampler_seed": 592837952,
+    "family": "radial",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 3,
+      "corridor": 26,
+      "endpoint_quantile": 0.487
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": -7.03,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.025
+    },
+    "measures": {
+      "geodesic_length_px": 728.97,
+      "normalized_length": 0.6689,
+      "turns": 8,
+      "route_branches": 2,
+      "difficulty_score": 1.5356,
+      "tier": "easy"
+    },
+    "graph_hash": "e7951223f862f7ebbfb01bd388e8e618ee73cc39abf8e7ffe2a85c31526acf63",
+    "mask_sha256": "a494a61bd3d570acadccdc4d7ac2e26c8c335d3b6a0c453615c78d606624f331",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 66.05,
+        "goal_marker_contrast": 66.22
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 592709060,
+          "style_seed": 198742878,
+          "augmentation_seed": 602745776,
+          "sampler_seed": 1641719271
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1004256174,
+          "style_seed": 1253756932,
+          "augmentation_seed": 1739351723,
+          "sampler_seed": 1213704583
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

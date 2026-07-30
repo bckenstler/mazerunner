@@ -1,0 +1,471 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 489165181,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "forest-path",
+    "style_seed": 1931199365,
+    "marker": {
+      "radius": 12,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        27,
+        42,
+        18
+      ],
+      "foliage": [
+        [
+          32,
+          65,
+          26
+        ],
+        [
+          24,
+          35,
+          20
+        ],
+        [
+          55,
+          79,
+          41
+        ],
+        [
+          69,
+          93,
+          55
+        ]
+      ],
+      "foliage_count": 2171,
+      "corridor_fill": [
+        219,
+        192,
+        168
+      ],
+      "corridor_noise": [
+        203,
+        176,
+        152
+      ],
+      "corridor_light": [
+        233,
+        206,
+        182
+      ],
+      "corridor_extra": [
+        [
+          203,
+          176,
+          152
+        ],
+        [
+          233,
+          206,
+          182
+        ]
+      ],
+      "outline_color": [
+        65,
+        88,
+        48
+      ],
+      "outline_px": 4
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7412,
+    "y": 0.4517
+  },
+  "goal": {
+    "x": 0.5387,
+    "y": 0.8102
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 25,
+    "optimal_length_px": 1635.92,
+    "optimal_length_px_geometric": 1399.69,
+    "corner_cut_headroom_px": 236.24,
+    "min_clearance_px": 8.06,
+    "optimal_path": [
+      {
+        "x": 0.7408,
+        "y": 0.4521
+      },
+      {
+        "x": 0.683,
+        "y": 0.4678
+      },
+      {
+        "x": 0.5929,
+        "y": 0.5036
+      },
+      {
+        "x": 0.5795,
+        "y": 0.5207
+      },
+      {
+        "x": 0.5484,
+        "y": 0.5622
+      },
+      {
+        "x": 0.5439,
+        "y": 0.5637
+      },
+      {
+        "x": 0.5095,
+        "y": 0.5308
+      },
+      {
+        "x": 0.4716,
+        "y": 0.5021
+      },
+      {
+        "x": 0.4372,
+        "y": 0.4807
+      },
+      {
+        "x": 0.436,
+        "y": 0.4793
+      },
+      {
+        "x": 0.4349,
+        "y": 0.4778
+      },
+      {
+        "x": 0.4338,
+        "y": 0.4721
+      },
+      {
+        "x": 0.4483,
+        "y": 0.4177
+      },
+      {
+        "x": 0.4405,
+        "y": 0.3519
+      },
+      {
+        "x": 0.406,
+        "y": 0.3076
+      },
+      {
+        "x": 0.3915,
+        "y": 0.2861
+      },
+      {
+        "x": 0.3893,
+        "y": 0.279
+      },
+      {
+        "x": 0.3793,
+        "y": 0.2375
+      },
+      {
+        "x": 0.3782,
+        "y": 0.2303
+      },
+      {
+        "x": 0.3704,
+        "y": 0.1702
+      },
+      {
+        "x": 0.3671,
+        "y": 0.166
+      },
+      {
+        "x": 0.3637,
+        "y": 0.1645
+      },
+      {
+        "x": 0.317,
+        "y": 0.2003
+      },
+      {
+        "x": 0.287,
+        "y": 0.2389
+      },
+      {
+        "x": 0.2781,
+        "y": 0.2518
+      },
+      {
+        "x": 0.2725,
+        "y": 0.2604
+      },
+      {
+        "x": 0.2647,
+        "y": 0.2732
+      },
+      {
+        "x": 0.257,
+        "y": 0.2876
+      },
+      {
+        "x": 0.2503,
+        "y": 0.3004
+      },
+      {
+        "x": 0.2469,
+        "y": 0.3076
+      },
+      {
+        "x": 0.2458,
+        "y": 0.3119
+      },
+      {
+        "x": 0.2469,
+        "y": 0.3147
+      },
+      {
+        "x": 0.2492,
+        "y": 0.3176
+      },
+      {
+        "x": 0.2525,
+        "y": 0.319
+      },
+      {
+        "x": 0.2814,
+        "y": 0.3305
+      },
+      {
+        "x": 0.2836,
+        "y": 0.3333
+      },
+      {
+        "x": 0.2848,
+        "y": 0.3391
+      },
+      {
+        "x": 0.2581,
+        "y": 0.4177
+      },
+      {
+        "x": 0.2536,
+        "y": 0.4235
+      },
+      {
+        "x": 0.2113,
+        "y": 0.4621
+      },
+      {
+        "x": 0.2102,
+        "y": 0.4635
+      },
+      {
+        "x": 0.2091,
+        "y": 0.4649
+      },
+      {
+        "x": 0.208,
+        "y": 0.4664
+      },
+      {
+        "x": 0.2069,
+        "y": 0.4721
+      },
+      {
+        "x": 0.2058,
+        "y": 0.4878
+      },
+      {
+        "x": 0.2069,
+        "y": 0.5651
+      },
+      {
+        "x": 0.2125,
+        "y": 0.5722
+      },
+      {
+        "x": 0.2136,
+        "y": 0.5737
+      },
+      {
+        "x": 0.2147,
+        "y": 0.5751
+      },
+      {
+        "x": 0.218,
+        "y": 0.5765
+      },
+      {
+        "x": 0.2647,
+        "y": 0.5551
+      },
+      {
+        "x": 0.2714,
+        "y": 0.5508
+      },
+      {
+        "x": 0.2814,
+        "y": 0.5479
+      },
+      {
+        "x": 0.2859,
+        "y": 0.5451
+      },
+      {
+        "x": 0.3014,
+        "y": 0.5379
+      },
+      {
+        "x": 0.3159,
+        "y": 0.5322
+      },
+      {
+        "x": 0.3604,
+        "y": 0.5279
+      },
+      {
+        "x": 0.3626,
+        "y": 0.5308
+      },
+      {
+        "x": 0.3637,
+        "y": 0.5322
+      },
+      {
+        "x": 0.3648,
+        "y": 0.5336
+      },
+      {
+        "x": 0.3671,
+        "y": 0.5408
+      },
+      {
+        "x": 0.3904,
+        "y": 0.6066
+      },
+      {
+        "x": 0.3893,
+        "y": 0.6109
+      },
+      {
+        "x": 0.3626,
+        "y": 0.6452
+      },
+      {
+        "x": 0.3615,
+        "y": 0.6495
+      },
+      {
+        "x": 0.3771,
+        "y": 0.6738
+      },
+      {
+        "x": 0.4194,
+        "y": 0.7282
+      },
+      {
+        "x": 0.4249,
+        "y": 0.7511
+      },
+      {
+        "x": 0.4472,
+        "y": 0.7954
+      },
+      {
+        "x": 0.4494,
+        "y": 0.7983
+      },
+      {
+        "x": 0.4527,
+        "y": 0.7997
+      },
+      {
+        "x": 0.4739,
+        "y": 0.804
+      },
+      {
+        "x": 0.4883,
+        "y": 0.8054
+      },
+      {
+        "x": 0.5384,
+        "y": 0.8097
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 45,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 489165181,
+    "style_seed": 1931199365,
+    "augmentation_seed": 1512735181,
+    "sampler_seed": 2105691842,
+    "family": "radial",
+    "tier_target": "hard",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 5,
+      "corridor": 22,
+      "loops": 2,
+      "endpoint_quantile": 0.917
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 7.39,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.99
+    },
+    "measures": {
+      "geodesic_length_px": 1399.69,
+      "normalized_length": 1.2276,
+      "turns": 16,
+      "route_branches": 6,
+      "difficulty_score": 3.1609,
+      "tier": "hard"
+    },
+    "graph_hash": "124d96dbd92feb2f16ee719f8324dc4271227ad7095c33d21dd1d878bd9a581f",
+    "mask_sha256": "e9be3872a54584cb875423b642217217afa658f4ffdafb7a5dfc8d44880c06f7",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 153.08,
+        "goal_marker_contrast": 133.14
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

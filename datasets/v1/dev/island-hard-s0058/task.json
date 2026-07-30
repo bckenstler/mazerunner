@@ -1,0 +1,495 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 991424620,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "dungeon-pebble",
+    "style_seed": 1922358229,
+    "marker": {
+      "radius": 12,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        32,
+        31,
+        30
+      ],
+      "corridor_fill": [
+        58,
+        56,
+        53
+      ],
+      "corridor_noise": [
+        50,
+        48,
+        45
+      ],
+      "corridor_extra": [
+        [
+          50,
+          48,
+          45
+        ]
+      ],
+      "pebble_shades": [
+        [
+          145,
+          138,
+          124
+        ],
+        [
+          135,
+          127,
+          118
+        ],
+        [
+          125,
+          122,
+          117
+        ],
+        [
+          137,
+          134,
+          127
+        ]
+      ],
+      "pebble_outline": [
+        16,
+        16,
+        14
+      ],
+      "outline_color": [
+        17,
+        17,
+        16
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.2057,
+    "y": 0.6295
+  },
+  "goal": {
+    "x": 0.1797,
+    "y": 0.1218
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 14,
+    "optimal_length_px": 1796.76,
+    "optimal_length_px_geometric": 1572.18,
+    "corner_cut_headroom_px": 224.59,
+    "min_clearance_px": 7.07,
+    "optimal_path": [
+      {
+        "x": 0.2053,
+        "y": 0.6292
+      },
+      {
+        "x": 0.1652,
+        "y": 0.7402
+      },
+      {
+        "x": 0.1615,
+        "y": 0.7497
+      },
+      {
+        "x": 0.1589,
+        "y": 0.7551
+      },
+      {
+        "x": 0.1627,
+        "y": 0.7673
+      },
+      {
+        "x": 0.1727,
+        "y": 0.7835
+      },
+      {
+        "x": 0.174,
+        "y": 0.7848
+      },
+      {
+        "x": 0.1752,
+        "y": 0.7862
+      },
+      {
+        "x": 0.1802,
+        "y": 0.7876
+      },
+      {
+        "x": 0.184,
+        "y": 0.7889
+      },
+      {
+        "x": 0.2416,
+        "y": 0.7943
+      },
+      {
+        "x": 0.4168,
+        "y": 0.8512
+      },
+      {
+        "x": 0.418,
+        "y": 0.8525
+      },
+      {
+        "x": 0.4243,
+        "y": 0.8552
+      },
+      {
+        "x": 0.5081,
+        "y": 0.8417
+      },
+      {
+        "x": 0.5094,
+        "y": 0.8403
+      },
+      {
+        "x": 0.5394,
+        "y": 0.8133
+      },
+      {
+        "x": 0.5444,
+        "y": 0.8119
+      },
+      {
+        "x": 0.6083,
+        "y": 0.8078
+      },
+      {
+        "x": 0.6946,
+        "y": 0.8539
+      },
+      {
+        "x": 0.7247,
+        "y": 0.8471
+      },
+      {
+        "x": 0.7309,
+        "y": 0.8403
+      },
+      {
+        "x": 0.7322,
+        "y": 0.839
+      },
+      {
+        "x": 0.7334,
+        "y": 0.8376
+      },
+      {
+        "x": 0.7472,
+        "y": 0.7943
+      },
+      {
+        "x": 0.7534,
+        "y": 0.774
+      },
+      {
+        "x": 0.821,
+        "y": 0.6089
+      },
+      {
+        "x": 0.8348,
+        "y": 0.5805
+      },
+      {
+        "x": 0.8385,
+        "y": 0.5697
+      },
+      {
+        "x": 0.8248,
+        "y": 0.5345
+      },
+      {
+        "x": 0.821,
+        "y": 0.5304
+      },
+      {
+        "x": 0.8135,
+        "y": 0.5264
+      },
+      {
+        "x": 0.7372,
+        "y": 0.4817
+      },
+      {
+        "x": 0.7121,
+        "y": 0.4547
+      },
+      {
+        "x": 0.6984,
+        "y": 0.433
+      },
+      {
+        "x": 0.6946,
+        "y": 0.4263
+      },
+      {
+        "x": 0.6884,
+        "y": 0.4168
+      },
+      {
+        "x": 0.592,
+        "y": 0.2422
+      },
+      {
+        "x": 0.5895,
+        "y": 0.2395
+      },
+      {
+        "x": 0.5845,
+        "y": 0.2382
+      },
+      {
+        "x": 0.562,
+        "y": 0.2368
+      },
+      {
+        "x": 0.5569,
+        "y": 0.2422
+      },
+      {
+        "x": 0.5019,
+        "y": 0.3085
+      },
+      {
+        "x": 0.5006,
+        "y": 0.3099
+      },
+      {
+        "x": 0.4994,
+        "y": 0.3112
+      },
+      {
+        "x": 0.4981,
+        "y": 0.3126
+      },
+      {
+        "x": 0.4969,
+        "y": 0.3139
+      },
+      {
+        "x": 0.4931,
+        "y": 0.3153
+      },
+      {
+        "x": 0.4693,
+        "y": 0.3166
+      },
+      {
+        "x": 0.4681,
+        "y": 0.3153
+      },
+      {
+        "x": 0.4668,
+        "y": 0.3139
+      },
+      {
+        "x": 0.4656,
+        "y": 0.3126
+      },
+      {
+        "x": 0.4018,
+        "y": 0.2355
+      },
+      {
+        "x": 0.4005,
+        "y": 0.2341
+      },
+      {
+        "x": 0.3992,
+        "y": 0.2327
+      },
+      {
+        "x": 0.398,
+        "y": 0.2314
+      },
+      {
+        "x": 0.393,
+        "y": 0.23
+      },
+      {
+        "x": 0.3454,
+        "y": 0.2152
+      },
+      {
+        "x": 0.2916,
+        "y": 0.2273
+      },
+      {
+        "x": 0.2854,
+        "y": 0.2314
+      },
+      {
+        "x": 0.2703,
+        "y": 0.2382
+      },
+      {
+        "x": 0.2403,
+        "y": 0.2327
+      },
+      {
+        "x": 0.2278,
+        "y": 0.2192
+      },
+      {
+        "x": 0.2215,
+        "y": 0.207
+      },
+      {
+        "x": 0.1965,
+        "y": 0.1502
+      },
+      {
+        "x": 0.1802,
+        "y": 0.1218
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 58,
+    "attempt": 5,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 991424620,
+    "style_seed": 1922358229,
+    "augmentation_seed": 940875476,
+    "sampler_seed": 146182430,
+    "family": "island",
+    "tier_target": "hard",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "islands": 20,
+      "corridor": 14,
+      "min_dist": 108,
+      "extra_edges": 3,
+      "endpoint_quantile": 0.986
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 6.44,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 1.104
+    },
+    "measures": {
+      "geodesic_length_px": 1572.18,
+      "normalized_length": 1.4427,
+      "turns": 13,
+      "route_branches": 5,
+      "difficulty_score": 3.026,
+      "tier": "hard"
+    },
+    "graph_hash": "fb4e41fd4c65cf109ca5c4b2bcc2cd407a847040224cf94327eb4b35ee2717cf",
+    "mask_sha256": "a521db00e017ed4f678206e12d7130c4711e4e7e92ca745d447fc09c89fd58b3",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 165.78,
+        "goal_marker_contrast": 164.79
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1366848788,
+          "style_seed": 1835740769,
+          "augmentation_seed": 2015784077,
+          "sampler_seed": 809873926
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1694967838,
+          "style_seed": 1151619516,
+          "augmentation_seed": 1597403344,
+          "sampler_seed": 41066100
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "validation",
+        "detail": "island: corridor 13-17 passes -4.6px from node 4's open pad (need 11.6)",
+        "seeds": {
+          "topo_seed": 560751368,
+          "style_seed": 2128189478,
+          "augmentation_seed": 950993513,
+          "sampler_seed": 2040055150
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "validation",
+        "detail": "island: corridor 5-14 passes -3.7px from node 19's open pad (need 11.7)",
+        "seeds": {
+          "topo_seed": 1285281396,
+          "style_seed": 1700860933,
+          "augmentation_seed": 2061010002,
+          "sampler_seed": 911593463
+        }
+      },
+      {
+        "attempt": 4,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 322855301,
+          "style_seed": 668080895,
+          "augmentation_seed": 1111845793,
+          "sampler_seed": 25714700
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

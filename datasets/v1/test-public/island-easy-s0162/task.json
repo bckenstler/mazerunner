@@ -1,0 +1,199 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 950003274,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "hedge-garden",
+    "style_seed": 987356007,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "grass": [
+        62,
+        131,
+        72
+      ],
+      "hedge": [
+        [
+          23,
+          60,
+          26
+        ],
+        [
+          20,
+          78,
+          23
+        ],
+        [
+          14,
+          47,
+          19
+        ]
+      ],
+      "corridor_fill": [
+        219,
+        209,
+        187
+      ],
+      "corridor_extra": [
+        [
+          207,
+          197,
+          175
+        ]
+      ],
+      "outline_color": [
+        14,
+        30,
+        13
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.3025,
+    "y": 0.8757
+  },
+  "goal": {
+    "x": 0.7178,
+    "y": 0.7599
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 3,
+    "optimal_length_px": 552.18,
+    "optimal_length_px_geometric": 508.79,
+    "corner_cut_headroom_px": 43.4,
+    "min_clearance_px": 7.62,
+    "optimal_path": [
+      {
+        "x": 0.3026,
+        "y": 0.8755
+      },
+      {
+        "x": 0.4883,
+        "y": 0.8212
+      },
+      {
+        "x": 0.5184,
+        "y": 0.7825
+      },
+      {
+        "x": 0.5217,
+        "y": 0.774
+      },
+      {
+        "x": 0.5395,
+        "y": 0.711
+      },
+      {
+        "x": 0.5528,
+        "y": 0.6609
+      },
+      {
+        "x": 0.5762,
+        "y": 0.6166
+      },
+      {
+        "x": 0.5773,
+        "y": 0.6152
+      },
+      {
+        "x": 0.5784,
+        "y": 0.6137
+      },
+      {
+        "x": 0.5962,
+        "y": 0.608
+      },
+      {
+        "x": 0.7175,
+        "y": 0.7597
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 162,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 950003274,
+    "style_seed": 987356007,
+    "augmentation_seed": 626474735,
+    "sampler_seed": 356535728,
+    "family": "island",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "islands": 11,
+      "corridor": 18,
+      "min_dist": 150,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.473
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": -1.86,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.002
+    },
+    "measures": {
+      "geodesic_length_px": 508.79,
+      "normalized_length": 0.4462,
+      "turns": 3,
+      "route_branches": 1,
+      "difficulty_score": 0.7962,
+      "tier": "easy"
+    },
+    "graph_hash": "a0242452f45fce09db34b51e447f9e4d30a3593826fe804f85c111bc69a2754a",
+    "mask_sha256": "41147f4cf619963b5334a07d4a7f85922080008055459505ddcb45f43562d9f4",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 62.73,
+        "goal_marker_contrast": 67.52
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

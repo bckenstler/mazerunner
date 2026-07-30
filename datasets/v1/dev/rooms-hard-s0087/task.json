@@ -1,0 +1,564 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 703292752,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "neon-pipes",
+    "style_seed": 914139094,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        13,
+        11,
+        22
+      ],
+      "grid_spacing": 42,
+      "corridor_fill": [
+        52,
+        56,
+        66
+      ],
+      "pipe_bodies": [
+        [
+          200,
+          46,
+          217
+        ],
+        [
+          60,
+          201,
+          186
+        ],
+        [
+          62,
+          121,
+          203
+        ],
+        [
+          80,
+          78,
+          204
+        ]
+      ],
+      "pipe_cores": [
+        [
+          235,
+          160,
+          236
+        ],
+        [
+          167,
+          252,
+          249
+        ],
+        [
+          157,
+          190,
+          239
+        ],
+        [
+          170,
+          166,
+          241
+        ]
+      ],
+      "joint": [
+        228,
+        231,
+        240
+      ],
+      "corridor_extra_from": [
+        "pipe_bodies",
+        "pipe_cores"
+      ],
+      "outline_color": [
+        40,
+        218,
+        82
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8,
+    "y": 0.8197
+  },
+  "goal": {
+    "x": 0.189,
+    "y": 0.1492
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 11,
+    "optimal_length_px": 2226.36,
+    "optimal_length_px_geometric": 2022.95,
+    "corner_cut_headroom_px": 203.41,
+    "min_clearance_px": 6.32,
+    "optimal_path": [
+      {
+        "x": 0.7998,
+        "y": 0.8197
+      },
+      {
+        "x": 0.5017,
+        "y": 0.8283
+      },
+      {
+        "x": 0.4983,
+        "y": 0.8326
+      },
+      {
+        "x": 0.4894,
+        "y": 0.8512
+      },
+      {
+        "x": 0.4883,
+        "y": 0.8526
+      },
+      {
+        "x": 0.4872,
+        "y": 0.8541
+      },
+      {
+        "x": 0.4828,
+        "y": 0.8555
+      },
+      {
+        "x": 0.3092,
+        "y": 0.8555
+      },
+      {
+        "x": 0.3059,
+        "y": 0.8512
+      },
+      {
+        "x": 0.3048,
+        "y": 0.8455
+      },
+      {
+        "x": 0.297,
+        "y": 0.8255
+      },
+      {
+        "x": 0.2948,
+        "y": 0.8226
+      },
+      {
+        "x": 0.2903,
+        "y": 0.8212
+      },
+      {
+        "x": 0.2291,
+        "y": 0.8069
+      },
+      {
+        "x": 0.2013,
+        "y": 0.7711
+      },
+      {
+        "x": 0.2002,
+        "y": 0.7654
+      },
+      {
+        "x": 0.2002,
+        "y": 0.5451
+      },
+      {
+        "x": 0.2369,
+        "y": 0.4979
+      },
+      {
+        "x": 0.2403,
+        "y": 0.4964
+      },
+      {
+        "x": 0.2981,
+        "y": 0.4964
+      },
+      {
+        "x": 0.2992,
+        "y": 0.4979
+      },
+      {
+        "x": 0.3003,
+        "y": 0.4993
+      },
+      {
+        "x": 0.3014,
+        "y": 0.5007
+      },
+      {
+        "x": 0.3048,
+        "y": 0.5021
+      },
+      {
+        "x": 0.4905,
+        "y": 0.5021
+      },
+      {
+        "x": 0.495,
+        "y": 0.4964
+      },
+      {
+        "x": 0.4994,
+        "y": 0.495
+      },
+      {
+        "x": 0.6885,
+        "y": 0.4864
+      },
+      {
+        "x": 0.6897,
+        "y": 0.485
+      },
+      {
+        "x": 0.6908,
+        "y": 0.4835
+      },
+      {
+        "x": 0.6919,
+        "y": 0.4821
+      },
+      {
+        "x": 0.7008,
+        "y": 0.4607
+      },
+      {
+        "x": 0.703,
+        "y": 0.4578
+      },
+      {
+        "x": 0.7063,
+        "y": 0.4564
+      },
+      {
+        "x": 0.7642,
+        "y": 0.4464
+      },
+      {
+        "x": 0.8076,
+        "y": 0.3906
+      },
+      {
+        "x": 0.8087,
+        "y": 0.3863
+      },
+      {
+        "x": 0.8087,
+        "y": 0.2132
+      },
+      {
+        "x": 0.7697,
+        "y": 0.1631
+      },
+      {
+        "x": 0.7664,
+        "y": 0.1617
+      },
+      {
+        "x": 0.6941,
+        "y": 0.1516
+      },
+      {
+        "x": 0.6852,
+        "y": 0.1402
+      },
+      {
+        "x": 0.6819,
+        "y": 0.1388
+      },
+      {
+        "x": 0.4705,
+        "y": 0.1388
+      },
+      {
+        "x": 0.4672,
+        "y": 0.1431
+      },
+      {
+        "x": 0.4638,
+        "y": 0.1445
+      },
+      {
+        "x": 0.1891,
+        "y": 0.1488
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 87,
+    "attempt": 226,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 703292752,
+    "style_seed": 914139094,
+    "augmentation_seed": 2059512033,
+    "sampler_seed": 193259356,
+    "family": "rooms",
+    "tier_target": "hard",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 16,
+      "extra_edges": 0,
+      "endpoint_quantile": 0.995
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.904
+    },
+    "measures": {
+      "geodesic_length_px": 2022.95,
+      "normalized_length": 1.7742,
+      "turns": 16,
+      "route_branches": 0,
+      "difficulty_score": 3.1076,
+      "tier": "hard"
+    },
+    "graph_hash": "a5f5da4861cd9671550b49f887a41698c5e2c54f4392fa286d1afd989940a0d9",
+    "mask_sha256": "8ed9f179fee9dabed775999630e410b7b3f78fbda82b97318cd5e47b11578327",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 114.1,
+        "goal_marker_contrast": 118.41
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 210,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 533095526,
+          "style_seed": 889609836,
+          "augmentation_seed": 316774500,
+          "sampler_seed": 1376801093
+        }
+      },
+      {
+        "attempt": 211,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 348617596,
+          "style_seed": 1779424674,
+          "augmentation_seed": 1571883925,
+          "sampler_seed": 498450353
+        }
+      },
+      {
+        "attempt": 212,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1646879785,
+          "style_seed": 904460935,
+          "augmentation_seed": 1826324157,
+          "sampler_seed": 1023200209
+        }
+      },
+      {
+        "attempt": 213,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 2058230336,
+          "style_seed": 526200522,
+          "augmentation_seed": 1392888629,
+          "sampler_seed": 215200987
+        }
+      },
+      {
+        "attempt": 214,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 213156884,
+          "style_seed": 1062579092,
+          "augmentation_seed": 1703044204,
+          "sampler_seed": 2062472665
+        }
+      },
+      {
+        "attempt": 215,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 862365773,
+          "style_seed": 910258908,
+          "augmentation_seed": 952632156,
+          "sampler_seed": 36431839
+        }
+      },
+      {
+        "attempt": 216,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1928096803,
+          "style_seed": 1288492874,
+          "augmentation_seed": 995771859,
+          "sampler_seed": 152220890
+        }
+      },
+      {
+        "attempt": 217,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 19339501,
+          "style_seed": 1493051378,
+          "augmentation_seed": 14937220,
+          "sampler_seed": 125027588
+        }
+      },
+      {
+        "attempt": 218,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1577315521,
+          "style_seed": 937260894,
+          "augmentation_seed": 559802912,
+          "sampler_seed": 124520753
+        }
+      },
+      {
+        "attempt": 219,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1604330200,
+          "style_seed": 1889717643,
+          "augmentation_seed": 1207722898,
+          "sampler_seed": 425991251
+        }
+      },
+      {
+        "attempt": 220,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 208947442,
+          "style_seed": 444590583,
+          "augmentation_seed": 2040044275,
+          "sampler_seed": 478581269
+        }
+      },
+      {
+        "attempt": 221,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 646811591,
+          "style_seed": 832482554,
+          "augmentation_seed": 1655672544,
+          "sampler_seed": 1044073892
+        }
+      },
+      {
+        "attempt": 222,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1947050845,
+          "style_seed": 194822234,
+          "augmentation_seed": 552325590,
+          "sampler_seed": 735251406
+        }
+      },
+      {
+        "attempt": 223,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1952072150,
+          "style_seed": 1514442129,
+          "augmentation_seed": 1304431546,
+          "sampler_seed": 1716833071
+        }
+      },
+      {
+        "attempt": 224,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 1798365217,
+          "style_seed": 911459716,
+          "augmentation_seed": 1244224597,
+          "sampler_seed": 1421519638
+        }
+      },
+      {
+        "attempt": 225,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 710827671,
+          "style_seed": 947523465,
+          "augmentation_seed": 1651035340,
+          "sampler_seed": 1754257227
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

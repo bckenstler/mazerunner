@@ -1,0 +1,187 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1541373051,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "pencil-sketch",
+    "style_seed": 1675514689,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "paper": [
+        248,
+        245,
+        240
+      ],
+      "corridor_fill": [
+        248,
+        245,
+        240
+      ],
+      "hatch": [
+        140,
+        142,
+        146
+      ],
+      "hatch_spacing": 8,
+      "outline_color": [
+        70,
+        73,
+        76
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8648,
+    "y": 0.2028
+  },
+  "goal": {
+    "x": 0.1279,
+    "y": 0.4768
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 4,
+    "optimal_length_px": 809.55,
+    "optimal_length_px_geometric": 716.48,
+    "corner_cut_headroom_px": 93.07,
+    "min_clearance_px": 8.54,
+    "optimal_path": [
+      {
+        "x": 0.8647,
+        "y": 0.2028
+      },
+      {
+        "x": 0.7497,
+        "y": 0.194
+      },
+      {
+        "x": 0.7361,
+        "y": 0.1815
+      },
+      {
+        "x": 0.7307,
+        "y": 0.1802
+      },
+      {
+        "x": 0.4465,
+        "y": 0.1802
+      },
+      {
+        "x": 0.3938,
+        "y": 0.229
+      },
+      {
+        "x": 0.3924,
+        "y": 0.234
+      },
+      {
+        "x": 0.3789,
+        "y": 0.418
+      },
+      {
+        "x": 0.3748,
+        "y": 0.4218
+      },
+      {
+        "x": 0.3221,
+        "y": 0.4568
+      },
+      {
+        "x": 0.3166,
+        "y": 0.4581
+      },
+      {
+        "x": 0.2409,
+        "y": 0.4693
+      },
+      {
+        "x": 0.1286,
+        "y": 0.4768
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 39,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1541373051,
+    "style_seed": 1675514689,
+    "augmentation_seed": 904690442,
+    "sampler_seed": 391640097,
+    "family": "rooms",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 22,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.59
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 0.904
+    },
+    "measures": {
+      "geodesic_length_px": 716.48,
+      "normalized_length": 0.6575,
+      "turns": 5,
+      "route_branches": 1,
+      "difficulty_score": 1.1741,
+      "tier": "easy"
+    },
+    "graph_hash": "7cc1a06e7a61ac2e85fa2f6ba32e0aa572424a18430903ad2103aa69b8f51191",
+    "mask_sha256": "8725f8567c0dac47814a81940b414c6af60beb77bce604f51626e9bb9c5a5aa2",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 97.61,
+        "goal_marker_contrast": 103.7
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

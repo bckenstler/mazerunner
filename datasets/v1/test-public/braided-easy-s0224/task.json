@@ -1,0 +1,187 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 906295730,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "candy-pastel",
+    "style_seed": 1939337299,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        225,
+        178,
+        197
+      ],
+      "stripe_spacing": 19,
+      "corridor_fill": [
+        236,
+        252,
+        243
+      ],
+      "sprinkles": [
+        [
+          225,
+          47,
+          53
+        ],
+        [
+          232,
+          193,
+          88
+        ],
+        [
+          43,
+          166,
+          206
+        ],
+        [
+          181,
+          88,
+          223
+        ]
+      ],
+      "outline_color": [
+        97,
+        55,
+        29
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.0835,
+    "y": 0.3252
+  },
+  "goal": {
+    "x": 0.9179,
+    "y": 0.1498
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 5,
+    "optimal_length_px": 756.75,
+    "optimal_length_px_geometric": 731.99,
+    "corner_cut_headroom_px": 24.76,
+    "min_clearance_px": 15.26,
+    "optimal_path": [
+      {
+        "x": 0.0839,
+        "y": 0.3254
+      },
+      {
+        "x": 0.0988,
+        "y": 0.169
+      },
+      {
+        "x": 0.1028,
+        "y": 0.1652
+      },
+      {
+        "x": 0.1069,
+        "y": 0.164
+      },
+      {
+        "x": 0.9175,
+        "y": 0.1502
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 224,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 906295730,
+    "style_seed": 1939337299,
+    "augmentation_seed": 1791321414,
+    "sampler_seed": 1111120545,
+    "family": "braided",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 5,
+      "rows": 5,
+      "corridor": 30,
+      "loops": 5,
+      "endpoint_quantile": 0.498
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.12
+    },
+    "measures": {
+      "geodesic_length_px": 731.99,
+      "normalized_length": 0.6717,
+      "turns": 1,
+      "route_branches": 3,
+      "difficulty_score": 1.055,
+      "tier": "easy"
+    },
+    "graph_hash": "db8f75ba6d4cfbd4fdbc047e70d5ff4cbdbe7c3297bffdd9d11a70d68e9b690c",
+    "mask_sha256": "d69a7ae9d6e46b961c3dba8b54ca8a0fa8dc2ca9004966fecacab9b0414a49a3",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00451,
+        "start_marker_contrast": 50.46,
+        "goal_marker_contrast": 65.84
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1075424091,
+          "style_seed": 1665269028,
+          "augmentation_seed": 702162493,
+          "sampler_seed": 239902811
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

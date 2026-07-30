@@ -1,0 +1,821 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2025680785,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "desert-canyon",
+    "style_seed": 247805698,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "strata": [
+        [
+          99,
+          73,
+          52
+        ],
+        [
+          124,
+          91,
+          55
+        ],
+        [
+          145,
+          104,
+          66
+        ],
+        [
+          111,
+          69,
+          37
+        ]
+      ],
+      "band": [
+        10,
+        21
+      ],
+      "corridor_fill": [
+        237,
+        222,
+        197
+      ],
+      "corridor_extra": [
+        [
+          225,
+          210,
+          185
+        ]
+      ],
+      "outline_color": [
+        56,
+        37,
+        22
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.6611,
+    "y": 0.0872
+  },
+  "goal": {
+    "x": 0.3604,
+    "y": 0.4738
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 42,
+    "optimal_length_px": 810.77,
+    "optimal_length_px_geometric": 641.31,
+    "corner_cut_headroom_px": 169.46,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.6607,
+        "y": 0.0873
+      },
+      {
+        "x": 0.5439,
+        "y": 0.5193
+      },
+      {
+        "x": 0.5228,
+        "y": 0.5465
+      },
+      {
+        "x": 0.4583,
+        "y": 0.6023
+      },
+      {
+        "x": 0.4538,
+        "y": 0.6037
+      },
+      {
+        "x": 0.3493,
+        "y": 0.6037
+      },
+      {
+        "x": 0.3459,
+        "y": 0.5994
+      },
+      {
+        "x": 0.3248,
+        "y": 0.5708
+      },
+      {
+        "x": 0.3237,
+        "y": 0.5665
+      },
+      {
+        "x": 0.3237,
+        "y": 0.485
+      },
+      {
+        "x": 0.327,
+        "y": 0.4807
+      },
+      {
+        "x": 0.3304,
+        "y": 0.4793
+      },
+      {
+        "x": 0.3604,
+        "y": 0.4735
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 17,
+    "attempt": 21,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2025680785,
+    "style_seed": 247805698,
+    "augmentation_seed": 1965018241,
+    "sampler_seed": 1040734534,
+    "family": "cave",
+    "tier_target": "hard",
+    "tier_relaxed": true,
+    "difficulty_overrides": {
+      "open_probability": 0.57,
+      "endpoint_quantile": 0.903
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 1,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.092
+    },
+    "measures": {
+      "geodesic_length_px": 641.31,
+      "normalized_length": 0.5625,
+      "turns": 2,
+      "route_branches": 37,
+      "difficulty_score": 2.2291,
+      "tier": "medium"
+    },
+    "graph_hash": "2afb3e5872d915d5858249200f1a24d9a4e8793c701c92da5cb5081e9a8eb213",
+    "mask_sha256": "c43d4df10566d2ea98ed190abd3b0afe34fedfe967af95922ac3e1f020174127",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 74.33,
+        "goal_marker_contrast": 65.34
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 187 cells is too small",
+        "seeds": {
+          "topo_seed": 2016972735,
+          "style_seed": 482931062,
+          "augmentation_seed": 226760717,
+          "sampler_seed": 1963273997
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 111 cells is too small",
+        "seeds": {
+          "topo_seed": 786580876,
+          "style_seed": 1017805382,
+          "augmentation_seed": 566089046,
+          "sampler_seed": 1342362449
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 131 cells is too small",
+        "seeds": {
+          "topo_seed": 612715423,
+          "style_seed": 410102730,
+          "augmentation_seed": 1995118439,
+          "sampler_seed": 986579506
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 92 cells is too small",
+        "seeds": {
+          "topo_seed": 447323038,
+          "style_seed": 765555567,
+          "augmentation_seed": 833633616,
+          "sampler_seed": 2043848586
+        }
+      },
+      {
+        "attempt": 4,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 42 cells is too small",
+        "seeds": {
+          "topo_seed": 939475482,
+          "style_seed": 1416624115,
+          "augmentation_seed": 1990150184,
+          "sampler_seed": 61426350
+        }
+      },
+      {
+        "attempt": 5,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 118 cells is too small",
+        "seeds": {
+          "topo_seed": 1960271291,
+          "style_seed": 1758790286,
+          "augmentation_seed": 1563809108,
+          "sampler_seed": 1946238776
+        }
+      },
+      {
+        "attempt": 6,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 85 cells is too small",
+        "seeds": {
+          "topo_seed": 368615664,
+          "style_seed": 825683716,
+          "augmentation_seed": 1865795462,
+          "sampler_seed": 569110320
+        }
+      },
+      {
+        "attempt": 7,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 42 cells is too small",
+        "seeds": {
+          "topo_seed": 1558862669,
+          "style_seed": 689227256,
+          "augmentation_seed": 1256841835,
+          "sampler_seed": 372431336
+        }
+      },
+      {
+        "attempt": 8,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 155 cells is too small",
+        "seeds": {
+          "topo_seed": 1306815942,
+          "style_seed": 299365974,
+          "augmentation_seed": 2048481182,
+          "sampler_seed": 157342455
+        }
+      },
+      {
+        "attempt": 9,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 155 cells is too small",
+        "seeds": {
+          "topo_seed": 758276121,
+          "style_seed": 154994529,
+          "augmentation_seed": 985727967,
+          "sampler_seed": 269497854
+        }
+      },
+      {
+        "attempt": 10,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 161 cells is too small",
+        "seeds": {
+          "topo_seed": 1585713734,
+          "style_seed": 2043032949,
+          "augmentation_seed": 1398584384,
+          "sampler_seed": 1900692614
+        }
+      },
+      {
+        "attempt": 11,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 78 cells is too small",
+        "seeds": {
+          "topo_seed": 2050633505,
+          "style_seed": 386207727,
+          "augmentation_seed": 867432298,
+          "sampler_seed": 1194123124
+        }
+      },
+      {
+        "attempt": 12,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 141 cells is too small",
+        "seeds": {
+          "topo_seed": 268241462,
+          "style_seed": 205259777,
+          "augmentation_seed": 572805808,
+          "sampler_seed": 2086849622
+        }
+      },
+      {
+        "attempt": 13,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 165 cells is too small",
+        "seeds": {
+          "topo_seed": 1399283066,
+          "style_seed": 1039907316,
+          "augmentation_seed": 919365066,
+          "sampler_seed": 1104771391
+        }
+      },
+      {
+        "attempt": 14,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 122 cells is too small",
+        "seeds": {
+          "topo_seed": 428083592,
+          "style_seed": 254454975,
+          "augmentation_seed": 755623386,
+          "sampler_seed": 673253594
+        }
+      },
+      {
+        "attempt": 15,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 191 cells is too small",
+        "seeds": {
+          "topo_seed": 1108188240,
+          "style_seed": 139157759,
+          "augmentation_seed": 1641045803,
+          "sampler_seed": 1511207097
+        }
+      },
+      {
+        "attempt": 16,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 91 cells is too small",
+        "seeds": {
+          "topo_seed": 1080476741,
+          "style_seed": 663834499,
+          "augmentation_seed": 1558153962,
+          "sampler_seed": 1915824445
+        }
+      },
+      {
+        "attempt": 17,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 158 cells is too small",
+        "seeds": {
+          "topo_seed": 1040311455,
+          "style_seed": 591102364,
+          "augmentation_seed": 1065577971,
+          "sampler_seed": 516960161
+        }
+      },
+      {
+        "attempt": 18,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 111 cells is too small",
+        "seeds": {
+          "topo_seed": 886047649,
+          "style_seed": 764833257,
+          "augmentation_seed": 1292994821,
+          "sampler_seed": 832651653
+        }
+      },
+      {
+        "attempt": 19,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 159 cells is too small",
+        "seeds": {
+          "topo_seed": 1718463477,
+          "style_seed": 1393766949,
+          "augmentation_seed": 173096236,
+          "sampler_seed": 354089911
+        }
+      },
+      {
+        "attempt": 20,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 152 cells is too small",
+        "seeds": {
+          "topo_seed": 596520626,
+          "style_seed": 817299506,
+          "augmentation_seed": 2068661799,
+          "sampler_seed": 537434483
+        }
+      },
+      {
+        "attempt": 21,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 2025680785,
+          "style_seed": 247805698,
+          "augmentation_seed": 1965018241,
+          "sampler_seed": 1040734534
+        }
+      },
+      {
+        "attempt": 22,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 231 cells is too small",
+        "seeds": {
+          "topo_seed": 1282474086,
+          "style_seed": 1500366165,
+          "augmentation_seed": 1336935865,
+          "sampler_seed": 980474234
+        }
+      },
+      {
+        "attempt": 23,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 92 cells is too small",
+        "seeds": {
+          "topo_seed": 682386151,
+          "style_seed": 247833343,
+          "augmentation_seed": 1192436826,
+          "sampler_seed": 810694291
+        }
+      },
+      {
+        "attempt": 24,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 847981197,
+          "style_seed": 356554121,
+          "augmentation_seed": 1641799624,
+          "sampler_seed": 1892243490
+        }
+      },
+      {
+        "attempt": 25,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 157 cells is too small",
+        "seeds": {
+          "topo_seed": 496359597,
+          "style_seed": 1345918283,
+          "augmentation_seed": 1947448944,
+          "sampler_seed": 154933127
+        }
+      },
+      {
+        "attempt": 26,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 59 cells is too small",
+        "seeds": {
+          "topo_seed": 390922688,
+          "style_seed": 752697638,
+          "augmentation_seed": 912567452,
+          "sampler_seed": 2090533467
+        }
+      },
+      {
+        "attempt": 27,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 153 cells is too small",
+        "seeds": {
+          "topo_seed": 1872447300,
+          "style_seed": 2033283767,
+          "augmentation_seed": 378614357,
+          "sampler_seed": 810955506
+        }
+      },
+      {
+        "attempt": 28,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 165 cells is too small",
+        "seeds": {
+          "topo_seed": 525453723,
+          "style_seed": 678547412,
+          "augmentation_seed": 1994688632,
+          "sampler_seed": 1826538889
+        }
+      },
+      {
+        "attempt": 29,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 74 cells is too small",
+        "seeds": {
+          "topo_seed": 478665146,
+          "style_seed": 1231127829,
+          "augmentation_seed": 2055415580,
+          "sampler_seed": 1938414790
+        }
+      },
+      {
+        "attempt": 0,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 187 cells is too small",
+        "seeds": {
+          "topo_seed": 2016972735,
+          "style_seed": 482931062,
+          "augmentation_seed": 226760717,
+          "sampler_seed": 1963273997
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 111 cells is too small",
+        "seeds": {
+          "topo_seed": 786580876,
+          "style_seed": 1017805382,
+          "augmentation_seed": 566089046,
+          "sampler_seed": 1342362449
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 131 cells is too small",
+        "seeds": {
+          "topo_seed": 612715423,
+          "style_seed": 410102730,
+          "augmentation_seed": 1995118439,
+          "sampler_seed": 986579506
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 92 cells is too small",
+        "seeds": {
+          "topo_seed": 447323038,
+          "style_seed": 765555567,
+          "augmentation_seed": 833633616,
+          "sampler_seed": 2043848586
+        }
+      },
+      {
+        "attempt": 4,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 42 cells is too small",
+        "seeds": {
+          "topo_seed": 939475482,
+          "style_seed": 1416624115,
+          "augmentation_seed": 1990150184,
+          "sampler_seed": 61426350
+        }
+      },
+      {
+        "attempt": 5,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 118 cells is too small",
+        "seeds": {
+          "topo_seed": 1960271291,
+          "style_seed": 1758790286,
+          "augmentation_seed": 1563809108,
+          "sampler_seed": 1946238776
+        }
+      },
+      {
+        "attempt": 6,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 85 cells is too small",
+        "seeds": {
+          "topo_seed": 368615664,
+          "style_seed": 825683716,
+          "augmentation_seed": 1865795462,
+          "sampler_seed": 569110320
+        }
+      },
+      {
+        "attempt": 7,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 42 cells is too small",
+        "seeds": {
+          "topo_seed": 1558862669,
+          "style_seed": 689227256,
+          "augmentation_seed": 1256841835,
+          "sampler_seed": 372431336
+        }
+      },
+      {
+        "attempt": 8,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 155 cells is too small",
+        "seeds": {
+          "topo_seed": 1306815942,
+          "style_seed": 299365974,
+          "augmentation_seed": 2048481182,
+          "sampler_seed": 157342455
+        }
+      },
+      {
+        "attempt": 9,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 155 cells is too small",
+        "seeds": {
+          "topo_seed": 758276121,
+          "style_seed": 154994529,
+          "augmentation_seed": 985727967,
+          "sampler_seed": 269497854
+        }
+      },
+      {
+        "attempt": 10,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 161 cells is too small",
+        "seeds": {
+          "topo_seed": 1585713734,
+          "style_seed": 2043032949,
+          "augmentation_seed": 1398584384,
+          "sampler_seed": 1900692614
+        }
+      },
+      {
+        "attempt": 11,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 78 cells is too small",
+        "seeds": {
+          "topo_seed": 2050633505,
+          "style_seed": 386207727,
+          "augmentation_seed": 867432298,
+          "sampler_seed": 1194123124
+        }
+      },
+      {
+        "attempt": 12,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 141 cells is too small",
+        "seeds": {
+          "topo_seed": 268241462,
+          "style_seed": 205259777,
+          "augmentation_seed": 572805808,
+          "sampler_seed": 2086849622
+        }
+      },
+      {
+        "attempt": 13,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 165 cells is too small",
+        "seeds": {
+          "topo_seed": 1399283066,
+          "style_seed": 1039907316,
+          "augmentation_seed": 919365066,
+          "sampler_seed": 1104771391
+        }
+      },
+      {
+        "attempt": 14,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 122 cells is too small",
+        "seeds": {
+          "topo_seed": 428083592,
+          "style_seed": 254454975,
+          "augmentation_seed": 755623386,
+          "sampler_seed": 673253594
+        }
+      },
+      {
+        "attempt": 15,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 191 cells is too small",
+        "seeds": {
+          "topo_seed": 1108188240,
+          "style_seed": 139157759,
+          "augmentation_seed": 1641045803,
+          "sampler_seed": 1511207097
+        }
+      },
+      {
+        "attempt": 16,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 91 cells is too small",
+        "seeds": {
+          "topo_seed": 1080476741,
+          "style_seed": 663834499,
+          "augmentation_seed": 1558153962,
+          "sampler_seed": 1915824445
+        }
+      },
+      {
+        "attempt": 17,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 158 cells is too small",
+        "seeds": {
+          "topo_seed": 1040311455,
+          "style_seed": 591102364,
+          "augmentation_seed": 1065577971,
+          "sampler_seed": 516960161
+        }
+      },
+      {
+        "attempt": 18,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 111 cells is too small",
+        "seeds": {
+          "topo_seed": 886047649,
+          "style_seed": 764833257,
+          "augmentation_seed": 1292994821,
+          "sampler_seed": 832651653
+        }
+      },
+      {
+        "attempt": 19,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 159 cells is too small",
+        "seeds": {
+          "topo_seed": 1718463477,
+          "style_seed": 1393766949,
+          "augmentation_seed": 173096236,
+          "sampler_seed": 354089911
+        }
+      },
+      {
+        "attempt": 20,
+        "relaxed": true,
+        "stage": "generation",
+        "detail": "cave: largest component 152 cells is too small",
+        "seeds": {
+          "topo_seed": 596520626,
+          "style_seed": 817299506,
+          "augmentation_seed": 2068661799,
+          "sampler_seed": 537434483
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

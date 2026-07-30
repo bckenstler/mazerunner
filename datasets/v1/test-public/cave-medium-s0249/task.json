@@ -1,0 +1,212 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 779828890,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "glow-cavern",
+    "style_seed": 1473319830,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        9,
+        13,
+        15
+      ],
+      "floor_a": [
+        112,
+        123,
+        110
+      ],
+      "floor_b": [
+        102,
+        113,
+        100
+      ],
+      "corridor_fill": [
+        112,
+        123,
+        110
+      ],
+      "corridor_extra": [
+        [
+          102,
+          113,
+          100
+        ]
+      ],
+      "sparkle": [
+        42,
+        163,
+        199
+      ],
+      "tile": 18,
+      "outline_color": [
+        31,
+        41,
+        36
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.294,
+    "y": 0.1794
+  },
+  "goal": {
+    "x": 0.5688,
+    "y": 0.7241
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 40,
+    "optimal_length_px": 731.85,
+    "optimal_length_px_geometric": 524.09,
+    "corner_cut_headroom_px": 207.76,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.2941,
+        "y": 0.18
+      },
+      {
+        "x": 0.2866,
+        "y": 0.1922
+      },
+      {
+        "x": 0.2854,
+        "y": 0.1935
+      },
+      {
+        "x": 0.2841,
+        "y": 0.1949
+      },
+      {
+        "x": 0.2578,
+        "y": 0.2111
+      },
+      {
+        "x": 0.2553,
+        "y": 0.2138
+      },
+      {
+        "x": 0.2541,
+        "y": 0.2179
+      },
+      {
+        "x": 0.2328,
+        "y": 0.2625
+      },
+      {
+        "x": 0.2315,
+        "y": 0.2666
+      },
+      {
+        "x": 0.2315,
+        "y": 0.2923
+      },
+      {
+        "x": 0.3041,
+        "y": 0.4384
+      },
+      {
+        "x": 0.5682,
+        "y": 0.724
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 249,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 779828890,
+    "style_seed": 1473319830,
+    "augmentation_seed": 943311573,
+    "sampler_seed": 1089958443,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.62,
+      "endpoint_quantile": 0.785
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 1,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.934
+    },
+    "measures": {
+      "geodesic_length_px": 524.09,
+      "normalized_length": 0.4809,
+      "turns": 0,
+      "route_branches": 37,
+      "difficulty_score": 1.9809,
+      "tier": "medium"
+    },
+    "graph_hash": "49ffd50ba01a7f4a4573834cf2781478bd2ebe10268b8cf1fd54a7f87b7bb8e2",
+    "mask_sha256": "161f4ef85dcc36ca145542c5dd5760333180c591b64a6092b20b06b65c932c0c",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00403,
+        "start_marker_contrast": 139.38,
+        "goal_marker_contrast": 96.53
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "cave: largest component 185 cells is too small",
+        "seeds": {
+          "topo_seed": 1059552988,
+          "style_seed": 187904329,
+          "augmentation_seed": 551319589,
+          "sampler_seed": 631901602
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

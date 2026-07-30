@@ -1,0 +1,255 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1145555762,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "treasure-map",
+    "style_seed": 252832669,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        182,
+        166,
+        131
+      ],
+      "stain": [
+        160,
+        144,
+        109
+      ],
+      "corridor_fill": [
+        235,
+        217,
+        200
+      ],
+      "corridor_extra": [
+        [
+          225,
+          207,
+          190
+        ]
+      ],
+      "route_dash": [
+        128,
+        62,
+        66
+      ],
+      "x_mark": [
+        126,
+        32,
+        32
+      ],
+      "outline_color": [
+        70,
+        52,
+        35
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.816,
+    "y": 0.1655
+  },
+  "goal": {
+    "x": 0.1956,
+    "y": 0.6117
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 6,
+    "optimal_length_px": 1195.04,
+    "optimal_length_px_geometric": 1003.56,
+    "corner_cut_headroom_px": 191.48,
+    "min_clearance_px": 8.54,
+    "optimal_path": [
+      {
+        "x": 0.816,
+        "y": 0.1651
+      },
+      {
+        "x": 0.806,
+        "y": 0.4953
+      },
+      {
+        "x": 0.7897,
+        "y": 0.5129
+      },
+      {
+        "x": 0.7885,
+        "y": 0.5183
+      },
+      {
+        "x": 0.7672,
+        "y": 0.594
+      },
+      {
+        "x": 0.7434,
+        "y": 0.6198
+      },
+      {
+        "x": 0.7397,
+        "y": 0.6211
+      },
+      {
+        "x": 0.5745,
+        "y": 0.6346
+      },
+      {
+        "x": 0.5294,
+        "y": 0.6834
+      },
+      {
+        "x": 0.5282,
+        "y": 0.6888
+      },
+      {
+        "x": 0.5106,
+        "y": 0.7415
+      },
+      {
+        "x": 0.5006,
+        "y": 0.7524
+      },
+      {
+        "x": 0.4994,
+        "y": 0.7564
+      },
+      {
+        "x": 0.4819,
+        "y": 0.8038
+      },
+      {
+        "x": 0.4443,
+        "y": 0.8444
+      },
+      {
+        "x": 0.4406,
+        "y": 0.8457
+      },
+      {
+        "x": 0.2866,
+        "y": 0.8457
+      },
+      {
+        "x": 0.2416,
+        "y": 0.797
+      },
+      {
+        "x": 0.2403,
+        "y": 0.7916
+      },
+      {
+        "x": 0.2265,
+        "y": 0.7388
+      },
+      {
+        "x": 0.2253,
+        "y": 0.7375
+      },
+      {
+        "x": 0.224,
+        "y": 0.7361
+      },
+      {
+        "x": 0.2053,
+        "y": 0.7199
+      },
+      {
+        "x": 0.2028,
+        "y": 0.7172
+      },
+      {
+        "x": 0.2015,
+        "y": 0.7131
+      },
+      {
+        "x": 0.1952,
+        "y": 0.6116
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 135,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1145555762,
+    "style_seed": 252832669,
+    "augmentation_seed": 725277460,
+    "sampler_seed": 188816543,
+    "family": "rooms",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 18,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.779
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 1,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 1.103
+    },
+    "measures": {
+      "geodesic_length_px": 1003.56,
+      "normalized_length": 0.9209,
+      "turns": 6,
+      "route_branches": 2,
+      "difficulty_score": 1.6209,
+      "tier": "medium"
+    },
+    "graph_hash": "a14283b0e8e84d9e00d95bd95e0cb4b38ba7f17e2e99d5f442c37a4ddea618d5",
+    "mask_sha256": "f59a8fc035d79baed7582cfc47a8c35a065186ab27801b4b9393ef4d5b36dc4b",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.02473,
+        "start_marker_contrast": 76.55,
+        "goal_marker_contrast": 84.91
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

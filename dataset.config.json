@@ -1,0 +1,54 @@
+{
+  "version": "v1",
+  "master_seed": 20260726,
+  "out_dir": "datasets/v1",
+  "tier_mix": {"easy": 0.3, "medium": 0.4, "hard": 0.3},
+  "public_forbidden_cells": [
+    ["rectilinear", "parchment-chart"],
+    ["braided", "notebook"],
+    ["organic", "neon-pipes"],
+    ["cave", "treasure-map"],
+    ["radial", "dungeon-pebble"],
+    ["island", "circuit-board"],
+    ["pipes", "watercolor-archipelago"],
+    ["rooms", "hedge-garden"]
+  ],
+  "splits": {
+    "dev": {
+      "size": 200,
+      "seed_base": 0,
+      "archetypes": [
+        "notebook", "dungeon-pebble", "blueprint-rooms", "forest-path",
+        "glow-cavern", "parchment-chart", "watercolor-archipelago", "neon-pipes",
+        "circuit-board", "hedge-garden", "treasure-map", "candy-pastel",
+        "pencil-sketch", "desert-canyon"
+      ]
+    },
+    "test-public": {
+      "size": 300,
+      "seed_base": 1000000,
+      "archetypes": [
+        "notebook", "dungeon-pebble", "blueprint-rooms", "forest-path",
+        "glow-cavern", "parchment-chart", "watercolor-archipelago", "neon-pipes",
+        "circuit-board", "hedge-garden", "treasure-map", "candy-pastel",
+        "pencil-sketch", "desert-canyon"
+      ]
+    },
+    "test-hidden": {
+      "size": 500,
+      "seed_base": 2000000,
+      "archetypes": [
+        "notebook", "dungeon-pebble", "blueprint-rooms", "forest-path",
+        "glow-cavern", "parchment-chart", "watercolor-archipelago", "neon-pipes",
+        "circuit-board", "hedge-garden", "treasure-map", "candy-pastel",
+        "pencil-sketch", "desert-canyon",
+        "metro-map", "ice-glacier", "paper-cutout", "volcanic",
+        "mosaic-tile", "biolab-vessels"
+      ],
+      "holdout_archetypes": [
+        "metro-map", "ice-glacier", "paper-cutout", "volcanic",
+        "mosaic-tile", "biolab-vessels"
+      ]
+    }
+  }
+}

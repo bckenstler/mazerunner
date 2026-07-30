@@ -1,0 +1,372 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1662428223,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "blueprint-rooms",
+    "style_seed": 819529921,
+    "marker": {
+      "radius": 14,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        22,
+        41,
+        78
+      ],
+      "grid": null,
+      "grid_spacing": 40,
+      "corridor_fill": [
+        231,
+        233,
+        242
+      ],
+      "dash": [
+        91,
+        118,
+        169
+      ],
+      "label": [
+        29,
+        45,
+        95
+      ],
+      "outline_color": [
+        102,
+        131,
+        182
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.3438,
+    "y": 0.197
+  },
+  "goal": {
+    "x": 0.571,
+    "y": 0.8092
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 8,
+    "optimal_length_px": 1237.97,
+    "optimal_length_px_geometric": 1131.78,
+    "corner_cut_headroom_px": 106.19,
+    "min_clearance_px": 8.06,
+    "optimal_path": [
+      {
+        "x": 0.3441,
+        "y": 0.1964
+      },
+      {
+        "x": 0.4786,
+        "y": 0.1245
+      },
+      {
+        "x": 0.6726,
+        "y": 0.1258
+      },
+      {
+        "x": 0.6747,
+        "y": 0.1284
+      },
+      {
+        "x": 0.6757,
+        "y": 0.1297
+      },
+      {
+        "x": 0.6767,
+        "y": 0.1309
+      },
+      {
+        "x": 0.7685,
+        "y": 0.1887
+      },
+      {
+        "x": 0.7706,
+        "y": 0.1913
+      },
+      {
+        "x": 0.7716,
+        "y": 0.1964
+      },
+      {
+        "x": 0.7821,
+        "y": 0.2272
+      },
+      {
+        "x": 0.7831,
+        "y": 0.2311
+      },
+      {
+        "x": 0.7404,
+        "y": 0.3299
+      },
+      {
+        "x": 0.7393,
+        "y": 0.3312
+      },
+      {
+        "x": 0.7383,
+        "y": 0.3325
+      },
+      {
+        "x": 0.7372,
+        "y": 0.3338
+      },
+      {
+        "x": 0.7362,
+        "y": 0.335
+      },
+      {
+        "x": 0.6872,
+        "y": 0.3761
+      },
+      {
+        "x": 0.683,
+        "y": 0.3774
+      },
+      {
+        "x": 0.5923,
+        "y": 0.4044
+      },
+      {
+        "x": 0.5912,
+        "y": 0.4056
+      },
+      {
+        "x": 0.5902,
+        "y": 0.4069
+      },
+      {
+        "x": 0.5839,
+        "y": 0.4236
+      },
+      {
+        "x": 0.5829,
+        "y": 0.4275
+      },
+      {
+        "x": 0.5902,
+        "y": 0.4685
+      },
+      {
+        "x": 0.5912,
+        "y": 0.4698
+      },
+      {
+        "x": 0.6184,
+        "y": 0.5212
+      },
+      {
+        "x": 0.6986,
+        "y": 0.6752
+      },
+      {
+        "x": 0.7039,
+        "y": 0.6868
+      },
+      {
+        "x": 0.6945,
+        "y": 0.724
+      },
+      {
+        "x": 0.6913,
+        "y": 0.7279
+      },
+      {
+        "x": 0.6872,
+        "y": 0.7304
+      },
+      {
+        "x": 0.658,
+        "y": 0.7484
+      },
+      {
+        "x": 0.6538,
+        "y": 0.751
+      },
+      {
+        "x": 0.61,
+        "y": 0.7779
+      },
+      {
+        "x": 0.5985,
+        "y": 0.7843
+      },
+      {
+        "x": 0.5714,
+        "y": 0.8087
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 194,
+    "attempt": 7,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1662428223,
+    "style_seed": 819529921,
+    "augmentation_seed": 662433964,
+    "sampler_seed": 190563541,
+    "family": "island",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "islands": 16,
+      "corridor": 16,
+      "min_dist": 128,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.826
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 4.24,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 1.056
+    },
+    "measures": {
+      "geodesic_length_px": 1131.78,
+      "normalized_length": 0.915,
+      "turns": 7,
+      "route_branches": 2,
+      "difficulty_score": 1.6983,
+      "tier": "medium"
+    },
+    "graph_hash": "88aa40ac39a0a105f294bbaac12db961c80acac34e9c809580c827fe874bf1ba",
+    "mask_sha256": "544bb0a35935783d754e28f19100aa20c00a368fc5213fdf7de7275995795abc",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.03248,
+        "start_marker_contrast": 90.49,
+        "goal_marker_contrast": 96.54
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "generation",
+        "detail": "could only place 15/16 points",
+        "seeds": {
+          "topo_seed": 1302648918,
+          "style_seed": 121865639,
+          "augmentation_seed": 79378262,
+          "sampler_seed": 1960180600
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 1020711823,
+          "style_seed": 1625635053,
+          "augmentation_seed": 1941416373,
+          "sampler_seed": 711427837
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 1849970120,
+          "style_seed": 1459595349,
+          "augmentation_seed": 1207331725,
+          "sampler_seed": 1019603046
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 156268563,
+          "style_seed": 850470321,
+          "augmentation_seed": 965751398,
+          "sampler_seed": 1078663981
+        }
+      },
+      {
+        "attempt": 4,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 211854054,
+          "style_seed": 1271206490,
+          "augmentation_seed": 88668128,
+          "sampler_seed": 1479155827
+        }
+      },
+      {
+        "attempt": 5,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 1313205852,
+          "style_seed": 865273940,
+          "augmentation_seed": 1994826840,
+          "sampler_seed": 1039911925
+        }
+      },
+      {
+        "attempt": 6,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 2095393678,
+          "style_seed": 780139863,
+          "augmentation_seed": 2129875354,
+          "sampler_seed": 1561933383
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 775518856,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "hedge-garden",
+    "style_seed": 299153492,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "grass": [
+        69,
+        133,
+        64
+      ],
+      "hedge": [
+        [
+          23,
+          52,
+          18
+        ],
+        [
+          32,
+          91,
+          28
+        ],
+        [
+          24,
+          49,
+          15
+        ]
+      ],
+      "corridor_fill": [
+        223,
+        217,
+        202
+      ],
+      "corridor_extra": [
+        [
+          211,
+          205,
+          190
+        ]
+      ],
+      "outline_color": [
+        14,
+        36,
+        12
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8564,
+    "y": 0.0846
+  },
+  "goal": {
+    "x": 0.5006,
+    "y": 0.2927
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 5,
+    "optimal_length_px": 756.18,
+    "optimal_length_px_geometric": 673.8,
+    "corner_cut_headroom_px": 82.38,
+    "min_clearance_px": 13.0,
+    "optimal_path": [
+      {
+        "x": 0.8565,
+        "y": 0.0844
+      },
+      {
+        "x": 0.8454,
+        "y": 0.2732
+      },
+      {
+        "x": 0.8443,
+        "y": 0.2747
+      },
+      {
+        "x": 0.8432,
+        "y": 0.2761
+      },
+      {
+        "x": 0.842,
+        "y": 0.2775
+      },
+      {
+        "x": 0.8387,
+        "y": 0.279
+      },
+      {
+        "x": 0.693,
+        "y": 0.279
+      },
+      {
+        "x": 0.6897,
+        "y": 0.2747
+      },
+      {
+        "x": 0.6885,
+        "y": 0.2704
+      },
+      {
+        "x": 0.6674,
+        "y": 0.103
+      },
+      {
+        "x": 0.6641,
+        "y": 0.0987
+      },
+      {
+        "x": 0.6596,
+        "y": 0.0973
+      },
+      {
+        "x": 0.515,
+        "y": 0.0973
+      },
+      {
+        "x": 0.5139,
+        "y": 0.0987
+      },
+      {
+        "x": 0.5128,
+        "y": 0.1001
+      },
+      {
+        "x": 0.5117,
+        "y": 0.1016
+      },
+      {
+        "x": 0.5106,
+        "y": 0.1059
+      },
+      {
+        "x": 0.5006,
+        "y": 0.2933
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 80,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 775518856,
+    "style_seed": 299153492,
+    "augmentation_seed": 1934079940,
+    "sampler_seed": 379706723,
+    "family": "braided",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 5,
+      "rows": 5,
+      "corridor": 30,
+      "loops": 5,
+      "endpoint_quantile": 0.456
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.905
+    },
+    "measures": {
+      "geodesic_length_px": 673.8,
+      "normalized_length": 0.591,
+      "turns": 5,
+      "route_branches": 4,
+      "difficulty_score": 1.4076,
+      "tier": "easy"
+    },
+    "graph_hash": "00c4e419a65f1c7ac320a2b1748b4b027a6fdb3cb55246b4880ed34ae2bf03ef",
+    "mask_sha256": "aa75114b2dd55b95191c7b8f4bb612862e742aef42aab630d6f49a3fd1629d0c",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 87.97,
+        "goal_marker_contrast": 42.16
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,310 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1152723409,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "treasure-map",
+    "style_seed": 399362338,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        183,
+        160,
+        127
+      ],
+      "stain": [
+        161,
+        138,
+        105
+      ],
+      "corridor_fill": [
+        244,
+        227,
+        198
+      ],
+      "corridor_extra": [
+        [
+          234,
+          217,
+          188
+        ]
+      ],
+      "route_dash": [
+        145,
+        60,
+        66
+      ],
+      "x_mark": [
+        114,
+        34,
+        42
+      ],
+      "outline_color": [
+        61,
+        45,
+        26
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.222,
+    "y": 0.5849
+  },
+  "goal": {
+    "x": 0.5077,
+    "y": 0.1204
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 8,
+    "optimal_length_px": 1278.46,
+    "optimal_length_px_geometric": 1201.17,
+    "corner_cut_headroom_px": 77.29,
+    "min_clearance_px": 8.06,
+    "optimal_path": [
+      {
+        "x": 0.2221,
+        "y": 0.5854
+      },
+      {
+        "x": 0.3545,
+        "y": 0.7522
+      },
+      {
+        "x": 0.4004,
+        "y": 0.7908
+      },
+      {
+        "x": 0.4213,
+        "y": 0.8023
+      },
+      {
+        "x": 0.4348,
+        "y": 0.81
+      },
+      {
+        "x": 0.4651,
+        "y": 0.8254
+      },
+      {
+        "x": 0.4838,
+        "y": 0.8344
+      },
+      {
+        "x": 0.4995,
+        "y": 0.8421
+      },
+      {
+        "x": 0.5047,
+        "y": 0.8447
+      },
+      {
+        "x": 0.5349,
+        "y": 0.8293
+      },
+      {
+        "x": 0.536,
+        "y": 0.828
+      },
+      {
+        "x": 0.537,
+        "y": 0.8267
+      },
+      {
+        "x": 0.5401,
+        "y": 0.8203
+      },
+      {
+        "x": 0.562,
+        "y": 0.7548
+      },
+      {
+        "x": 0.5641,
+        "y": 0.7497
+      },
+      {
+        "x": 0.5693,
+        "y": 0.7343
+      },
+      {
+        "x": 0.5756,
+        "y": 0.715
+      },
+      {
+        "x": 0.6475,
+        "y": 0.5032
+      },
+      {
+        "x": 0.6778,
+        "y": 0.466
+      },
+      {
+        "x": 0.7404,
+        "y": 0.3979
+      },
+      {
+        "x": 0.7435,
+        "y": 0.3941
+      },
+      {
+        "x": 0.7675,
+        "y": 0.3389
+      },
+      {
+        "x": 0.7706,
+        "y": 0.2388
+      },
+      {
+        "x": 0.7716,
+        "y": 0.2092
+      },
+      {
+        "x": 0.7706,
+        "y": 0.2054
+      },
+      {
+        "x": 0.7696,
+        "y": 0.2041
+      },
+      {
+        "x": 0.7685,
+        "y": 0.2028
+      },
+      {
+        "x": 0.7675,
+        "y": 0.2015
+      },
+      {
+        "x": 0.7518,
+        "y": 0.1849
+      },
+      {
+        "x": 0.7487,
+        "y": 0.1836
+      },
+      {
+        "x": 0.5996,
+        "y": 0.1849
+      },
+      {
+        "x": 0.5985,
+        "y": 0.1836
+      },
+      {
+        "x": 0.5933,
+        "y": 0.1797
+      },
+      {
+        "x": 0.5704,
+        "y": 0.1656
+      },
+      {
+        "x": 0.5391,
+        "y": 0.1463
+      },
+      {
+        "x": 0.5078,
+        "y": 0.1207
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 42,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1152723409,
+    "style_seed": 399362338,
+    "augmentation_seed": 1490781725,
+    "sampler_seed": 123377331,
+    "family": "island",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "islands": 16,
+      "corridor": 16,
+      "min_dist": 128,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.812
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": -3.57,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 1.111
+    },
+    "measures": {
+      "geodesic_length_px": 1201.17,
+      "normalized_length": 0.9711,
+      "turns": 2,
+      "route_branches": 5,
+      "difficulty_score": 1.6378,
+      "tier": "medium"
+    },
+    "graph_hash": "eed33185fc06644553269bbb5bb89461ea6d84721161f8e0084d1165227695a9",
+    "mask_sha256": "6ace811e1af52c2ce5f742b9dfa112dddbf48d21e6f532c8cb0a17b3cb9db20f",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.03275,
+        "start_marker_contrast": 74.04,
+        "goal_marker_contrast": 78.27
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted medium, measured easy",
+        "seeds": {
+          "topo_seed": 1806728800,
+          "style_seed": 1614648622,
+          "augmentation_seed": 1508378362,
+          "sampler_seed": 810643348
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

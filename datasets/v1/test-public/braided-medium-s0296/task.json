@@ -1,0 +1,313 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 159493615,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "neon-pipes",
+    "style_seed": 1395789170,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        11,
+        10,
+        18
+      ],
+      "grid_spacing": 46,
+      "corridor_fill": [
+        52,
+        54,
+        62
+      ],
+      "pipe_bodies": [
+        [
+          63,
+          158,
+          219
+        ],
+        [
+          58,
+          201,
+          185
+        ],
+        [
+          79,
+          55,
+          193
+        ],
+        [
+          72,
+          227,
+          109
+        ]
+      ],
+      "pipe_cores": [
+        [
+          160,
+          212,
+          254
+        ],
+        [
+          162,
+          252,
+          247
+        ],
+        [
+          163,
+          155,
+          247
+        ],
+        [
+          156,
+          238,
+          182
+        ]
+      ],
+      "joint": [
+        228,
+        231,
+        240
+      ],
+      "corridor_extra_from": [
+        "pipe_bodies",
+        "pipe_cores"
+      ],
+      "outline_color": [
+        228,
+        60,
+        242
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.921,
+    "y": 0.8541
+  },
+  "goal": {
+    "x": 0.5007,
+    "y": 0.2886
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 11,
+    "optimal_length_px": 1176.7,
+    "optimal_length_px_geometric": 1018.25,
+    "corner_cut_headroom_px": 158.45,
+    "min_clearance_px": 13.0,
+    "optimal_path": [
+      {
+        "x": 0.9215,
+        "y": 0.8536
+      },
+      {
+        "x": 0.7984,
+        "y": 0.8423
+      },
+      {
+        "x": 0.7957,
+        "y": 0.8398
+      },
+      {
+        "x": 0.7943,
+        "y": 0.8385
+      },
+      {
+        "x": 0.793,
+        "y": 0.8335
+      },
+      {
+        "x": 0.793,
+        "y": 0.7284
+      },
+      {
+        "x": 0.797,
+        "y": 0.7247
+      },
+      {
+        "x": 0.8024,
+        "y": 0.7234
+      },
+      {
+        "x": 0.9039,
+        "y": 0.6996
+      },
+      {
+        "x": 0.9053,
+        "y": 0.6984
+      },
+      {
+        "x": 0.9066,
+        "y": 0.6971
+      },
+      {
+        "x": 0.908,
+        "y": 0.6934
+      },
+      {
+        "x": 0.908,
+        "y": 0.587
+      },
+      {
+        "x": 0.9039,
+        "y": 0.5832
+      },
+      {
+        "x": 0.8999,
+        "y": 0.582
+      },
+      {
+        "x": 0.797,
+        "y": 0.5582
+      },
+      {
+        "x": 0.7957,
+        "y": 0.5569
+      },
+      {
+        "x": 0.7943,
+        "y": 0.5557
+      },
+      {
+        "x": 0.793,
+        "y": 0.5507
+      },
+      {
+        "x": 0.7659,
+        "y": 0.4443
+      },
+      {
+        "x": 0.7645,
+        "y": 0.4431
+      },
+      {
+        "x": 0.7632,
+        "y": 0.4418
+      },
+      {
+        "x": 0.7578,
+        "y": 0.4406
+      },
+      {
+        "x": 0.3775,
+        "y": 0.418
+      },
+      {
+        "x": 0.3762,
+        "y": 0.4168
+      },
+      {
+        "x": 0.3748,
+        "y": 0.4155
+      },
+      {
+        "x": 0.3735,
+        "y": 0.4143
+      },
+      {
+        "x": 0.3721,
+        "y": 0.4105
+      },
+      {
+        "x": 0.3721,
+        "y": 0.3041
+      },
+      {
+        "x": 0.3762,
+        "y": 0.3004
+      },
+      {
+        "x": 0.3802,
+        "y": 0.2991
+      },
+      {
+        "x": 0.5007,
+        "y": 0.2891
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 296,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 159493615,
+    "style_seed": 1395789170,
+    "augmentation_seed": 1223977399,
+    "sampler_seed": 1019310202,
+    "family": "braided",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 7,
+      "rows": 6,
+      "corridor": 26,
+      "loops": 9,
+      "endpoint_quantile": 0.61
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.091
+    },
+    "measures": {
+      "geodesic_length_px": 1018.25,
+      "normalized_length": 0.9344,
+      "turns": 12,
+      "route_branches": 6,
+      "difficulty_score": 2.5344,
+      "tier": "medium"
+    },
+    "graph_hash": "f18581e4e0c45ee4e8c0f4b165e55b37e64e64456e0c7d4007d89fa7983cab23",
+    "mask_sha256": "0db838fc46f9483c63074058cd90d128c6cfb7230f1340ce71a8084e1a5810a0",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 167.02,
+        "goal_marker_contrast": 119.6
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

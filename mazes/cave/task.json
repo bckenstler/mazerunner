@@ -1,0 +1,138 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 45,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "glow-cavern",
+    "style_seed": 45,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        9,
+        13,
+        20
+      ],
+      "floor_a": [
+        122,
+        128,
+        116
+      ],
+      "floor_b": [
+        112,
+        118,
+        106
+      ],
+      "corridor_fill": [
+        122,
+        128,
+        116
+      ],
+      "corridor_extra": [
+        [
+          112,
+          118,
+          106
+        ]
+      ],
+      "sparkle": [
+        36,
+        201,
+        49
+      ],
+      "tile": 20,
+      "outline_color": [
+        34,
+        55,
+        52
+      ],
+      "outline_px": 3
+    }
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8385,
+    "y": 0.7442
+  },
+  "goal": {
+    "x": 0.2128,
+    "y": 0.9066
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 59,
+    "optimal_length_px": 1180.0,
+    "optimal_length_px_geometric": 869.72,
+    "corner_cut_headroom_px": 310.28,
+    "min_clearance_px": 10.0,
+    "optimal_path": [
+      {
+        "x": 0.8385,
+        "y": 0.7442
+      },
+      {
+        "x": 0.8798,
+        "y": 0.6779
+      },
+      {
+        "x": 0.9061,
+        "y": 0.6211
+      },
+      {
+        "x": 0.9061,
+        "y": 0.594
+      },
+      {
+        "x": 0.8523,
+        "y": 0.5359
+      },
+      {
+        "x": 0.8486,
+        "y": 0.5345
+      },
+      {
+        "x": 0.6733,
+        "y": 0.4804
+      },
+      {
+        "x": 0.627,
+        "y": 0.4547
+      },
+      {
+        "x": 0.6233,
+        "y": 0.4533
+      },
+      {
+        "x": 0.5494,
+        "y": 0.4533
+      },
+      {
+        "x": 0.4956,
+        "y": 0.5115
+      },
+      {
+        "x": 0.2203,
+        "y": 0.8904
+      },
+      {
+        "x": 0.219,
+        "y": 0.8945
+      },
+      {
+        "x": 0.2128,
+        "y": 0.9066
+      }
+    ]
+  }
+}

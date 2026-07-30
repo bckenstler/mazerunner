@@ -1,0 +1,586 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 802878962,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "forest-path",
+    "style_seed": 968581108,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        27,
+        51,
+        30
+      ],
+      "foliage": [
+        [
+          33,
+          58,
+          40
+        ],
+        [
+          23,
+          41,
+          26
+        ],
+        [
+          33,
+          81,
+          48
+        ],
+        [
+          53,
+          122,
+          74
+        ]
+      ],
+      "foliage_count": 3173,
+      "corridor_fill": [
+        210,
+        188,
+        143
+      ],
+      "corridor_noise": [
+        194,
+        172,
+        127
+      ],
+      "corridor_light": [
+        224,
+        202,
+        157
+      ],
+      "corridor_extra": [
+        [
+          194,
+          172,
+          127
+        ],
+        [
+          224,
+          202,
+          157
+        ]
+      ],
+      "outline_color": [
+        54,
+        100,
+        55
+      ],
+      "outline_px": 4
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7932,
+    "y": 0.5274
+  },
+  "goal": {
+    "x": 0.2878,
+    "y": 0.4494
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 52,
+    "optimal_length_px": 945.19,
+    "optimal_length_px_geometric": 681.28,
+    "corner_cut_headroom_px": 263.9,
+    "min_clearance_px": 8.0,
+    "optimal_path": [
+      {
+        "x": 0.7931,
+        "y": 0.5279
+      },
+      {
+        "x": 0.7864,
+        "y": 0.5408
+      },
+      {
+        "x": 0.7853,
+        "y": 0.5422
+      },
+      {
+        "x": 0.7842,
+        "y": 0.5436
+      },
+      {
+        "x": 0.7408,
+        "y": 0.5866
+      },
+      {
+        "x": 0.7386,
+        "y": 0.5894
+      },
+      {
+        "x": 0.7063,
+        "y": 0.671
+      },
+      {
+        "x": 0.6841,
+        "y": 0.6996
+      },
+      {
+        "x": 0.5417,
+        "y": 0.8298
+      },
+      {
+        "x": 0.5384,
+        "y": 0.8312
+      },
+      {
+        "x": 0.4994,
+        "y": 0.8312
+      },
+      {
+        "x": 0.4761,
+        "y": 0.8011
+      },
+      {
+        "x": 0.2881,
+        "y": 0.4492
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 41,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 802878962,
+    "style_seed": 968581108,
+    "augmentation_seed": 507969232,
+    "sampler_seed": 2069063038,
+    "family": "cave",
+    "tier_target": "easy",
+    "tier_relaxed": true,
+    "difficulty_overrides": {
+      "open_probability": 0.66,
+      "endpoint_quantile": 0.596
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.999
+    },
+    "measures": {
+      "geodesic_length_px": 681.28,
+      "normalized_length": 0.5975,
+      "turns": 1,
+      "route_branches": 42,
+      "difficulty_score": 2.1809,
+      "tier": "medium"
+    },
+    "graph_hash": "74cfc5df98372b54bec49a1e1e9d5bb5fb61a196aec124e99bec7eeb5dd2f93c",
+    "mask_sha256": "7598385f6ddd299e346c3664a0da7c888848ab4d682ab830010875675e8870c0",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 137.76,
+        "goal_marker_contrast": 47.36
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 802878962,
+          "style_seed": 968581108,
+          "augmentation_seed": 507969232,
+          "sampler_seed": 2069063038
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1270973007,
+          "style_seed": 950299009,
+          "augmentation_seed": 113287331,
+          "sampler_seed": 1738610314
+        }
+      },
+      {
+        "attempt": 2,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1437095649,
+          "style_seed": 1623458284,
+          "augmentation_seed": 4028559,
+          "sampler_seed": 72560393
+        }
+      },
+      {
+        "attempt": 3,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1189253402,
+          "style_seed": 279836852,
+          "augmentation_seed": 1368474367,
+          "sampler_seed": 472039868
+        }
+      },
+      {
+        "attempt": 4,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1845098047,
+          "style_seed": 1630103606,
+          "augmentation_seed": 552109868,
+          "sampler_seed": 260457147
+        }
+      },
+      {
+        "attempt": 5,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 2140551021,
+          "style_seed": 1128950727,
+          "augmentation_seed": 235789929,
+          "sampler_seed": 260438081
+        }
+      },
+      {
+        "attempt": 6,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 3858125,
+          "style_seed": 1941879311,
+          "augmentation_seed": 2134155750,
+          "sampler_seed": 1092153202
+        }
+      },
+      {
+        "attempt": 7,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1651504946,
+          "style_seed": 762775651,
+          "augmentation_seed": 1745357002,
+          "sampler_seed": 510450598
+        }
+      },
+      {
+        "attempt": 8,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 626835367,
+          "style_seed": 324488125,
+          "augmentation_seed": 2034675391,
+          "sampler_seed": 1180771472
+        }
+      },
+      {
+        "attempt": 9,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 260318252,
+          "style_seed": 1458187811,
+          "augmentation_seed": 695162025,
+          "sampler_seed": 139662853
+        }
+      },
+      {
+        "attempt": 10,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1961012974,
+          "style_seed": 141509626,
+          "augmentation_seed": 537201015,
+          "sampler_seed": 667485834
+        }
+      },
+      {
+        "attempt": 11,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 241579593,
+          "style_seed": 182158107,
+          "augmentation_seed": 1458871342,
+          "sampler_seed": 1155438780
+        }
+      },
+      {
+        "attempt": 12,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 234044932,
+          "style_seed": 743799652,
+          "augmentation_seed": 1709178047,
+          "sampler_seed": 121803706
+        }
+      },
+      {
+        "attempt": 13,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 87465008,
+          "style_seed": 53599342,
+          "augmentation_seed": 1279329097,
+          "sampler_seed": 1625773918
+        }
+      },
+      {
+        "attempt": 14,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1796320955,
+          "style_seed": 1349874213,
+          "augmentation_seed": 844257045,
+          "sampler_seed": 101366909
+        }
+      },
+      {
+        "attempt": 15,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 2022439537,
+          "style_seed": 750483170,
+          "augmentation_seed": 149905799,
+          "sampler_seed": 1776146850
+        }
+      },
+      {
+        "attempt": 16,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1032458017,
+          "style_seed": 96206527,
+          "augmentation_seed": 2084485171,
+          "sampler_seed": 1167349362
+        }
+      },
+      {
+        "attempt": 17,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 2026136594,
+          "style_seed": 673334447,
+          "augmentation_seed": 1605330619,
+          "sampler_seed": 810836951
+        }
+      },
+      {
+        "attempt": 18,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1240416394,
+          "style_seed": 1452658523,
+          "augmentation_seed": 2101909984,
+          "sampler_seed": 1678946322
+        }
+      },
+      {
+        "attempt": 19,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1478581741,
+          "style_seed": 845059897,
+          "augmentation_seed": 2008950783,
+          "sampler_seed": 1050891834
+        }
+      },
+      {
+        "attempt": 20,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 2021310060,
+          "style_seed": 274360702,
+          "augmentation_seed": 1877912237,
+          "sampler_seed": 97620682
+        }
+      },
+      {
+        "attempt": 21,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1065330257,
+          "style_seed": 1352044023,
+          "augmentation_seed": 1192131118,
+          "sampler_seed": 274766376
+        }
+      },
+      {
+        "attempt": 22,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 2054017331,
+          "style_seed": 2045841078,
+          "augmentation_seed": 2130796008,
+          "sampler_seed": 109168912
+        }
+      },
+      {
+        "attempt": 23,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1931735498,
+          "style_seed": 1277864889,
+          "augmentation_seed": 1674041603,
+          "sampler_seed": 303711742
+        }
+      },
+      {
+        "attempt": 24,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1940779309,
+          "style_seed": 2104835604,
+          "augmentation_seed": 1005348535,
+          "sampler_seed": 1036057267
+        }
+      },
+      {
+        "attempt": 25,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 769808470,
+          "style_seed": 675387483,
+          "augmentation_seed": 1160151085,
+          "sampler_seed": 696140109
+        }
+      },
+      {
+        "attempt": 26,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1944898773,
+          "style_seed": 1799718795,
+          "augmentation_seed": 1895076376,
+          "sampler_seed": 2118365695
+        }
+      },
+      {
+        "attempt": 27,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1063460264,
+          "style_seed": 994660684,
+          "augmentation_seed": 1729684054,
+          "sampler_seed": 798881635
+        }
+      },
+      {
+        "attempt": 28,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1803533639,
+          "style_seed": 498184567,
+          "augmentation_seed": 94416991,
+          "sampler_seed": 1616412439
+        }
+      },
+      {
+        "attempt": 29,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 239837671,
+          "style_seed": 232206373,
+          "augmentation_seed": 1838905832,
+          "sampler_seed": 821630434
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

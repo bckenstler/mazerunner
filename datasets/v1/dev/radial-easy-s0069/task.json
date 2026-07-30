@@ -1,0 +1,428 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1801110957,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "neon-pipes",
+    "style_seed": 1513468109,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        14,
+        13,
+        22
+      ],
+      "grid_spacing": 47,
+      "corridor_fill": [
+        58,
+        56,
+        69
+      ],
+      "pipe_bodies": [
+        [
+          194,
+          52,
+          214
+        ],
+        [
+          77,
+          222,
+          126
+        ],
+        [
+          48,
+          203,
+          202
+        ],
+        [
+          87,
+          83,
+          216
+        ]
+      ],
+      "pipe_cores": [
+        [
+          236,
+          150,
+          240
+        ],
+        [
+          157,
+          245,
+          171
+        ],
+        [
+          168,
+          234,
+          241
+        ],
+        [
+          175,
+          162,
+          250
+        ]
+      ],
+      "joint": [
+        228,
+        231,
+        240
+      ],
+      "corridor_extra_from": [
+        "pipe_bodies",
+        "pipe_cores"
+      ],
+      "outline_color": [
+        227,
+        13,
+        135
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.4888,
+    "y": 0.3525
+  },
+  "goal": {
+    "x": 0.7645,
+    "y": 0.5999
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 12,
+    "optimal_length_px": 1096.63,
+    "optimal_length_px_geometric": 893.98,
+    "corner_cut_headroom_px": 202.66,
+    "min_clearance_px": 17.49,
+    "optimal_path": [
+      {
+        "x": 0.4883,
+        "y": 0.3519
+      },
+      {
+        "x": 0.4349,
+        "y": 0.4006
+      },
+      {
+        "x": 0.4338,
+        "y": 0.402
+      },
+      {
+        "x": 0.4327,
+        "y": 0.4034
+      },
+      {
+        "x": 0.4316,
+        "y": 0.4049
+      },
+      {
+        "x": 0.4305,
+        "y": 0.4063
+      },
+      {
+        "x": 0.4294,
+        "y": 0.4077
+      },
+      {
+        "x": 0.4283,
+        "y": 0.4092
+      },
+      {
+        "x": 0.4271,
+        "y": 0.4106
+      },
+      {
+        "x": 0.426,
+        "y": 0.412
+      },
+      {
+        "x": 0.4249,
+        "y": 0.4134
+      },
+      {
+        "x": 0.4238,
+        "y": 0.4149
+      },
+      {
+        "x": 0.4194,
+        "y": 0.422
+      },
+      {
+        "x": 0.4138,
+        "y": 0.432
+      },
+      {
+        "x": 0.4093,
+        "y": 0.4435
+      },
+      {
+        "x": 0.4071,
+        "y": 0.4506
+      },
+      {
+        "x": 0.4038,
+        "y": 0.4607
+      },
+      {
+        "x": 0.4004,
+        "y": 0.4878
+      },
+      {
+        "x": 0.4016,
+        "y": 0.5465
+      },
+      {
+        "x": 0.4372,
+        "y": 0.5923
+      },
+      {
+        "x": 0.4416,
+        "y": 0.5966
+      },
+      {
+        "x": 0.4527,
+        "y": 0.6052
+      },
+      {
+        "x": 0.4727,
+        "y": 0.6152
+      },
+      {
+        "x": 0.4883,
+        "y": 0.618
+      },
+      {
+        "x": 0.5362,
+        "y": 0.6166
+      },
+      {
+        "x": 0.5729,
+        "y": 0.5694
+      },
+      {
+        "x": 0.5762,
+        "y": 0.5622
+      },
+      {
+        "x": 0.5806,
+        "y": 0.5536
+      },
+      {
+        "x": 0.5884,
+        "y": 0.5293
+      },
+      {
+        "x": 0.5895,
+        "y": 0.5222
+      },
+      {
+        "x": 0.5907,
+        "y": 0.515
+      },
+      {
+        "x": 0.5895,
+        "y": 0.5122
+      },
+      {
+        "x": 0.5873,
+        "y": 0.5093
+      },
+      {
+        "x": 0.5439,
+        "y": 0.4692
+      },
+      {
+        "x": 0.5428,
+        "y": 0.4678
+      },
+      {
+        "x": 0.5417,
+        "y": 0.4664
+      },
+      {
+        "x": 0.5406,
+        "y": 0.4607
+      },
+      {
+        "x": 0.6229,
+        "y": 0.3176
+      },
+      {
+        "x": 0.6274,
+        "y": 0.3119
+      },
+      {
+        "x": 0.634,
+        "y": 0.3076
+      },
+      {
+        "x": 0.673,
+        "y": 0.2861
+      },
+      {
+        "x": 0.6897,
+        "y": 0.2775
+      },
+      {
+        "x": 0.6952,
+        "y": 0.2761
+      },
+      {
+        "x": 0.6974,
+        "y": 0.2775
+      },
+      {
+        "x": 0.6986,
+        "y": 0.279
+      },
+      {
+        "x": 0.6997,
+        "y": 0.2804
+      },
+      {
+        "x": 0.7008,
+        "y": 0.2818
+      },
+      {
+        "x": 0.7063,
+        "y": 0.2904
+      },
+      {
+        "x": 0.7264,
+        "y": 0.329
+      },
+      {
+        "x": 0.7308,
+        "y": 0.3405
+      },
+      {
+        "x": 0.743,
+        "y": 0.3748
+      },
+      {
+        "x": 0.7486,
+        "y": 0.3963
+      },
+      {
+        "x": 0.7508,
+        "y": 0.4063
+      },
+      {
+        "x": 0.7531,
+        "y": 0.4163
+      },
+      {
+        "x": 0.7564,
+        "y": 0.4378
+      },
+      {
+        "x": 0.7586,
+        "y": 0.4607
+      },
+      {
+        "x": 0.7597,
+        "y": 0.4821
+      },
+      {
+        "x": 0.7642,
+        "y": 0.5994
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 69,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1801110957,
+    "style_seed": 1513468109,
+    "augmentation_seed": 537978665,
+    "sampler_seed": 1128210165,
+    "family": "radial",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 3,
+      "corridor": 26,
+      "endpoint_quantile": 0.515
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 0.72,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.118
+    },
+    "measures": {
+      "geodesic_length_px": 893.98,
+      "normalized_length": 0.7841,
+      "turns": 6,
+      "route_branches": 3,
+      "difficulty_score": 1.5841,
+      "tier": "easy"
+    },
+    "graph_hash": "6793741a8ed5ebaef2c5e1bbe083cf85af9b9923975fd5dc490930a86552a944",
+    "mask_sha256": "c88e4e8ed15dfe5a971614415959c75d7230885b463cf30d6eaa22c9e06262da",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 131.61,
+        "goal_marker_contrast": 108.71
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 375163066,
+          "style_seed": 958077123,
+          "augmentation_seed": 324221240,
+          "sampler_seed": 895576930
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

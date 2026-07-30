@@ -1,0 +1,199 @@
+{
+  "id": "pipes",
+  "type": "Pipes",
+  "style": "Neon factory",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1661770125,
+  "generator": "Orthogonal network",
+  "style_record": {
+    "archetype": "candy-pastel",
+    "style_seed": 172466796,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        224,
+        164,
+        216
+      ],
+      "stripe_spacing": 23,
+      "corridor_fill": [
+        223,
+        242,
+        233
+      ],
+      "sprinkles": [
+        [
+          209,
+          41,
+          45
+        ],
+        [
+          228,
+          197,
+          82
+        ],
+        [
+          60,
+          149,
+          200
+        ],
+        [
+          165,
+          47,
+          192
+        ]
+      ],
+      "outline_color": [
+        92,
+        59,
+        31
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.9193,
+    "y": 0.0712
+  },
+  "goal": {
+    "x": 0.6402,
+    "y": 0.93
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 5,
+    "optimal_length_px": 892.41,
+    "optimal_length_px_geometric": 875.53,
+    "corner_cut_headroom_px": 16.88,
+    "min_clearance_px": 11.4,
+    "optimal_path": [
+      {
+        "x": 0.9188,
+        "y": 0.0713
+      },
+      {
+        "x": 0.9093,
+        "y": 0.9161
+      },
+      {
+        "x": 0.9053,
+        "y": 0.9199
+      },
+      {
+        "x": 0.8999,
+        "y": 0.9212
+      },
+      {
+        "x": 0.6401,
+        "y": 0.9299
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 172,
+    "attempt": 2,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1661770125,
+    "style_seed": 172466796,
+    "augmentation_seed": 246146319,
+    "sampler_seed": 669533884,
+    "family": "pipes",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 5,
+      "rows": 4,
+      "corridor": 20,
+      "loops": 2,
+      "endpoint_quantile": 0.49
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 1,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 0.97
+    },
+    "measures": {
+      "geodesic_length_px": 875.53,
+      "normalized_length": 0.8034,
+      "turns": 2,
+      "route_branches": 1,
+      "difficulty_score": 1.0701,
+      "tier": "easy"
+    },
+    "graph_hash": "5a245ca9b1fe9d0e8633a59c37aab0af02e2b6159f6068e2ae1aeaf436795f34",
+    "mask_sha256": "07c0bd916b75f5b4aab27928738223a435d45df9b37e52a523bf746c6dcb4f19",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0052,
+        "start_marker_contrast": 59.66,
+        "goal_marker_contrast": 69.78
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1371679135,
+          "style_seed": 1527525982,
+          "augmentation_seed": 378895197,
+          "sampler_seed": 612616115
+        }
+      },
+      {
+        "attempt": 1,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 1169516121,
+          "style_seed": 790366107,
+          "augmentation_seed": 196155375,
+          "sampler_seed": 486368371
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

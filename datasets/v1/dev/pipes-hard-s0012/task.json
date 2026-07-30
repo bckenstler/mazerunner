@@ -1,0 +1,360 @@
+{
+  "id": "pipes",
+  "type": "Pipes",
+  "style": "Neon factory",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 37646254,
+  "generator": "Orthogonal network",
+  "style_record": {
+    "archetype": "hedge-garden",
+    "style_seed": 1809203089,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "grass": [
+        69,
+        143,
+        58
+      ],
+      "hedge": [
+        [
+          26,
+          57,
+          17
+        ],
+        [
+          32,
+          73,
+          23
+        ],
+        [
+          18,
+          45,
+          19
+        ]
+      ],
+      "corridor_fill": [
+        196,
+        191,
+        180
+      ],
+      "corridor_extra": [
+        [
+          184,
+          179,
+          168
+        ]
+      ],
+      "outline_color": [
+        12,
+        33,
+        9
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.0782,
+    "y": 0.0672
+  },
+  "goal": {
+    "x": 0.5852,
+    "y": 0.934
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 18,
+    "optimal_length_px": 2014.5,
+    "optimal_length_px_geometric": 1879.26,
+    "corner_cut_headroom_px": 135.25,
+    "min_clearance_px": 7.07,
+    "optimal_path": [
+      {
+        "x": 0.0785,
+        "y": 0.0676
+      },
+      {
+        "x": 0.0825,
+        "y": 0.1802
+      },
+      {
+        "x": 0.0853,
+        "y": 0.1827
+      },
+      {
+        "x": 0.0866,
+        "y": 0.184
+      },
+      {
+        "x": 0.092,
+        "y": 0.1852
+      },
+      {
+        "x": 0.2355,
+        "y": 0.1852
+      },
+      {
+        "x": 0.2395,
+        "y": 0.1815
+      },
+      {
+        "x": 0.2409,
+        "y": 0.1765
+      },
+      {
+        "x": 0.2517,
+        "y": 0.0763
+      },
+      {
+        "x": 0.253,
+        "y": 0.0751
+      },
+      {
+        "x": 0.2544,
+        "y": 0.0738
+      },
+      {
+        "x": 0.2558,
+        "y": 0.0726
+      },
+      {
+        "x": 0.2598,
+        "y": 0.0713
+      },
+      {
+        "x": 0.4046,
+        "y": 0.0713
+      },
+      {
+        "x": 0.4087,
+        "y": 0.0751
+      },
+      {
+        "x": 0.41,
+        "y": 0.0788
+      },
+      {
+        "x": 0.41,
+        "y": 0.3041
+      },
+      {
+        "x": 0.406,
+        "y": 0.3079
+      },
+      {
+        "x": 0.4019,
+        "y": 0.3091
+      },
+      {
+        "x": 0.088,
+        "y": 0.3191
+      },
+      {
+        "x": 0.0839,
+        "y": 0.3229
+      },
+      {
+        "x": 0.0825,
+        "y": 0.3267
+      },
+      {
+        "x": 0.0825,
+        "y": 0.5519
+      },
+      {
+        "x": 0.0866,
+        "y": 0.5557
+      },
+      {
+        "x": 0.0907,
+        "y": 0.5569
+      },
+      {
+        "x": 0.4046,
+        "y": 0.567
+      },
+      {
+        "x": 0.4087,
+        "y": 0.5707
+      },
+      {
+        "x": 0.41,
+        "y": 0.5745
+      },
+      {
+        "x": 0.4208,
+        "y": 0.6758
+      },
+      {
+        "x": 0.4235,
+        "y": 0.6783
+      },
+      {
+        "x": 0.4249,
+        "y": 0.6796
+      },
+      {
+        "x": 0.4303,
+        "y": 0.6809
+      },
+      {
+        "x": 0.5737,
+        "y": 0.6909
+      },
+      {
+        "x": 0.5778,
+        "y": 0.6946
+      },
+      {
+        "x": 0.5792,
+        "y": 0.6996
+      },
+      {
+        "x": 0.59,
+        "y": 0.7997
+      },
+      {
+        "x": 0.5913,
+        "y": 0.801
+      },
+      {
+        "x": 0.5927,
+        "y": 0.8023
+      },
+      {
+        "x": 0.594,
+        "y": 0.8035
+      },
+      {
+        "x": 0.5981,
+        "y": 0.8048
+      },
+      {
+        "x": 0.7429,
+        "y": 0.8148
+      },
+      {
+        "x": 0.747,
+        "y": 0.8185
+      },
+      {
+        "x": 0.7483,
+        "y": 0.8223
+      },
+      {
+        "x": 0.7483,
+        "y": 0.9237
+      },
+      {
+        "x": 0.7456,
+        "y": 0.9262
+      },
+      {
+        "x": 0.7442,
+        "y": 0.9274
+      },
+      {
+        "x": 0.7388,
+        "y": 0.9287
+      },
+      {
+        "x": 0.5846,
+        "y": 0.9337
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 12,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 37646254,
+    "style_seed": 1809203089,
+    "augmentation_seed": 2052833861,
+    "sampler_seed": 194987537,
+    "family": "pipes",
+    "tier_target": "hard",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "cols": 8,
+      "rows": 6,
+      "corridor": 15,
+      "loops": 7,
+      "endpoint_quantile": 0.971
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 0.905
+    },
+    "measures": {
+      "geodesic_length_px": 1879.26,
+      "normalized_length": 1.7245,
+      "turns": 18,
+      "route_branches": 8,
+      "difficulty_score": 4.0245,
+      "tier": "hard"
+    },
+    "graph_hash": "bf63cbd016653558adfbf7f20eb775270545a8a5c7ebd06d5466478375806b40",
+    "mask_sha256": "a5df794c55e2252c3362b5cb17ebc2c718479f2a10930a58d2b69f8aa01c1fd1",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 97.16,
+        "goal_marker_contrast": 110.28
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted hard, measured medium",
+        "seeds": {
+          "topo_seed": 115974755,
+          "style_seed": 1462392611,
+          "augmentation_seed": 350180536,
+          "sampler_seed": 1343520419
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

@@ -1,0 +1,195 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 901943617,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "dungeon-pebble",
+    "style_seed": 233178847,
+    "marker": {
+      "radius": 12,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        29,
+        29,
+        27
+      ],
+      "corridor_fill": [
+        62,
+        59,
+        55
+      ],
+      "corridor_noise": [
+        54,
+        51,
+        47
+      ],
+      "corridor_extra": [
+        [
+          54,
+          51,
+          47
+        ]
+      ],
+      "pebble_shades": [
+        [
+          116,
+          109,
+          102
+        ],
+        [
+          130,
+          123,
+          113
+        ],
+        [
+          124,
+          117,
+          109
+        ],
+        [
+          152,
+          143,
+          128
+        ]
+      ],
+      "pebble_outline": [
+        21,
+        21,
+        20
+      ],
+      "outline_color": [
+        21,
+        20,
+        19
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8465,
+    "y": 0.1464
+  },
+  "goal": {
+    "x": 0.2773,
+    "y": 0.7873
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 51,
+    "optimal_length_px": 932.69,
+    "optimal_length_px_geometric": 697.09,
+    "corner_cut_headroom_px": 235.6,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.8471,
+        "y": 0.1464
+      },
+      {
+        "x": 0.8106,
+        "y": 0.3442
+      },
+      {
+        "x": 0.7862,
+        "y": 0.3667
+      },
+      {
+        "x": 0.387,
+        "y": 0.6558
+      },
+      {
+        "x": 0.2855,
+        "y": 0.7497
+      },
+      {
+        "x": 0.2842,
+        "y": 0.7547
+      },
+      {
+        "x": 0.2774,
+        "y": 0.7872
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 225,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 901943617,
+    "style_seed": 233178847,
+    "augmentation_seed": 1311484733,
+    "sampler_seed": 97262506,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.62,
+      "endpoint_quantile": 0.695
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 0.966
+    },
+    "measures": {
+      "geodesic_length_px": 697.09,
+      "normalized_length": 0.6397,
+      "turns": 2,
+      "route_branches": 38,
+      "difficulty_score": 2.3063,
+      "tier": "medium"
+    },
+    "graph_hash": "b69726764da06f3b3f2c28bf6a9f374f4f1f61cfbeb9867c1adba7266837119f",
+    "mask_sha256": "d87807619a6203cd415bd51c36bdb62ea48548386ff866c92b04ec513d3e8bbe",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 140.16,
+        "goal_marker_contrast": 146.41
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

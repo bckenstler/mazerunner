@@ -1,0 +1,198 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 415876709,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "neon-pipes",
+    "style_seed": 417143880,
+    "marker": {
+      "radius": 12,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        13,
+        12,
+        20
+      ],
+      "grid_spacing": 58,
+      "corridor_fill": [
+        55,
+        54,
+        66
+      ],
+      "pipe_bodies": [
+        [
+          91,
+          69,
+          224
+        ],
+        [
+          86,
+          219,
+          206
+        ],
+        [
+          192,
+          43,
+          214
+        ],
+        [
+          197,
+          64,
+          158
+        ]
+      ],
+      "pipe_cores": [
+        [
+          183,
+          174,
+          244
+        ],
+        [
+          155,
+          251,
+          246
+        ],
+        [
+          245,
+          172,
+          237
+        ],
+        [
+          244,
+          170,
+          213
+        ]
+      ],
+      "joint": [
+        228,
+        231,
+        240
+      ],
+      "corridor_extra_from": [
+        "pipe_bodies",
+        "pipe_cores"
+      ],
+      "outline_color": [
+        27,
+        252,
+        99
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7071,
+    "y": 0.9218
+  },
+  "goal": {
+    "x": 0.1809,
+    "y": 0.5508
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 38,
+    "optimal_length_px": 694.7,
+    "optimal_length_px_geometric": 508.63,
+    "corner_cut_headroom_px": 186.07,
+    "min_clearance_px": 8.0,
+    "optimal_path": [
+      {
+        "x": 0.7071,
+        "y": 0.9215
+      },
+      {
+        "x": 0.4406,
+        "y": 0.8011
+      },
+      {
+        "x": 0.3755,
+        "y": 0.7307
+      },
+      {
+        "x": 0.1815,
+        "y": 0.5507
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 41,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 415876709,
+    "style_seed": 417143880,
+    "augmentation_seed": 1736863341,
+    "sampler_seed": 796638712,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.62,
+      "endpoint_quantile": 0.627
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.991
+    },
+    "measures": {
+      "geodesic_length_px": 508.63,
+      "normalized_length": 0.4667,
+      "turns": 0,
+      "route_branches": 34,
+      "difficulty_score": 1.9667,
+      "tier": "medium"
+    },
+    "graph_hash": "c96a3ec3286099d3abd8b055f1033b2fb3fcc0b55c5a094c9eca085716fb81c9",
+    "mask_sha256": "78832dbc34903ffbcfb1be6d177e0f9d99d5c04dc250caa4cf5a979f04329a58",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 123.58,
+        "goal_marker_contrast": 80.33
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

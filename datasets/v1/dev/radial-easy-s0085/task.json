@@ -1,0 +1,313 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 100298149,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "glow-cavern",
+    "style_seed": 968370432,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        11,
+        17,
+        23
+      ],
+      "floor_a": [
+        114,
+        119,
+        110
+      ],
+      "floor_b": [
+        104,
+        109,
+        100
+      ],
+      "corridor_fill": [
+        114,
+        119,
+        110
+      ],
+      "corridor_extra": [
+        [
+          104,
+          109,
+          100
+        ]
+      ],
+      "sparkle": [
+        57,
+        198,
+        208
+      ],
+      "tile": 19,
+      "outline_color": [
+        31,
+        45,
+        43
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.4057,
+    "y": 0.5974
+  },
+  "goal": {
+    "x": 0.447,
+    "y": 0.2618
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 8,
+    "optimal_length_px": 891.17,
+    "optimal_length_px_geometric": 760.02,
+    "corner_cut_headroom_px": 131.16,
+    "min_clearance_px": 14.14,
+    "optimal_path": [
+      {
+        "x": 0.4055,
+        "y": 0.5968
+      },
+      {
+        "x": 0.3367,
+        "y": 0.636
+      },
+      {
+        "x": 0.3354,
+        "y": 0.6373
+      },
+      {
+        "x": 0.3342,
+        "y": 0.6387
+      },
+      {
+        "x": 0.3329,
+        "y": 0.6441
+      },
+      {
+        "x": 0.3467,
+        "y": 0.6617
+      },
+      {
+        "x": 0.378,
+        "y": 0.7294
+      },
+      {
+        "x": 0.3767,
+        "y": 0.7321
+      },
+      {
+        "x": 0.3717,
+        "y": 0.7375
+      },
+      {
+        "x": 0.3467,
+        "y": 0.7537
+      },
+      {
+        "x": 0.3379,
+        "y": 0.7591
+      },
+      {
+        "x": 0.3342,
+        "y": 0.7618
+      },
+      {
+        "x": 0.3254,
+        "y": 0.7673
+      },
+      {
+        "x": 0.3191,
+        "y": 0.7713
+      },
+      {
+        "x": 0.3104,
+        "y": 0.77
+      },
+      {
+        "x": 0.2691,
+        "y": 0.7253
+      },
+      {
+        "x": 0.2578,
+        "y": 0.7118
+      },
+      {
+        "x": 0.2491,
+        "y": 0.6996
+      },
+      {
+        "x": 0.2278,
+        "y": 0.6631
+      },
+      {
+        "x": 0.224,
+        "y": 0.6549
+      },
+      {
+        "x": 0.2165,
+        "y": 0.6387
+      },
+      {
+        "x": 0.2078,
+        "y": 0.6143
+      },
+      {
+        "x": 0.2028,
+        "y": 0.5995
+      },
+      {
+        "x": 0.1952,
+        "y": 0.5683
+      },
+      {
+        "x": 0.1927,
+        "y": 0.5494
+      },
+      {
+        "x": 0.1902,
+        "y": 0.5345
+      },
+      {
+        "x": 0.189,
+        "y": 0.5061
+      },
+      {
+        "x": 0.1965,
+        "y": 0.3681
+      },
+      {
+        "x": 0.2365,
+        "y": 0.3248
+      },
+      {
+        "x": 0.2403,
+        "y": 0.3234
+      },
+      {
+        "x": 0.3667,
+        "y": 0.3207
+      },
+      {
+        "x": 0.368,
+        "y": 0.3194
+      },
+      {
+        "x": 0.383,
+        "y": 0.3072
+      },
+      {
+        "x": 0.3867,
+        "y": 0.3045
+      },
+      {
+        "x": 0.393,
+        "y": 0.3004
+      },
+      {
+        "x": 0.403,
+        "y": 0.295
+      },
+      {
+        "x": 0.4468,
+        "y": 0.2612
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 85,
+    "attempt": 1,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 100298149,
+    "style_seed": 968370432,
+    "augmentation_seed": 646760277,
+    "sampler_seed": 767521077,
+    "family": "radial",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 3,
+      "corridor": 26,
+      "endpoint_quantile": 0.404
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": -4.1,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.906
+    },
+    "measures": {
+      "geodesic_length_px": 760.02,
+      "normalized_length": 0.6974,
+      "turns": 7,
+      "route_branches": 2,
+      "difficulty_score": 1.4807,
+      "tier": "easy"
+    },
+    "graph_hash": "1715804bb3c541f6b4a93954e78d08f31937bcafba51f76d5ee1d5791c4b60e5",
+    "mask_sha256": "1fd0b293748e461b679ec3d39ec5c663ce4f3a0cec10e9adae28f1521b39b75d",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00423,
+        "start_marker_contrast": 156.19,
+        "goal_marker_contrast": 134.39
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "relaxed": false,
+        "stage": "tier",
+        "detail": "targeted easy, measured medium",
+        "seeds": {
+          "topo_seed": 153754240,
+          "style_seed": 1266202501,
+          "augmentation_seed": 745211183,
+          "sampler_seed": 1462024027
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

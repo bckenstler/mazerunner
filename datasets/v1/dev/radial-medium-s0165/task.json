@@ -1,0 +1,427 @@
+{
+  "id": "radial",
+  "type": "Radial",
+  "style": "Astronomer's chart",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1962966625,
+  "generator": "Polar-cell DFS",
+  "style_record": {
+    "archetype": "watercolor-archipelago",
+    "style_seed": 1597160690,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "sea": [
+        79,
+        184,
+        180
+      ],
+      "wave_light": [
+        93,
+        198,
+        194
+      ],
+      "wave_dark": [
+        67,
+        172,
+        168
+      ],
+      "wave_spacing": 14,
+      "corridor_fill": [
+        232,
+        218,
+        177
+      ],
+      "corridor_noise": [
+        220,
+        206,
+        165
+      ],
+      "stone": [
+        214,
+        200,
+        159
+      ],
+      "stone_rim": [
+        186,
+        172,
+        131
+      ],
+      "corridor_extra": [
+        [
+          220,
+          206,
+          165
+        ],
+        [
+          214,
+          200,
+          159
+        ]
+      ],
+      "outline_color": [
+        62,
+        128,
+        123
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.6151,
+    "y": 0.2542
+  },
+  "goal": {
+    "x": 0.4454,
+    "y": 0.8466
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 17,
+    "optimal_length_px": 1652.31,
+    "optimal_length_px_geometric": 1408.93,
+    "corner_cut_headroom_px": 243.38,
+    "min_clearance_px": 13.0,
+    "optimal_path": [
+      {
+        "x": 0.6157,
+        "y": 0.2541
+      },
+      {
+        "x": 0.5264,
+        "y": 0.2453
+      },
+      {
+        "x": 0.5142,
+        "y": 0.2441
+      },
+      {
+        "x": 0.5007,
+        "y": 0.2441
+      },
+      {
+        "x": 0.498,
+        "y": 0.2466
+      },
+      {
+        "x": 0.4966,
+        "y": 0.2478
+      },
+      {
+        "x": 0.4953,
+        "y": 0.2528
+      },
+      {
+        "x": 0.4912,
+        "y": 0.2941
+      },
+      {
+        "x": 0.4858,
+        "y": 0.2991
+      },
+      {
+        "x": 0.4804,
+        "y": 0.3004
+      },
+      {
+        "x": 0.4032,
+        "y": 0.3191
+      },
+      {
+        "x": 0.3748,
+        "y": 0.3104
+      },
+      {
+        "x": 0.3302,
+        "y": 0.2691
+      },
+      {
+        "x": 0.3139,
+        "y": 0.2503
+      },
+      {
+        "x": 0.295,
+        "y": 0.2278
+      },
+      {
+        "x": 0.2936,
+        "y": 0.224
+      },
+      {
+        "x": 0.295,
+        "y": 0.2215
+      },
+      {
+        "x": 0.2963,
+        "y": 0.2203
+      },
+      {
+        "x": 0.2977,
+        "y": 0.219
+      },
+      {
+        "x": 0.3058,
+        "y": 0.214
+      },
+      {
+        "x": 0.3126,
+        "y": 0.2103
+      },
+      {
+        "x": 0.3329,
+        "y": 0.199
+      },
+      {
+        "x": 0.3505,
+        "y": 0.1915
+      },
+      {
+        "x": 0.3694,
+        "y": 0.184
+      },
+      {
+        "x": 0.3911,
+        "y": 0.1777
+      },
+      {
+        "x": 0.4208,
+        "y": 0.1702
+      },
+      {
+        "x": 0.4696,
+        "y": 0.164
+      },
+      {
+        "x": 0.5074,
+        "y": 0.1627
+      },
+      {
+        "x": 0.6604,
+        "y": 0.174
+      },
+      {
+        "x": 0.7618,
+        "y": 0.2678
+      },
+      {
+        "x": 0.7727,
+        "y": 0.2791
+      },
+      {
+        "x": 0.7767,
+        "y": 0.2841
+      },
+      {
+        "x": 0.8051,
+        "y": 0.3179
+      },
+      {
+        "x": 0.8133,
+        "y": 0.3304
+      },
+      {
+        "x": 0.82,
+        "y": 0.3417
+      },
+      {
+        "x": 0.8281,
+        "y": 0.3567
+      },
+      {
+        "x": 0.8349,
+        "y": 0.3717
+      },
+      {
+        "x": 0.8444,
+        "y": 0.3967
+      },
+      {
+        "x": 0.8512,
+        "y": 0.4155
+      },
+      {
+        "x": 0.8566,
+        "y": 0.4406
+      },
+      {
+        "x": 0.8593,
+        "y": 0.4568
+      },
+      {
+        "x": 0.8606,
+        "y": 0.4693
+      },
+      {
+        "x": 0.862,
+        "y": 0.4831
+      },
+      {
+        "x": 0.8606,
+        "y": 0.6133
+      },
+      {
+        "x": 0.8227,
+        "y": 0.6483
+      },
+      {
+        "x": 0.8187,
+        "y": 0.6496
+      },
+      {
+        "x": 0.7673,
+        "y": 0.637
+      },
+      {
+        "x": 0.7605,
+        "y": 0.6433
+      },
+      {
+        "x": 0.6942,
+        "y": 0.7171
+      },
+      {
+        "x": 0.6928,
+        "y": 0.7222
+      },
+      {
+        "x": 0.7023,
+        "y": 0.7772
+      },
+      {
+        "x": 0.6955,
+        "y": 0.7835
+      },
+      {
+        "x": 0.6861,
+        "y": 0.7885
+      },
+      {
+        "x": 0.6793,
+        "y": 0.7922
+      },
+      {
+        "x": 0.6698,
+        "y": 0.7972
+      },
+      {
+        "x": 0.6604,
+        "y": 0.8023
+      },
+      {
+        "x": 0.6482,
+        "y": 0.8073
+      },
+      {
+        "x": 0.636,
+        "y": 0.8123
+      },
+      {
+        "x": 0.6225,
+        "y": 0.8173
+      },
+      {
+        "x": 0.5954,
+        "y": 0.8248
+      },
+      {
+        "x": 0.5751,
+        "y": 0.8298
+      },
+      {
+        "x": 0.5467,
+        "y": 0.8335
+      },
+      {
+        "x": 0.525,
+        "y": 0.836
+      },
+      {
+        "x": 0.4912,
+        "y": 0.8373
+      },
+      {
+        "x": 0.4452,
+        "y": 0.8461
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 165,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1962966625,
+    "style_seed": 1597160690,
+    "augmentation_seed": 2073408419,
+    "sampler_seed": 1880237044,
+    "family": "radial",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "rings": 4,
+      "corridor": 24,
+      "endpoint_quantile": 0.753
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 1,
+      "rotation_deg": 5.61,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.086
+    },
+    "measures": {
+      "geodesic_length_px": 1408.93,
+      "normalized_length": 1.2929,
+      "turns": 11,
+      "route_branches": 3,
+      "difficulty_score": 2.5095,
+      "tier": "medium"
+    },
+    "graph_hash": "af6ac64420b0f14767ed75d8d271a84b71c3654216a7b394a8a9b94aff653749",
+    "mask_sha256": "8b6c927822ba7039543cbf1d698479ccaad945916b6ff7a0926b48382475169b",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 46.06,
+        "goal_marker_contrast": 78.82
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

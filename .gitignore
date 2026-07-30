@@ -1,0 +1,14 @@
+.env
+.venv/
+datasets/*/test-hidden/
+# QC contact sheets render the tasks they sample, so a hidden-split sheet leaks
+# hidden mazes even though it lives outside the split directory.
+datasets/*/qc-test-hidden*.png
+__pycache__/
+*.pyc
+results/
+.pytest_cache/
+# Archived attempt traces ARE tracked (archive/runs/**/attempts.jsonl.gz, ~39MB).
+# Overlay tarballs are not: 165MB of PNGs that are derived artifacts, fully
+# regenerable from the stored submissions via overlay.render_overlay().
+archive/runs/**/overlays.tar.gz

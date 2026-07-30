@@ -1,0 +1,189 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 138410624,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "circuit-board",
+    "style_seed": 16648,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        10,
+        27,
+        12
+      ],
+      "grid_spacing": 25,
+      "corridor_fill": [
+        184,
+        121,
+        67
+      ],
+      "corridor_extra": [
+        [
+          209,
+          146,
+          92
+        ]
+      ],
+      "pad": [
+        232,
+        226,
+        210
+      ],
+      "outline_color": [
+        5,
+        17,
+        8
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.5,
+    "y": 0.0863
+  },
+  "goal": {
+    "x": 0.3279,
+    "y": 0.6674
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 55,
+    "optimal_length_px": 1063.85,
+    "optimal_length_px_geometric": 841.76,
+    "corner_cut_headroom_px": 222.09,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.5006,
+        "y": 0.0858
+      },
+      {
+        "x": 0.6229,
+        "y": 0.3491
+      },
+      {
+        "x": 0.6452,
+        "y": 0.4034
+      },
+      {
+        "x": 0.7308,
+        "y": 0.598
+      },
+      {
+        "x": 0.7297,
+        "y": 0.6552
+      },
+      {
+        "x": 0.7063,
+        "y": 0.6853
+      },
+      {
+        "x": 0.6841,
+        "y": 0.7124
+      },
+      {
+        "x": 0.6808,
+        "y": 0.7139
+      },
+      {
+        "x": 0.4116,
+        "y": 0.711
+      },
+      {
+        "x": 0.3838,
+        "y": 0.6753
+      },
+      {
+        "x": 0.3804,
+        "y": 0.6738
+      },
+      {
+        "x": 0.3281,
+        "y": 0.6681
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 129,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 138410624,
+    "style_seed": 16648,
+    "augmentation_seed": 921990758,
+    "sampler_seed": 1059368478,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.62,
+      "endpoint_quantile": 0.692
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.966
+    },
+    "measures": {
+      "geodesic_length_px": 841.76,
+      "normalized_length": 0.7383,
+      "turns": 3,
+      "route_branches": 50,
+      "difficulty_score": 2.4883,
+      "tier": "medium"
+    },
+    "graph_hash": "4bb5a8c06bb997d47a927a995c46a6b14e1e4337ae0652e5aa98e7c5262a4a96",
+    "mask_sha256": "243d70fbb98b5c559b97a4528b422c475091c902c63375ced3671bb24d20e17e",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 127.08,
+        "goal_marker_contrast": 74.29
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

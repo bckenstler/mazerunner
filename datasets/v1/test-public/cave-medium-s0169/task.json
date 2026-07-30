@@ -1,0 +1,186 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1754953426,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "parchment-chart",
+    "style_seed": 1854762115,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        12,
+        11,
+        25
+      ],
+      "star": [
+        235,
+        232,
+        244
+      ],
+      "star_faint": [
+        66,
+        68,
+        100
+      ],
+      "corridor_fill": [
+        226,
+        217,
+        192
+      ],
+      "corridor_noise": [
+        214,
+        205,
+        180
+      ],
+      "corridor_extra": [
+        [
+          214,
+          205,
+          180
+        ]
+      ],
+      "outline_color": [
+        33,
+        46,
+        81
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.2083,
+    "y": 0.3443
+  },
+  "goal": {
+    "x": 0.7332,
+    "y": 0.4481
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 40,
+    "optimal_length_px": 725.96,
+    "optimal_length_px_geometric": 578.43,
+    "corner_cut_headroom_px": 147.53,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.208,
+        "y": 0.3448
+      },
+      {
+        "x": 0.2736,
+        "y": 0.4893
+      },
+      {
+        "x": 0.2759,
+        "y": 0.4921
+      },
+      {
+        "x": 0.297,
+        "y": 0.5179
+      },
+      {
+        "x": 0.4205,
+        "y": 0.5708
+      },
+      {
+        "x": 0.6329,
+        "y": 0.5694
+      },
+      {
+        "x": 0.7208,
+        "y": 0.4564
+      },
+      {
+        "x": 0.7253,
+        "y": 0.4549
+      },
+      {
+        "x": 0.733,
+        "y": 0.4478
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "test-public",
+    "slot": 169,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 1000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1754953426,
+    "style_seed": 1854762115,
+    "augmentation_seed": 1795600401,
+    "sampler_seed": 965778647,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.62,
+      "endpoint_quantile": 0.784
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.101
+    },
+    "measures": {
+      "geodesic_length_px": 578.43,
+      "normalized_length": 0.5073,
+      "turns": 2,
+      "route_branches": 36,
+      "difficulty_score": 2.174,
+      "tier": "medium"
+    },
+    "graph_hash": "9a7cacbfee1049c20d6c1d713cd5f923eae8ecbf3bc62d0cf7268ba7cf572e5d",
+    "mask_sha256": "7a3e4e4fe317230acf67e3681c8d90b7edb822284ff00758e218e6973d81a67b",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 101.79,
+        "goal_marker_contrast": 120.77
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

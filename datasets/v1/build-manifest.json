@@ -1,0 +1,166 @@
+{
+  "config": {
+    "version": "v1",
+    "master_seed": 20260726,
+    "out_dir": "datasets/v1",
+    "tier_mix": {
+      "easy": 0.3,
+      "medium": 0.4,
+      "hard": 0.3
+    },
+    "public_forbidden_cells": [
+      [
+        "rectilinear",
+        "parchment-chart"
+      ],
+      [
+        "braided",
+        "notebook"
+      ],
+      [
+        "organic",
+        "neon-pipes"
+      ],
+      [
+        "cave",
+        "treasure-map"
+      ],
+      [
+        "radial",
+        "dungeon-pebble"
+      ],
+      [
+        "island",
+        "circuit-board"
+      ],
+      [
+        "pipes",
+        "watercolor-archipelago"
+      ],
+      [
+        "rooms",
+        "hedge-garden"
+      ]
+    ],
+    "splits": {
+      "dev": {
+        "size": 200,
+        "seed_base": 0,
+        "archetypes": [
+          "notebook",
+          "dungeon-pebble",
+          "blueprint-rooms",
+          "forest-path",
+          "glow-cavern",
+          "parchment-chart",
+          "watercolor-archipelago",
+          "neon-pipes",
+          "circuit-board",
+          "hedge-garden",
+          "treasure-map",
+          "candy-pastel",
+          "pencil-sketch",
+          "desert-canyon"
+        ]
+      },
+      "test-public": {
+        "size": 300,
+        "seed_base": 1000000,
+        "archetypes": [
+          "notebook",
+          "dungeon-pebble",
+          "blueprint-rooms",
+          "forest-path",
+          "glow-cavern",
+          "parchment-chart",
+          "watercolor-archipelago",
+          "neon-pipes",
+          "circuit-board",
+          "hedge-garden",
+          "treasure-map",
+          "candy-pastel",
+          "pencil-sketch",
+          "desert-canyon"
+        ]
+      },
+      "test-hidden": {
+        "size": 500,
+        "seed_base": 2000000,
+        "archetypes": [
+          "notebook",
+          "dungeon-pebble",
+          "blueprint-rooms",
+          "forest-path",
+          "glow-cavern",
+          "parchment-chart",
+          "watercolor-archipelago",
+          "neon-pipes",
+          "circuit-board",
+          "hedge-garden",
+          "treasure-map",
+          "candy-pastel",
+          "pencil-sketch",
+          "desert-canyon",
+          "metro-map",
+          "ice-glacier",
+          "paper-cutout",
+          "volcanic",
+          "mosaic-tile",
+          "biolab-vessels"
+        ],
+        "holdout_archetypes": [
+          "metro-map",
+          "ice-glacier",
+          "paper-cutout",
+          "volcanic",
+          "mosaic-tile",
+          "biolab-vessels"
+        ]
+      }
+    }
+  },
+  "environment": {
+    "python": "3.13.3",
+    "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+    "packages": {
+      "numpy": "2.5.1",
+      "pillow": "12.3.0",
+      "scipy": "1.18.0"
+    }
+  },
+  "summaries": {
+    "test-hidden": {
+      "split": "test-hidden",
+      "size": 500,
+      "total_rejections": 3306,
+      "tiers": {
+        "easy": 124,
+        "medium": 254,
+        "hard": 122
+      },
+      "archetypes": {
+        "glow-cavern": 29,
+        "metro-map": 19,
+        "circuit-board": 29,
+        "desert-canyon": 30,
+        "neon-pipes": 31,
+        "notebook": 25,
+        "pencil-sketch": 26,
+        "candy-pastel": 26,
+        "ice-glacier": 27,
+        "treasure-map": 22,
+        "forest-path": 18,
+        "blueprint-rooms": 21,
+        "watercolor-archipelago": 25,
+        "hedge-garden": 24,
+        "paper-cutout": 23,
+        "dungeon-pebble": 28,
+        "mosaic-tile": 35,
+        "biolab-vessels": 17,
+        "volcanic": 23,
+        "parchment-chart": 22
+      }
+    }
+  },
+  "total_semantic_hashes": 1000
+}
