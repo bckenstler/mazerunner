@@ -6,10 +6,16 @@ datasets/*/test-hidden/
 datasets/*/qc-test-hidden*.png
 __pycache__/
 *.pyc
-results/
-# ...except written findings, which are documents rather than run output.
+# Exclude run output, but keep written findings — they are documents, not data.
+# Must match contents (results/*) rather than the directory (results/): git
+# will not re-include anything beneath an excluded directory.
+results/*
 !results/*.md
 !results/*.txt
+# ...but not the hidden-split build log: it names hidden task ids alongside
+# their topology seeds, and generation is deterministic, so publishing it
+# would let anyone rebuild the held-out mazes.
+results/dataset-build-hidden-log.txt
 .pytest_cache/
 # Archived attempt traces ARE tracked (archive/runs/**/attempts.jsonl.gz, ~39MB).
 # Overlay tarballs are not: 165MB of PNGs that are derived artifacts, fully

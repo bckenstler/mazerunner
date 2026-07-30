@@ -1,0 +1,11 @@
+anthropic · rectilinear · trial 1 ... FAIL
+anthropic · braided · trial 1 ... FAIL
+anthropic · rooms · trial 1 ... PASS
+anthropic · organic · trial 1 ... FAIL
+anthropic · cave · trial 1 ... FAIL
+anthropic · radial · trial 1 ... FAIL
+anthropic · island · trial 1 ... FAIL
+anthropic · pipes · trial 1 ... FAIL
+
+run written to results/20260726-204611/
+  anthropic/claude-opus-5          pass 1/8 eff=1.0 latency=66.54s

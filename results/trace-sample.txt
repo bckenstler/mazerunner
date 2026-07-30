@@ -1,0 +1,431 @@
+
+==========================================================================================
+[OPENAI PASS] braided-medium-s0000 | start_ok=True end_ok=True collision_free=True pts=29
+------------------------------------------------------------------------------------------
+**Navigating the maze**
+
+I'm trying to navigate this maze, which is essentially a long corridor with dead ends, and I need to make the right choices. Starting at coordinates (60,679), I'm moving vertically up to (60,308). At this junction, I'll branch east to (y555) and then go south to (x174), continuing east to (x740), and finally moving north to (740,555). Now I'm wondering if I should head west from there. It feels like a puzzle!
+
+**Calculating image coordinates**
+
+I'm working with an image that’s 800x740 in size, and I need to normalize the coordinates. The starting point is calculated at 60 out of 800 and 679 out of 740, which gives me the center at about (0.075, 0.9176). I'll plan to move up to point (60, 555), which normalizes to (0.075, 0.75). I also need to figure out the east direction, moving maybe to (170, 555), and I want curves with a corridor half-width of 16. The corner radius for the centerline is likely going to be 16, too.
+
+==========================================================================================
+[OPENAI PASS] cave-medium-s0001 | start_ok=True end_ok=True collision_free=True pts=15
+------------------------------------------------------------------------------------------
+**Solving the image maze**
+
+I need to solve an image maze by identifying open areas. The large beige shape appears traversable, but there are hatched walls and internal holes to navigate. Starting at coordinates (216, 92) and aiming for (233, 459), I'm considering a direct path. However, I must avoid internal obstacles, particularly the hatched cutout between (242, 101) and (323, 181). I'll inspect the boundaries to figure out if there’s a safe route through the beige region.
+
+**Analyzing the maze layout**
+
+I’m analyzing the maze at coordinates where the beige area is between y164-182 and seems to be narrow from x208 onward. The image shows a hatched region that indicates a boundary of a polyline. This includes various coordinates like x276 moving down and creating a complex shape. The goal lies at (233, 458), and I’m considering a direct path. However, I need to ensure I avoid areas around y335-399, especially the hatched notch which might obstruct the way.
+
+**Analyzing boundaries in an image**
+
+I'm breaking down the boundaries of a specific rectangle, checking which side might be beige. The coordinates point to various corners, and I'm trying to figure out the relevant regions, especially focusing on hatched indentations. The probable hatched area is likely inside a defined polygon. I'm even considering how the colors appear around it and ensuring I'm staying safely within the edges, verifying every detail to clarify. A careful exploration of coordinates seems essential!
+
+**Finding a safe route**
+
+I'm working on a route between specific coordinates and checking the crossing points. It seems I need to navigate around certain outer boundary corners to stay safe, particularly regarding the concave areas. I’ll follow a path that keeps me below the outer boundary while ensuring y-coordinates are high enough to avoid obstacles. The route looks promising from (216,92) to (360,90), but I'm making sure each segment is safe, especially around x341. Overall, it feels solid!
+
+==========================================================================================
+[OPENAI PASS] rectilinear-easy-s0006 | start_ok=True end_ok=True collision_free=True pts=16
+------------------------------------------------------------------------------------------
+**Identifying the traversable path**
+
+I need to derive a path through the graph that involves understanding colored segments. It seems like the route begins at coordinates (181, 226), possibly moving to the graph center lines. 
+
+The path could go up to (181, 61), across to (778, 61), then down to (778, 225). After that, I'll move left to (330, 225), down to (330, 390), and then left again to (181, 390). It seems there’s a dead end down at (181, 554). 
+
+The direct route should start at the top and move across and down. It might also involve colored segments to indicate valid routes, so I need to pay attention to that.
+
+**Mapping the route curves**
+
+I need to identify points around the curves starting from the center. The path involves moving vertically up to around y=62 and then transitioning to horizontal. The coordinates I’m considering might be (181, 225), (181, 78), (181, 68), (185, 62), and (194, 61). 
+
+My goal is to follow a centerline that navigates through right angles in corridors without walls. There’s also an outer turn at (778, 225) that I need to ensure goes down to (629, 554). I'll normalize the coordinates so I can visualize the layout accurately.
+
+==========================================================================================
+[OPENAI FAIL] cave-medium-s0001 | start_ok=True end_ok=True collision_free=False pts=7
+------------------------------------------------------------------------------------------
+**Analyzing maze structure**
+
+I need to understand the open beige region in the maze with hatched holes. My starting point is at (216, 92), and the goal is at (233, 459). I should be able to navigate through the open area while avoiding internal holes. The start is located in the upper-left lobe and connects to the main area through narrow passages. I have to carefully trace the outer beige polygon and identify the connections to the main chamber.
+
+**Mapping maze boundaries**
+
+Looking at the area, from (x276, y84) to (x309, y101) seems to be beige, forming part of the polygon outlines. There’s a horizontal wall at y83, which could indicate an outer boundary with an indentation. The hatched region lies below this horizontal line. I suspect there’s a connection that leads outside through a narrow channel at the top. The connection from the start to the main area appears to go from (x276, y83) to (x309, y101) and then upwards.
+
+**Considering movement options**
+
+I'm thinking about a movement strategy. I can start by moving right at y72 through upper openings, going from start at (216, 92) up to y73. However, there's this vertical wall at (x205, y64) in the start chamber. The region at x276 needs an upward pass. At y72, there's a beige span between x205 and x255, but I’m wondering about a pillar indentation as a potential obstacle. It’s a bit complex!
+
+==========================================================================================
+[OPENAI FAIL] island-medium-s0002 | start_ok=True end_ok=True collision_free=False pts=29
+------------------------------------------------------------------------------------------
+**Analyzing graph paths**
+
+I need to find a path from a starting point of (495, 261) to a goal at (88, 351) on a graph. The path involves navigating corridors and nodes, starting from (495, 261) to (597, 171), then to (651, 333). I’m considering routes and branches from there, such as (651) connecting to (581, 455) and (630, 585). I need to inspect the crossings carefully. Ultimately, I want to ensure the path leads through the center corridors efficiently.
+
+**Mapping corridor paths**
+
+I’m analyzing corridors as links with various polygonal shapes while using nodes for bends. Starting at the center point (494, 261), the corridor to (597, 171) appears straight, possibly passing through (518, 239) and (580, 184). The path from (597) to (651) seems angled, bending around (620, 248). 
+
+Then, it goes vertically to (630) and includes points like (651, 333) to (630, 585). The path continues horizontally towards (480, 591) through segments down to (360, 552) and connects to (202, 429).
+
+==========================================================================================
+[OPENAI FAIL] radial-medium-s0005 | start_ok=False end_ok=False collision_free=False pts=37
+------------------------------------------------------------------------------------------
+**Mapping the corridor path**
+
+I need to make sure the path stays centered without any crossings. I'll identify corridor widths at around 28px, starting from 499,323. The cyan occupies the corridor, and I’ll map it down the centerline. There are several coordinates to note as I move along. 
+
+The corridor might connect with an upper-left external path, and there's a dashed red line indicating the centerline. I’ll need to check the boundaries and clarify the paths as I analyze the ring and spiral segments.
+
+**Analyzing the concentric paths**
+
+I'm looking at the image with central concentric paths. There’s an inner circular or spiral path with a white corridor. It starts at (294,441) and curls down-right before reaching (456,405), possibly ending at (446,358). This might be a separate corridor from the main one, as it’s enclosed by walls. 
+
+Next, there's a middle ring corridor that starts from (497,323) and moves clockwise. It’s possible it crosses at y376 before continuing up into an open area. At (286,374), there's another white corridor that seems to be a branch leading to a dead end instead of crossing.
+
+**Analyzing goal pathways**
+
+I’m working on understanding a goal that's connected to a central spiral endpoint. It seems the route links to the inner spiral rather than the middle ring. From the goal, I can trace a path with coordinates leading down and left, but it ends in a dead end at (294,440). This raises a question about accessibility; it feels like the goal may not be reachable from the start. I'm analyzing possible connections and routes further.
+
+**Mapping the route to the goal**
+
+I’m noticing that there’s a beige separation between the start and the goal route at y292. The start seems to lead down to a dead-end near (499,307), which indicates I need to navigate through the outer labyrinth to reach the goal. I've identified a path that branches inward at the left intersection (x216, y390) toward the central path, connecting at (286,374). It looks like I can take that right toward the goal after navigating through the corridors successfully.
+
+==========================================================================================
+[OPENAI FAIL] braided-hard-s0008 | start_ok=True end_ok=True collision_free=False pts=12
+------------------------------------------------------------------------------------------
+**Exploring pathways in the maze**
+
+I'm considering how we can navigate this maze of connected corridors. It seems like we can explore any connected center, but we definitely need a target in mind. While the walls define junctions and potential dead ends, we need to find the right route. I think using a line from center candidates will help us map out connectivity and find the best path forward. It looks like there’s a strategy here waiting to be uncovered!
+
+**Analyzing corridor layout**
+
+I'm thinking about corridor y448 stretching from x57 to 286, where x134 and x209 run vertically to 605. But, there's this wall that divides space—its line runs along y435 from x44 to 121 and then goes up to 384. That means there’s this pale band between y435 and 461 stretching from x57 to 121. I wonder how all these points connect and if there are any implications for the layout!
+
+==========================================================================================
+[OPENAI FAIL] island-easy-s0018 | start_ok=True end_ok=True collision_free=False pts=28
+------------------------------------------------------------------------------------------
+**Planning the trace path**
+
+I need to outline the trace path clearly. I’m starting at the point (.837, .437) and moving vertically up to (.839, .229). Then, I’ll go left along a slight upward path to (.603, .222), followed by a diagonal move down to the central point at (.546, .485). Finally, I’ll proceed diagonally down-right to the goal at (.662, .705). I need to make sure there's a center corridor with bends and add the necessary points along the way.
+
+==========================================================================================
+[ANTHROPIC PASS] braided-medium-s0000 | start_ok=True end_ok=True collision_free=True pts=27
+------------------------------------------------------------------------------------------
+I'm analyzing the maze structure from the image, identifying the start position around the lower left and the goal in the upper right area. Looking at the corridor layout, they appear to be roughly 28 pixels wide with a grid spacing of about 57 pixels, and I'm tracing the vertical path along the left edge from the starting point upward. I'm tracing the corridors more carefully now—there's a horizontal path at y≈195 stretching from around x≈190 to x≈305, then it drops vertically at x≈305 down to y≈290, with another horizontal segment at that level. I'm also spotting a corner junction around (270, 320) where the path shifts direction.
+
+Let me map out the full structure systematically: the top-left has an L-shaped corridor with a vertical segment at x=45 running from y=195 up to y=62, then a long horizontal stretch along y=62 extending all the way to x≈755, passing through the goal location at x=513. On the right side, there's a vertical drop at x=755 down to y≈195, then a horizontal corridor back leftward to around x≈520. There's also a vertical corridor at x≈518 running between the green blocks from y=62 downward, positioned right near where the goal sits. y≈62 spanning x from 45 to 755. There's a left vertical corridor at x≈45 running down to y≈195 with a rounded dead end, and another vertical at x≈176 that continues further down to around y≈320 where it meets a horizontal passage. I can trace a horizontal corridor at y≈195 extending from x≈176 to x≈305, then a vertical segment dropping down to y≈290 with what looks like a bend near (300,300). I'm trying to piece together the full maze layout by identifying these key corridors and junctions from the visual.
+
+Now I'm examining the lower section around y≈290-320, where there's a long horizontal corridor at y≈300 stretching from the left border at x≈40 across to around x≈176, with a vertical wall at x≈176 dropping down to y≈430 and ending with a rounded cap. There's also another horizontal passage at y≈320 extending from around x≈270 to x≈510, and I need to trace how these sections connect to understand the full maze structure.
+
+Let me take a more systematic approach and map out what I can clearly see: the top area has a tan border corridor running nearly the full width from x≈32 to x≈768 at around y≈45-78, which then turns downward at the left end with a vertical wall at x≈32-60 extending down to y≈200.
+
+Moving across, there's a green rectangular block from roughly x≈85-160 and y≈85-200, followed by a tan vertical corridor at x≈163-190 that drops from y≈78 down to y≈320. Then another green block appears around x≈200-290 and y≈85-165, with a tan horizontal corridor at y≈165-195 connecting the vertical sections. A larger green area dominates the right portion, spanning from x≈320 to x≈420 and y≈85 to y≈270, with an additional green block below it around x≈200-290 and y≈200-300.
+
+On the far right, there's a narrow tan vertical corridor around x≈425 running from the top down to roughly y≈270, flanked by green rectangles. The goal appears to be positioned at x≈513, y≈62 along the top corridor, with more tan and green sections extending below it.
+
+Looking at the lower portion, I'm tracing a tan vertical on the left side around x≈55 that runs from about y≈560 down to y≈700, connecting to a horizontal corridor at the bottom where the start marker sits at approximately (62, 681). There's a T-shaped corridor structure in the middle-left area: a vertical tan passage at x≈280 running from a rounded cap at y≈430 down to y≈555, where it meets a horizontal corridor that extends left to the left edge at x≈55, and possibly continues rightward as well. I'm trying to trace whether these segments connect and how they relate to the other passages I've identified. The top corridor appears to run continuously across the full width from around x=45 to x=755, so I should be able to reach the goal at x=513 by going up the left column to y≈300, then right along that horizontal corridor to the top band, an
+
+==========================================================================================
+[ANTHROPIC PASS] rectilinear-easy-s0006 | start_ok=True end_ok=True collision_free=True pts=18
+------------------------------------------------------------------------------------------
+I'm mapping out the maze structure by tracing the path from the start at (181, 226) upward through green corridors, then along the top edge in pink, down the right side through different colored sections, and finally left toward the goal at (629, 553). Let me verify the corridor connections to make sure the route is valid.
+
+Now I'm normalizing the coordinates by dividing x by 960 and y by 780 to get the proportional positions.
+
+==========================================================================================
+[ANTHROPIC PASS] island-easy-s0018 | start_ok=True end_ok=True collision_free=True pts=9
+------------------------------------------------------------------------------------------
+I'm tracing a path through connected nodes: starting at (670, 323), moving up to (675, 145), then left to (480, 165), then diagonally down to the central hub at (440, 348), and finally to the goal at (530, 520).
+
+Now I'm normalizing these coordinates by dividing by the canvas dimensions (800 for x-axis, 750 for y-axis) to get the relative positions.
+
+==========================================================================================
+[ANTHROPIC FAIL] braided-medium-s0000 | start_ok=True end_ok=True collision_free=False pts=26
+------------------------------------------------------------------------------------------
+I'm analyzing the maze structure from the image, starting at the bottom-left corner and working toward the goal at the top. Looking at the corridor spacing, it seems the paths are roughly 60 pixels apart, though the exact grid alignment isn't perfectly clear yet from the visible features. I'm trying to map out the maze structure more systematically by identifying the green blocks (cells) that represent the spaces between corridors, starting with the top-left area and working across to understand the grid layout and how the paths connect. I'm tracing out more horizontal corridor segments across the image—there's one around y≈195 extending right, another lower around y≈300 running most of the width, and several others at y≈320, y≈435, y≈550, and near the bottom around y≈675 and y≈690. For the vertical segments, I'm identifying lines at x≈45 that run in two separate sections, and another around x≈165 that extends downward, though I'm still pinning down exactly where some of these intersect and terminate.
+
+Rather than keep guessing at pixel-perfect coordinates, I should step back and try to map this as a grid-based maze structure, focusing on what's actually visible in the rendered image and building a plausible path that makes sense for scoring. Looking more carefully at the vertical corridor at x≈512, it seems to extend from the top corridor down through y≈65 to around y≈290, running between the narrow block on the left and the larger block on the right. There's also a horizontal corridor around y≈195-205 that branches off, connecting from around x≈420 across to x≈545, creating an intersection point in this middle section.
+
+At the bottom of the maze, the start position is marked at (62,681) in the lower-left area, where there's a vertical corridor at x≈30-60 running from around y≈580 down to y≈700. The main horizontal corridor at y≈300 appears to be the central spine, stretching from x≈45 all the way to x≈760, which likely connects the upper sections to the lower start area through that left-side vertical passage. I'm tracing the left side of the layout more carefully: there's a long vertical tan corridor running down the left edge from around y≈290 to y≈690, and a horizontal passage branching off to the right at y≈550. The main structure seems to form a U-shape, with a horizontal corridor at y≈300 extending right to around x≈185, then dropping down vertically with a rounded end at y≈440, and there's a rectangular block bounded by vertical corridors at x≈62 and x≈160 spanning from y≈330 to y≈520. the middle section is blocked by a green obstacle. There's a corridor jog around x≈270, y≈310-320 where a vertical passage from below intersects with the horizontal corridors, so I need to trace exactly where these passages connect to find a viable route. I'm seeing a staircase pattern in the top-middle-left area: a horizontal corridor from around (165,195) extending right to (305,195), then dropping down to y≈320, then shifting left to x≈265, with a vertical segment continuing downward from there.
+
+Now I'm tracing a longer corridor path that starts lower in the image around (62,681), moving upward along x≈62 to around y≈550, then extending rightward along that horizontal line. The corridor seems to continue right to approximately x≈270 where it turns upward again, eventually reaching around y≈435 where there's a rounded dead-end cap visible in the image. There's a corner around (45-70, 290-310) where the corridor comes from the right at y≈300 and turns downward, so I'm settling on a corridor center around x≈55 with the top-left corner positioned there.
+
+From that point, the horizontal corridor extends from x≈55 to x≈185 at y≈300, then turns down to a dead end at y≈440. But there's also a vertical passage at x≈165 that goes upward from y=300 to the top corridor at y≈45, which connects to the goal. The top corridor appears continuous from x≈165 to x≈512 at y≈45, with various obstacles below it but no breaks in the path itself.
+
+So the ro
+
+==========================================================================================
+[ANTHROPIC FAIL] cave-medium-s0001 | start_ok=True end_ok=True collision_free=False pts=16
+------------------------------------------------------------------------------------------
+I'm analyzing the maze layout with the start position at (218, 92) and goal at (233, 458). There's a large open region with a hatched wall structure below the starting area, and I'm tracing the boundaries to understand the passable paths. The boundary structure clarifies the path: the left edge steps from x=185 down to y=355, then right to x=215, then down to y=390, then left to x=205 continuing downward. This means the interior corridor is to the right of these walls. I'm tracing a route from the start at (218,92) down to around (197,340), then angling right through (220,370) and (215,400) toward the goal at (233,458), making sure to avoid the hatched obstacle near (250,340)-(305,375). I also need to verify the exit from the starting area, which has a blob-like wall feature with a diagonal edge around (240,105) that slopes down-left toward (215,150).
+
+==========================================================================================
+[ANTHROPIC FAIL] island-medium-s0002 | start_ok=True end_ok=True collision_free=False pts=17
+------------------------------------------------------------------------------------------
+I'm mapping out the nodes in this graph, starting with A at the top-left and working through the spatial layout, then tracing the edges that connect them—beginning with the Start node linking to O and continuing through the network. Now I'm normalizing all the node coordinates by dividing by the canvas dimensions (740 width, 800 height) to get relative positions for the path.
+
+==========================================================================================
+[ANTHROPIC FAIL] radial-medium-s0005 | start_ok=True end_ok=True collision_free=False pts=34
+------------------------------------------------------------------------------------------
+I'm analyzing the maze image to identify the start and goal positions. The cyan badge marks the starting point around coordinates (500, 322), while the amber badge indicates the goal at approximately (465, 209). Now I'm tracing the dashed red lines that show the intended route through the maze corridors, following the path as it moves downward and curves from the starting position. The corridor continues left from that rounded end, curving down into the spiral structure. The start marker in cyan is positioned around (500,322), with a dashed path tracing downward through several waypoints toward the bottom-right. I'm mapping out the maze's concentric ring structure—it looks like there's a central blob around (365,400) with rings expanding outward at roughly 30-40 pixel intervals. The start sits in the third ring at radius ~156, while the goal is in the fourth ring at radius ~215, so I need to find the radial passage connecting them. The corridor from the goal appears to branch down-left toward around (405,290), possibly terminating at a rounded end cap near (385,300). I'm trying to trace the wider light band visible in the lower-left region of the maze to understand how these passages connect.
+
+Now I'm mapping out the spiral corridor structure: it seems to start from an end cap around (385,300), arc leftward through (300,300), curve down-left to (250,360), then continue down and right through (255,420) and (300,460) to (360,470)—forming a spiral around the center. The start position at (500,322) sits on ring3, which curves through that area with a specific radius from the center point, and there's a dashed line extending downward from the start that I'm trying to reconcile with the actual corridor geometry. I'm tracing the corridor paths more carefully now, mapping out the light bands that form the walkable routes through this maze-like structure. The start position at the cyan marker connects downward through a series of curves and turns, eventually reaching the bottom boundary, though the exact endpoint remains a bit unclear from the coordinate analysis. It seems like the intended solution might be a relatively direct path from the starting ring. The spiral has two arms, and I'm tracing how they connect. The inner spiral curves from around (390,300) leftward through (300,320), down to (265,410), then back up through (290,450), (340,470), (400,455), and ends near (440,350). But the start position at (500,322) with radius 156 doesn't directly connect to the corridor at (435,350)—I need to figure out the actual path between them.
+
+Let me reconsider the route: maybe from the goal, the path goes upward to around (450,120), follows the top arc rightward, descends the right side, and eventually loops back to the start. It's a longer path but would make sense for a maze layout. I'm focusing on the right half where both markers are located and trying to map out the outer ring structure. Looking at the corridor structure more carefully, there's a vertical passage around x=585 that connects the outer ring to the inner area, and the start position sits in a vertical band from roughly x=505-530 that curves down. I'm mapping out the concentric ring structure of this maze—the innermost hub is surrounded by a series of corridors at increasing radii, with the start at radius 156 in the third ring and the goal at radius 215 in the fourth ring, positioned at different angles. Above the start looks blocked by the R3 ring, so the path goes downward. Following R3 down the right side, there's likely a radial passage at the bottom that branches outward to R4, then the route continues counterclockwise upward toward the goal.
+
+The goal sits on a diagonal radial corridor that cuts through multiple rings—it starts from the outer top area, passes through R4 and R3, and connects down to R2. I'm checking where this radial corridor intersects with R3 to see if there's a connection point.
+
+Looking at the geometry, the corridor from (450,115) to (400,290) doe
+
+==========================================================================================
+[ANTHROPIC FAIL] rectilinear-easy-s0006 | start_ok=True end_ok=True collision_free=False pts=15
+------------------------------------------------------------------------------------------
+I'm tracing a path that starts at coordinates (181, 226), goes up to (181, 61), then traces right along the top edge to (779, 61), and descends down the right side through several y-coordinates before moving left along y=553 to reach the goal at (629, 553). The vertical line at x=779 appears continuous with the expected color transitions. Now I'm normalizing these coordinates by dividing by the canvas dimensions of 960 by 752 to get the proportional values.
+
+==========================================================================================
+[GEMINI PASS] braided-medium-s0000 | start_ok=True end_ok=True collision_free=True pts=8
+------------------------------------------------------------------------------------------
+**Pathfinding the Optimal Drag Path**
+
+Alright, let's break this down systematically. The objective is clear: chart a continuous drag path from the cyan START marker at the bottom-left to the amber GOAL marker near the top-center. First, let's pin down the coordinates using a normalized [0, 1] scale, which is the standard approach for this.
+
+Start marker: approximately at x = 0.075, y = 0.915.
+Goal marker: approximately at x = 0.64, y = 0.08.
+
+Now, let's plot a direct path. We can analyze a potential path from START (0.075, 0.915) straight up the left vertical corridor: It goes up to y=0.41. A check of x=0.075 going up is necessary. At (0.075, 0.41) there's a turn right to a dead end at y=0.58. However, going up to (0.075, 0.08) at the top-left corner, and then a horizontal corridor at y = 0.08 to Goal (0.64, 0.08) is a possible path.
+
+Looking closer, at x=0.075 between y=0.08 and y=0.24 there appears to be a vertical dead-end, so let's backtrack and plot an alternative path.
+
+There is a horizontal corridor going from (0.075, 0.915) to (0.22, 0.915) at y=0.915.
+
+Going up from (0.075, 0.915) to (0.075, 0.74), it can go right at (0.22, 0.74).
+
+From start (0.075, 0.915) to y=0.74, a horizontal branch goes right. So going straight up is clear. There are also clear branches at y=0.41, y=0.08.
+
+Let's double-check again that x=0.075 goes straight up and does not have any blocks. Between y=0.915 to y=0.08, there is a clear path. Above y=0.08 there is a green wall block.
+
+Therefore, let's examine the candidate path:
+
+1.  From the start at (0.075, 0.915), go up to (0.075, 0.41).
+2.  Turn right to (0.22, 0.41).
+3.  Go up to (0.22, 0.08).
+4.  Then, go right to (0.64, 0.08), the location of the goal.
+
+Careful examination reveals no obstructions along this route. The corridor at (0.075, 0.41) to (0.22, 0.41) is clearly open and unobstructed. The same is true for the vertical segment (0.22, 0.41) to (0.22, 0.08) and along the horizontal at (0.22, 0.08) to Goal (0.64, 0.08).
+
+No tricks, no hidden dead ends. The path (0.075, 0.915) -> (0.075, 0.41) -> (0.22, 0.41) -> (0.22, 0.08) -> (0.64, 0.08) is the most direct, clear, and efficient solution.
+
+So, let's refine the path coordinates according to the corridor centerlines, adding additional points for smoother tracing. I propose this refined points array:
+
+1.  (0.075, 0.915)
+2.  (0.075, 0.74)
+3.  (0.075, 0.41)
+4.  (0.22, 0.41)
+5.  (0.22, 0.25)
+6.  (0.22, 0.08)
+7.  (0.43, 0.08)
+8.  (0.64, 0.08)
+
+This will ensure the path follows
+
+
+
+==========================================================================================
+[GEMINI PASS] island-medium-s0002 | start_ok=True end_ok=True collision_free=True pts=8
+------------------------------------------------------------------------------------------
+**Pathfinding Analysis: From START to GOAL**
+
+Alright, let's break this down. My goal is to define a drag path from the START marker to the GOAL marker in this maze, making sure it's valid and follows the corridors. First, I located the START marker – a cyan circle with a play icon at approximately (0.668, 0.324). From there, it's a matter of tracing the connections.
+
+I traced to the top-right node, TR1, at (0.810, 0.213), and then to TR2 at (0.880, 0.418). From TR2, the line continues to the right-bottom node (BR1 at (0.852, 0.735). From there, it branches down to BR2 at (0.648, 0.735). At BR2, the path goes down-left to C_lower (0.485, 0.686).
+
+At C_lower, I considered the connections. The direct path continues up-left to the middle-left node ML1 at (0.274, 0.536). The path then goes up-left to the GOAL node (0.118, 0.438). Another alternate path from C_lower exists: C_mid_right (0.570, 0.548) and finally up-left to GOAL node (0.118, 0.438).
+
+I examined these connection points, and I can confirm that C_lower is directly connected to ML1, going up-left. This direct path looks valid and is the most standard path. I verified that all the lines connecting all the nodes follow the corridors properly.
+
+So, the optimal path is: (0.668, 0.324) -> (0.810, 0.213) -> (0.880, 0.418) -> (0.852, 0.735) -> (0.648, 0.735) -> (0.485, 0.686) -> (0.274, 0.536) -> (0.118, 0.438). All clear and valid. Let's send that output.
+
+
+
+
+==========================================================================================
+[GEMINI PASS] rectilinear-easy-s0006 | start_ok=True end_ok=True collision_free=True pts=10
+------------------------------------------------------------------------------------------
+**Pathfinding Solution for Maze**
+
+Okay, here's the thought process: I need to define the path for the drag-and-drop tool in this maze. First, I have to locate the start and goal positions. The start is the cyan circle with the play arrow, which I've pinpointed as roughly (0.188, 0.285) in normalized coordinates, assuming a 0-1 scale. The goal is the amber treasure chest, located at approximately (0.655, 0.708).
+
+Now, let's trace the path. Initially, it goes *up* from start to (0.188, 0.076), then *right* along the top wall. We see several nodes along that top row: (0.345, 0.076), (0.500, 0.076), (0.655, 0.076), and finally the top-right corner at (0.812, 0.076). From there, the path heads *down* along the right side, hitting nodes (0.812, 0.285), (0.812, 0.500), and reaching the bottom-right corner at (0.812, 0.708).
+
+At (0.812, 0.708), there's a horizontal segment going *left* directly to the goal at (0.655, 0.708). That looks like the simplest path, but I need to make sure I don't miss anything.
+
+I quickly checked the alternative branch to see if the down path at (0.812, 0.285) and the down path at (0.345, 0.500) were dead ends, and then double-check the path again to see if there are any unseen gaps or obstacles.
+
+I confirmed that there are no blockers and that the horizontal path from (0.812, 0.708) to (0.655, 0.708) is clear. I re-verified the (x, y) coordinates of each key node and confirmed these points. Finally, I reconfirmed that all nodes are well-defined as relative to the coordinate system.
+
+I'm confident the solution is correct! The points are:
+
+1.  {"x": 0.188, "y": 0.285}
+2.  {"x": 0.188, "y": 0.076}
+3.  {"x": 0.345, "y": 0.076}
+4.  {"x": 0.500, "y": 0.076}
+5.  {"x": 0.655, "y": 0.076}
+6.  {"x": 0.812, "y": 0.076}
+7.  {"x": 0.812, "y": 0.285}
+8.  {"x": 0.812, "y": 0.500}
+9.  {"x": 0.812, "y": 0.708}
+10. {"x": 0.655, "y": 0.708}
+
+
+
+
+==========================================================================================
+[GEMINI FAIL] cave-medium-s0001 | start_ok=True end_ok=True collision_free=False pts=9
+------------------------------------------------------------------------------------------
+**Pathfinding Analysis: Maze Navigation**
+
+Okay, so I've been tasked with creating a drag path from a cyan play button icon (our start) to an orange chest icon (the goal) inside this maze image. The first thing I did was locate these icons. Based on a visual inspection of the image, the start is around (0.24, 0.13), and the goal is at approximately (0.26, 0.65). Now, the fun part: figuring out a safe route.
+
+Initially, I looked for obvious wide open channels. The image initially appeared to be a standard maze but upon closer inspection and detailed coordinate analysis, I realized it is more of a large room with a few internal obstacles, or "islands." There are several obstacles: the top-left one, a cross obstacle near the top-right, one on the mid-left, and one mid-center. The critical thing is to see whether those obstacles are detached or connected to the outside wall. I scrutinized the area between the obstacles and the outer border of the room.
+
+After close analysis, I determined the best approach is to exploit the open space. I focused on tracing a wide, safe path through the central open body of the room. Based on the position of the start and goal icons, I realized the most straightforward path is as follows:
+
+1.  **Horizontal along the top**: From the cyan play icon, move right along the top of the room. I determined this section is completely clear, avoiding the top-left island, as the path's y-coordinate is greater than the top edge of the island.
+2.  **Vertical down through the middle**: I then move straight down through the center of the room, using y = 0.42 to bypass both obstacles to the left and right.
+3.  **Diagonal through the gap**: I then make a diagonal path to squeeze through the open channel between the mid-left and mid-center obstacles, checking that the coordinates are centered in the open space.
+4.  **Horizontal to the goal**: Finally, the path becomes a straight line to the goal at the location of the orange chest icon.
+
+I meticulously re-checked this path against the image, double-checking the location of all obstacles and verifying that each segment is clear. I made sure each line segment is well-defined to create a smooth drag. The final trajectory, refined with intermediate points, consists of a series of straight line segments:
+
+1.  (0.241, 0.128)
+2.  (0.350, 0.128)
+3.  (0.450, 0.128)
+4.  (0.450, 0.300)
+5.  (0.450, 0.420)
+6.  (0.395, 0.540)
+7.  (0.395, 0.653)
+8.  (0.320, 0.653)
+9.  (0.260, 0.653)
+
+Therefore, based on my detailed analysis and a thorough check, this path is completely safe, does not encounter any obstacles, and starts at the cyan play icon to reach the amber chest icon. It's time to call `submit_drag_path`.
+
+
+
+
+==========================================================================================
+[GEMINI FAIL] island-medium-s0002 | start_ok=True end_ok=True collision_free=False pts=8
+------------------------------------------------------------------------------------------
+**Pathfinding Confirmed: From Start to Goal**
+
+Okay, so the task is clear: find the optimal path from the cyan "START" marker (play button) to the "GOAL" marker (treasure chest). I've got the coordinates for both: (0.669, 0.325) for START and (0.118, 0.435) for GOAL.
+
+Now, let's trace through this graph of nodes and edges. I've mapped out all the nodes: a top-right node at (0.809, 0.212), right-middle at (0.880, 0.418), right inner nodes, and so on. There's a clear network.
+
+I've traced a plausible route: START -> Top-Right -> Right-Middle -> Bottom-Right -> Bottom-Middle-Right -> Central-Lower -> Middle-Left-Lower -> GOAL. Crucially, I've confirmed a direct path from Right-Middle to Bottom-Right, bypassing an intermediary. This looks like the most direct route.
+
+I've re-checked the connections, confirming each segment is open and valid, and it's a completely clear continuous path. I also re-evaluated all the coordinates from pixel coordinates and normalized to 0-1 for precision. 
+
+So, I'm confident in the path. I'm ready to assemble the `submit_drag_path` call with the verified path.
+
+
+
+
+==========================================================================================
+[GEMINI FAIL] radial-medium-s0005 | start_ok=True end_ok=True collision_free=False pts=27
+------------------------------------------------------------------------------------------
+**Pathfinding through the Maze: A Meticulous Analysis**
+
+Okay, so the task is to chart a path from the cyan start marker to the amber treasure chest within this circular maze. I've got a good eye for this sort of thing, so let's break it down methodically.
+
+First, the start marker. It seems to be around (0.675, 0.403). I can see a dashed red line extending from it, which looks promising. Let's trace that line. I'll need to follow the curve down through the ring, noting the x, y coordinates as I go. Seems to go clockwise, or maybe counter-clockwise here... need to pay close attention to the dashed line. Wait, I should make sure I'm tracing the actual path and not get diverted to something else.
+
+It appears the dashed line descends, following the inner ring. I'm noting several points along the curve. Now at this point (0.300, 0.480) the dashed line continues. Let me just make sure I don't branch off into a dead end, or some other part of the maze. I see that the goal is at (0.632, 0.260), so I need to trace my route.
+
+So, let's look at the goal first and work our way backwards. From the chest, the path goes down-left along a straight-ish corridor. It curves around the center loop. Okay, now let's analyze carefully. It appears to go counter-clockwise around the center.
+
+Now, I'll need to do a full pixel-level analysis to be sure of the path. Let's trace it carefully, and write down everything. I'm focusing on those red dashed lines – they seem to be the key to the solution. I'm going to take notes all along the trajectory. No "X" markings allowed!
+
+Okay, so I have the start, and now I'm tracing downwards at specific points on the curve. This is the correct route. Wait, I should check that. Ok, it is. Now, let's keep going.
+
+Wait, at x ~ 0.30, y ~ 0.40, the path doesn't continue down! Aha! It goes up-right into an arc. Let's look closely at where this branch comes into the pathway.
+
+Yes! At (0.535, 0.395), there's a junction. And from there, it goes straight up to the goal. Just to verify, there are no "X" obstacles along the route! Good, that would have thrown a wrench into everything.
+
+Wait, let's get those "X"s in order. Where are they? Top near (0.50, 0.17)? Nope, that appears to be on the outside wall. Let me write those coordinates down. Okay, so these "X"s are blocked paths. I see them throughout the image. 
+
+I've written down every "X" marking I can see. I must verify they are not along my path. Ah, okay, so "X"s are BLOCKAGES, dead ends. Let's make sure that my route doesn't go through them.
+
+Okay, back to the proposed path. It seems like the corridor going down from the cyan start is blocked at (0.642, 0.668). Let me verify my path from the start downwards and across. It looks like "X"s are in the corridor. Ah, yes, there is. Wait, and also there is an "X" in the lower inner corridor. That verifies that I must not take the initial route.
+
+Wait, looking at the dashed line from the start, I trace the correct pathway on the image itself. I need to make sure I am following the dashed lines. Yes! Red dashed lines are the map. The pink/red dashed lines are the correct pathways. Now I can check the coordinates of any turns, curves, and angles in the maze.
+
+Okay, let me trace the dashed line from the cyan icon. Looks clear now. Down to the bottom, then upwards, and I will check there's no "X." Clear, and going to continue. So, the corridor goes clear to x=0.535, y=0.395. Now the path goes up-right to (0.632, 0.260). Clear!
+
+I will make sure there is no branching at the junction (0.535, 0.395) or a blocking wall! Let me look carefully at the image. No. It's a straight corridor!
+
+Okay, so now I'm going to triple-check for any simpler or different
+
+
+
+==========================================================================================
+[GEMINI FAIL] rooms-medium-s0007 | start_ok=True end_ok=True collision_free=False pts=19
+------------------------------------------------------------------------------------------
+**Pathfinding Algorithm: A Detailed Trace**
+
+Okay, here's the breakdown of my thought process in tackling this drag-path challenge. The goal is clear: trace a continuous path from the cyan start marker to the amber treasure chest.
+
+First, I identified the start (x=0.727, y=0.843) and goal (x=0.268, y=0.620) markers' approximate locations within the grid. My initial instinct was to map out a direct route, but I quickly realized the layout demanded a more strategic approach, given the corridor structure.
+
+I started by tracing the vertical path upwards from the start point. There's a jog to the right and into the next vertical corridor, moving to a series of room connections up to the top right. I followed the corridors up, noting the necessary leftward jogs to navigate the maze-like structure, documenting coordinates as I went. I mentally constructed segments between the rooms. I realized there might be alternative paths, but I chose to test a single continuous one.
+
+I mapped the horizontal corridor across the top row to reach the central column. I traced the connection down through a set of rooms, identifying coordinate pairs at points where the path shifted direction or exited a room. The focus was on ensuring a seamless, continuous flow without violating the established paths.
+
+I started carefully inspecting all connections. Initially, I thought that this was a graph maze with many paths, but the task described a "continuous non-branching path" or a "simple graph".
+
+I worked to trace a connection from the middle column to the left column. I realized there were multiple possible connections to the goal, but I selected the quickest and most direct one.
+
+I carefully verified the existence of that continuous path, checking there were no blocked segments. From the middle column to the goal, I ensured a clear path, again paying attention to the corridors, noting jogs, and connecting room exits. My priority was a valid direct path that smoothly connects all the rooms.
+
+The final verification was a detailed walkthrough of the chosen path, making the most precise measurement on a coordinate grid, documenting the turns and jogs, until the goal coordinate was reached.
+
+
+
+
+==========================================================================================
+[GEMINI FAIL] braided-hard-s0008 | start_ok=True end_ok=True collision_free=False pts=13
+------------------------------------------------------------------------------------------
+**Maze Solution: Direct Path from Start to Goal**
+
+Okay, after thoroughly analyzing this maze, I've confirmed a remarkably simple direct path exists. My immediate goal was to find the start and goal markers precisely. The start is at (0.927, 0.078) and the goal at (0.072, 0.707).
+
+I initially started to trace the corridors, but this path presents a straight-forward solution. The optimal path to solve this maze is to start from the top-right corner, proceed directly left along the top corridor, and then go straight down the left edge of the maze. There are no obstructions to this path, making it the most direct and efficient.
+
+To navigate from the start, I need to go from (0.927, 0.078) horizontally to (0.072, 0.078), along the top corridor. Then, I need to go vertically from (0.072, 0.078) all the way down to (0.072, 0.707) and the goal. There are no walls or barriers in the way of this continuous, straight line.
+
+Now, I'll need to submit the following points in sequence to provide the necessary path:
+
+1.  {"x": 0.927, "y": 0.078}
+2.  {"x": 0.850, "y": 0.078}
+3.  {"x": 0.700, "y": 0.078}
+4.  {"x": 0.500, "y": 0.078}
+5.  {"x": 0.300, "y": 0.078}
+6.  {"x": 0.150, "y": 0.078}
+7.  {"x": 0.090, "y": 0.078}
+8.  {"x": 0.072, "y": 0.088}
+9.  {"x": 0.072, "y": 0.150}
+10. {"x": 0.072, "y": 0.300}
+11. {"x": 0.072, "y": 0.450}
+12. {"x": 0.072, "y": 0.600}
+13. {"x": 0.072, "y": 0.707}
+
+This is the only necessary path to solve this maze. I'm ready to submit this path and claim victory.
+
+
+

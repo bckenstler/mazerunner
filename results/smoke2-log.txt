@@ -1,0 +1,29 @@
+openai · rectilinear · trial 1 ... PASS
+openai · braided · trial 1 ... FAIL
+openai · rooms · trial 1 ... FAIL
+openai · organic · trial 1 ... PASS
+openai · cave · trial 1 ... FAIL
+openai · radial · trial 1 ... FAIL
+openai · island · trial 1 ... FAIL
+openai · pipes · trial 1 ... FAIL
+anthropic · rectilinear · trial 1 ... FAIL
+anthropic · braided · trial 1 ... FAIL
+anthropic · rooms · trial 1 ... FAIL
+anthropic · organic · trial 1 ... FAIL
+anthropic · cave · trial 1 ... FAIL
+anthropic · radial · trial 1 ... FAIL
+anthropic · island · trial 1 ... FAIL
+anthropic · pipes · trial 1 ... FAIL
+gemini · rectilinear · trial 1 ... FAIL
+gemini · braided · trial 1 ... FAIL
+gemini · rooms · trial 1 ... PASS
+gemini · organic · trial 1 ... FAIL
+gemini · cave · trial 1 ... FAIL
+gemini · radial · trial 1 ... FAIL
+gemini · island · trial 1 ... FAIL
+gemini · pipes · trial 1 ... FAIL
+
+run written to results/20260726-200824/
+  openai/gpt-5.6-sol               pass 2/8 eff=0.9849 latency=57.57s
+  anthropic/claude-opus-5          pass 0/8 eff=None latency=6.18s
+  gemini/gemini-3.6-flash          pass 1/8 eff=1.0 latency=52.46s
