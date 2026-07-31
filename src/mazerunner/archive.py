@@ -101,8 +101,14 @@ def inventory(results_root: Path) -> list[RunRecord]:
     records: list[RunRecord] = []
     for attempts in sorted(results_root.rglob("attempts.jsonl")):
         run_dir = attempts.parent
-        leg = run_dir.parent.name if run_dir.parent != results_root else "_root"
-        stamp = run_dir.name
+        # The leg is the *full* relative path above the run dir, not just its
+        # parent's name: sharded runs nest as
+        # results/main/<provider>/<run-id>/shard-NN, so seven legs share the
+        # name "shard-03" and taking only the parent would archive them all to
+        # one path, silently overwriting six.
+        relative = run_dir.relative_to(results_root)
+        leg = str(relative.parent) if str(relative.parent) != "." else "_root"
+        stamp = relative.name
 
         stats = _scan_attempts(attempts)
         record = RunRecord(
@@ -127,10 +133,15 @@ def inventory(results_root: Path) -> list[RunRecord]:
                 if path.suffix == ".png":
                     record.overlays += 1
 
-        # The launcher writes results/<leg>.log alongside the leg directory.
-        log = results_root / f"{leg}.log"
-        if log.exists():
-            record.log_file = str(log)
+        # Launcher logs sit beside the tree as results/<leg>.log for flat runs
+        # and results/<root>-<provider>-<shard>.log for sharded ones.
+        for candidate in (
+            results_root / f"{leg}.log",
+            results_root / f"{leg.replace('/', '-')}.log",
+        ):
+            if candidate.exists():
+                record.log_file = str(candidate)
+                break
 
         if record.rows == 0:
             record.note = "empty — run produced no attempts (killed before first write)"
