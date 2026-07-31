@@ -119,6 +119,18 @@ def test_completed_keys_on_missing_file(tmp_path):
     assert completed_keys(tmp_path / "nope.jsonl") == set()
 
 
+def test_transport_failures_are_replayed_on_resume(tmp_path):
+    """§3 requeues failures once; counting them as done would strand them."""
+    path = tmp_path / "attempts.jsonl"
+    path.write_text(
+        json.dumps({"provider": "a", "maze": "t0", "trial": 0, "error": "transport failure: 429"})
+        + "\n"
+        + json.dumps({"provider": "a", "maze": "t1", "trial": 0, "evaluation": {"success": True}})
+        + "\n"
+    )
+    assert completed_keys(path) == {("a", "t1", 0)}
+
+
 def test_completed_keys_survives_a_truncated_final_line(tmp_path):
     """A crash mid-write must not make the whole leg unresumable."""
     path = tmp_path / "attempts.jsonl"

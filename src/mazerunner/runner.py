@@ -159,7 +159,12 @@ def shard(units: list[AttemptUnit], index: int, count: int) -> list[AttemptUnit]
 
 
 def completed_keys(attempts_path: Path) -> set[tuple]:
-    """(provider, task_id, trial) already recorded, for --resume."""
+    """(provider, task_id, trial) already *answered*, for --resume.
+
+    Transport failures are deliberately not counted: §3 requeues them once, so
+    a resumed shard replays exactly those units. The merge prefers the
+    evaluated row over the recorded failure, so nothing is double-counted.
+    """
     keys: set[tuple] = set()
     if not attempts_path.exists():
         return keys
@@ -170,6 +175,8 @@ def completed_keys(attempts_path: Path) -> set[tuple]:
             try:
                 row = json.loads(line)
             except json.JSONDecodeError:
+                continue
+            if row.get("error"):
                 continue
             keys.add((row.get("provider"), row.get("maze"), row.get("trial")))
     return keys
