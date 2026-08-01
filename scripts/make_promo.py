@@ -213,14 +213,20 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34
             z = min(1.0, step / max(1, n_zoom - 1))
             ease = z * z * (3 - 2 * z)                       # smoothstep
             lingering = step >= n_zoom
-            tile = 150                                        # final crop half-size
+            # The crop must keep the frame's aspect ratio, or x and y magnify by
+            # different factors and anything drawn on top drifts off the pixel
+            # it is meant to mark. Clamp the *centre* so the box stays inside
+            # the maze rather than clamping the box itself, which would also
+            # distort it.
             half_w, half_h = maze.width / 2, maze.height / 2
-            cw = half_w + (tile - half_w) * ease
-            ch = half_h + (tile - half_h) * ease
-            cx = half_w + (col[0] - ox - half_w) * ease
-            cy = half_h + (col[1] - oy - half_h) * ease
-            box = (max(0, cx - cw), max(0, cy - ch),
-                   min(maze.width, cx + cw), min(maze.height, cy + ch))
+            tile_w = 150.0
+            tile_h = tile_w * maze.height / maze.width
+            cw = half_w + (tile_w - half_w) * ease
+            ch = half_h + (tile_h - half_h) * ease
+            tx, ty = col[0] - ox, col[1] - oy
+            cx = min(max(half_w + (tx - half_w) * ease, cw), maze.width - cw)
+            cy = min(max(half_h + (ty - half_h) * ease, ch), maze.height - ch)
+            box = (cx - cw, cy - ch, cx + cw, cy + ch)
             crop_box = tuple(int(v) for v in box)
             crop = stage.crop(crop_box).resize((maze.width, maze.height), Image.LANCZOS)
             mag = maze.width / max(1, crop_box[2] - crop_box[0])
@@ -546,20 +552,17 @@ def main():
             return [rec + (f"{meta['family']} · {meta['archetype'].replace('-', ' ')}",)]
         return []
 
-    # Alternate: a clean win, then a failure that is funny to look at.
-    picked += take_win("gpt-xhigh")
-    picked += take_mode("endpoint_misidentification", 2)
+    # One of each thing worth showing, and nothing twice. The reel earns its
+    # length from variety, not volume.
+    picked += take_mode("hard_win", 1)                  # a 50-turn maze, solved
+    picked += take_mode("endpoint_misidentification", 1)  # never found the badge
+    picked += take_mode("figure_ground_inversion", 1)     # straight through walls
+    picked += take_win("gemini")
+    picked += take_mode("analytic_parameterisation", 1)   # drew an arc and hoped
+    picked += take_mode("graph_abstraction", 1)           # imaginary nodes
     picked += take_mode("hard_win", 1)
-    picked += take_mode("figure_ground_inversion", 2)
-    picked += take_win("openai")
-    picked += take_mode("analytic_parameterisation", 2)
-    picked += take_win("kimi")
-    picked += take_mode("graph_abstraction", 1)
-    picked += take_mode("hard_win", 1)
-    picked += take_mode("clearance_failure", 2)      # the subtle ones, with zoom
-    picked += take_mode("hard_win", 1)
-    picked += take_mode("almost", 2)
-    picked += take_mode("satisficing", 1)
+    picked += take_mode("clearance_failure", 1)           # subtle clip, needs zoom
+    picked += take_mode("almost", 2)                      # the painful ones
     print(f"selected {len(picked)} clips: "
           f"{sum(1 for p in picked if p[6])} wins, {sum(1 for p in picked if not p[6])} fails")
 
