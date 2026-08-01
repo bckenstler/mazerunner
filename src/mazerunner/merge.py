@@ -80,9 +80,17 @@ def merge_runs(
                     previous = kept[key]
                     if _is_evaluated(previous) and _is_evaluated(row):
                         if _succeeded(previous) != _succeeded(row):
+                            # Two shards disagreeing means the work was split
+                            # wrong and the same unit ran in two places. The
+                            # same shard disagreeing across time is a
+                            # re-execution (a resume racing a live shard) —
+                            # models are stochastic, so that is expected and
+                            # only matters if the dedup policy is sensitive.
+                            cross_shard = previous.get("shard") != row.get("shard")
                             conflicts.append(
                                 {
                                     "key": dict(zip(ATTEMPT_KEY, key)),
+                                    "kind": "cross_shard" if cross_shard else "re_execution",
                                     "a": {
                                         "success": _succeeded(previous),
                                         "shard": previous.get("shard"),
@@ -129,6 +137,8 @@ def merge_runs(
         "rows_out": len(ordered),
         "duplicates_collapsed": duplicates,
         "conflicts": conflicts,
+        "cross_shard_conflicts": [c for c in conflicts if c["kind"] == "cross_shard"],
+        "re_execution_conflicts": [c for c in conflicts if c["kind"] == "re_execution"],
         "malformed_lines": malformed,
         "expected_units": expected_units,
         "per_leg": per_leg,

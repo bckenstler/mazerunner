@@ -168,11 +168,16 @@ def cmd_merge(args: argparse.Namespace) -> int:
         print(f"  {leg:<16}{stats['attempts']:>5} attempts  {stats['successes']:>4} pass  "
               f"{stats['transport_failures']:>3} transport fail")
 
-    if manifest["conflicts"]:
-        for conflict in manifest["conflicts"][:5]:
-            print(f"FAIL conflicting duplicate: {conflict['key']} "
+    reexec = manifest.get("re_execution_conflicts", [])
+    if reexec:
+        print(f"  note: {len(reexec)} unit(s) ran twice (a resume racing a live shard) and "
+              f"disagreed; dedup keeps one, which is unbiased w.r.t. success")
+    cross = manifest.get("cross_shard_conflicts", [])
+    if cross:
+        for conflict in cross[:5]:
+            print(f"FAIL two shards scored the same unit differently: {conflict['key']} "
                   f"success={conflict['a']['success']} vs {conflict['b']['success']}")
-        print(f"{len(manifest['conflicts'])} conflicting duplicates — sharding is wrong")
+        print(f"{len(cross)} cross-shard conflicts — the work was split wrong")
         return 1
 
     if args.mazes_file and args.providers:

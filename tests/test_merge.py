@@ -172,3 +172,20 @@ def test_complete_run_reports_nothing_missing(tmp_path):
     merged = _write(tmp_path / "merged" / "attempts.jsonl", rows)
 
     assert missing_units(merged, ["t1"], ["a"], trials=3) == []
+
+
+def test_conflict_kinds_are_distinguished(tmp_path):
+    """Two shards disagreeing is a bug; one shard disagreeing across time is a rerun."""
+    cross_a = _write(tmp_path / "x0" / "attempts.jsonl", [_row(success=True, shard=0)])
+    cross_b = _write(tmp_path / "x1" / "attempts.jsonl", [_row(success=False, shard=1)])
+    manifest = merge_runs([cross_a, cross_b], tmp_path / "m1")
+    assert len(manifest["cross_shard_conflicts"]) == 1
+    assert not manifest["re_execution_conflicts"]
+
+    rerun_a = _write(tmp_path / "y0" / "attempts.jsonl",
+                     [_row(success=True, shard=3, timestamp="2026-01-01T00:00:00")])
+    rerun_b = _write(tmp_path / "y1" / "attempts.jsonl",
+                     [_row(success=False, shard=3, timestamp="2026-01-01T00:10:00")])
+    manifest = merge_runs([rerun_a, rerun_b], tmp_path / "m2")
+    assert len(manifest["re_execution_conflicts"]) == 1
+    assert not manifest["cross_shard_conflicts"]

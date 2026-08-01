@@ -85,3 +85,23 @@ def test_archive_is_idempotent(tmp_path):
 
     assert first["coverage"]["rows_total"] == second["coverage"]["rows_total"]
     assert verify_archive(out)["ok"]
+
+
+def test_archiving_a_growing_run_records_what_was_copied(tmp_path, monkeypatch):
+    """A live run appends while we copy; the manifest must not contradict the file."""
+    results = tmp_path / "results"
+    run = _run(results, "leg/stamp", [{"provider": "a", "maze": "t1", "trial": 0}])
+    records = inventory(results)
+    assert records[0].rows == 1
+
+    # Simulate the shard writing another attempt between scan and copy.
+    with (run / "attempts.jsonl").open("a") as handle:
+        handle.write(json.dumps({"provider": "a", "maze": "t2", "trial": 0}) + "\n")
+
+    archive_runs(records, tmp_path / "archive", results_root=results)
+    report = verify_archive(tmp_path / "archive")
+
+    assert report["ok"], report
+    manifest = json.loads((tmp_path / "archive" / "MANIFEST.json").read_text())
+    assert manifest["records"][0]["rows"] == 2
+    assert "in progress" in (manifest["records"][0]["note"] or "")

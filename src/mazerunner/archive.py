@@ -206,6 +206,20 @@ def archive_runs(
             target = dest / "attempts.jsonl.gz"
             with attempts.open("rb") as src, gzip.open(target, "wb", compresslevel=9) as dst:
                 shutil.copyfileobj(src, dst)
+            # A live run appends while we copy, so the census taken during
+            # inventory can be stale by the time the bytes land. Re-count what
+            # was actually archived and correct the record, rather than
+            # recording a number the archived file contradicts.
+            with gzip.open(target, "rt") as handle:
+                archived_rows = sum(1 for line in handle if line.strip())
+            if archived_rows != record.rows + record.malformed_lines:
+                record.note = (
+                    (record.note + "; " if record.note else "")
+                    + f"snapshot of a run in progress ({archived_rows} rows at copy time, "
+                    f"{record.rows} at scan time)"
+                )
+                record.rows = archived_rows - record.malformed_lines
+            record.files["attempts.jsonl"] = file_sha256(attempts)
 
         summary = source / "summary.json"
         if summary.exists():
