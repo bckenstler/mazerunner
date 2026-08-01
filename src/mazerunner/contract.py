@@ -113,3 +113,39 @@ def validate_submission(arguments: object) -> tuple[list[tuple[float, float]] | 
                 return None, f"point {i} '{key}'={value} is outside [0, 1]"
         points.append((float(entry["x"]), float(entry["y"])))
     return points, None
+
+
+FEEDBACK_CATEGORY_TEXT = {
+    "collision": "your path crossed a wall",
+    "wrong_start": "your path did not begin on the cyan START badge",
+    "stopped_short": "your path never reached the amber GOAL badge",
+    "schema_invalid": "your submission did not match the required format",
+    "no_tool_call": "you did not call the tool",
+    "other": "your path was not accepted",
+}
+
+
+def feedback_text(category: str, stop_xy: tuple[float, float] | None = None) -> str:
+    """What the model is told between attempts.
+
+    Deliberately withholds any oracle geometry -- no distance to the true
+    route, no direction to move, no hint about where the corridor actually
+    goes. It reports only what a real failed drag would reveal: the attempt was
+    rejected, why, and where it stopped. Anything more would test instruction
+    following rather than closed-loop visual correction.
+    """
+    reason = FEEDBACK_CATEGORY_TEXT.get(category, FEEDBACK_CATEGORY_TEXT["other"])
+    where = ""
+    if stop_xy is not None:
+        where = (
+            f" It stopped at approximately x={stop_xy[0]:.3f}, y={stop_xy[1]:.3f} "
+            "in normalized coordinates, marked with a red ⊗."
+        )
+
+    return (
+        f"That attempt was not accepted: {reason}.{where}\n\n"
+        "The second image shows the same maze with your submitted path drawn "
+        "over it in red.\n\n"
+        "Look again at where your path left the open corridor, then submit a "
+        "corrected path by calling submit_drag_path exactly once."
+    )

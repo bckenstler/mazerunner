@@ -16,7 +16,12 @@ import re
 import time
 
 from ..contract import PROMPT_TEXT, TOOL_DESCRIPTION, TOOL_NAME, TOOL_SCHEMA
-from .base import ProviderError, ProviderResponse
+from .base import (
+    DEFAULT_MAX_RETRIES,
+    DEFAULT_TIMEOUT_S,
+    ProviderError,
+    ProviderResponse,
+)
 
 TYPE_NAME = "openai_compat"
 
@@ -83,11 +88,15 @@ class OpenAICompatProvider:
         max_tokens: int | None = None,
         extra_body: dict | None = None,
         schema_sanitize: bool = False,
+        timeout: float = DEFAULT_TIMEOUT_S,
+        max_retries: int = DEFAULT_MAX_RETRIES,
         **_ignored,
     ):
         self.model = model
         self.base_url = base_url
         self.env_key = env_key
+        self.timeout = timeout
+        self.max_retries = max_retries
         # "forced" | "auto" | "omit" — omit skips the parameter entirely for
         # gateways that reject it (e.g. LiteLLM's fireworks_ai integration).
         self.tool_choice = tool_choice
@@ -111,26 +120,56 @@ class OpenAICompatProvider:
         if self._client is None:
             from openai import OpenAI
 
-            self._client = OpenAI(base_url=self.base_url, api_key=os.environ[self.env_key])
+            self._client = OpenAI(
+                base_url=self.base_url,
+                api_key=os.environ[self.env_key],
+                timeout=self.timeout,
+                max_retries=self.max_retries,
+            )
         return self._client
 
+    def _user_message(self, prompt: str, png_bytes: bytes | None) -> dict:
+        content = []
+        if png_bytes is not None:
+            b64 = base64.standard_b64encode(png_bytes).decode()
+            content.append(
+                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}}
+            )
+        content.append({"type": "text", "text": prompt})
+        return {"role": "user", "content": content}
+
+    def continue_run(
+        self, prior: ProviderResponse, feedback: str, png_bytes: bytes | None = None
+    ) -> ProviderResponse:
+        """Second and later turns of a feedback episode.
+
+        Chat-completions tool messages are text-only, so the overlay cannot ride
+        on the tool result and goes in a following user message instead. When
+        the model answered through the inline-XML fallback there is no tool-call
+        id at all, and emitting a tool message would 400 — those continue as a
+        plain user turn.
+        """
+        if not prior.conversation:
+            raise ProviderError(f"{self.base_url}: prior response carries no conversation state")
+        messages = list(prior.conversation["messages"])
+        assistant = prior.conversation.get("assistant_message")
+        if assistant is not None:
+            messages.append(assistant)
+        if prior.tool_call_id:
+            messages.append(
+                {"role": "tool", "tool_call_id": prior.tool_call_id, "content": feedback}
+            )
+        messages.append(self._user_message(feedback, png_bytes))
+        return self._send(messages)
+
     def run(self, png_bytes: bytes, prompt: str = PROMPT_TEXT) -> ProviderResponse:
+        return self._send([self._user_message(prompt, png_bytes)])
+
+    def _send(self, messages: list) -> ProviderResponse:
         client = self._get_client()
-        b64 = base64.standard_b64encode(png_bytes).decode()
         request = {
             "model": self.model,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": f"data:image/png;base64,{b64}"},
-                        },
-                        {"type": "text", "text": prompt},
-                    ],
-                }
-            ],
+            "messages": messages,
             "tools": [
                 {
                     "type": "function",
@@ -159,6 +198,18 @@ class OpenAICompatProvider:
         latency = time.monotonic() - start
 
         arguments, error = parse_response(completion)
+        tool_call_id = None
+        assistant_message = None
+        for choice in getattr(completion, "choices", None) or []:
+            message = getattr(choice, "message", None)
+            if message is None:
+                continue
+            if hasattr(message, "model_dump"):
+                assistant_message = message.model_dump(exclude_none=True)
+            for call in getattr(message, "tool_calls", None) or []:
+                function = getattr(call, "function", None)
+                if function is not None and function.name == TOOL_NAME:
+                    tool_call_id = getattr(call, "id", None)
         usage = getattr(completion, "usage", None)
         return ProviderResponse(
             tool_arguments=arguments,
@@ -169,4 +220,6 @@ class OpenAICompatProvider:
             model=getattr(completion, "model", self.model),
             raw=completion.model_dump() if hasattr(completion, "model_dump") else None,
             reasoning=extract_reasoning(completion),
+            conversation={"messages": messages, "assistant_message": assistant_message},
+            tool_call_id=tool_call_id,
         )

@@ -1,0 +1,346 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2112164453,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "glow-cavern",
+    "style_seed": 37260783,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        10,
+        13,
+        17
+      ],
+      "floor_a": [
+        106,
+        112,
+        103
+      ],
+      "floor_b": [
+        96,
+        102,
+        93
+      ],
+      "corridor_fill": [
+        106,
+        112,
+        103
+      ],
+      "corridor_extra": [
+        [
+          96,
+          102,
+          93
+        ]
+      ],
+      "sparkle": [
+        36,
+        223,
+        211
+      ],
+      "tile": 17,
+      "outline_color": [
+        36,
+        53,
+        50
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.2038,
+    "y": 0.1264
+  },
+  "goal": {
+    "x": 0.8181,
+    "y": 0.8202
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 11,
+    "optimal_length_px": 2278.32,
+    "optimal_length_px_geometric": 2020.8,
+    "corner_cut_headroom_px": 257.52,
+    "min_clearance_px": 6.71,
+    "optimal_path": [
+      {
+        "x": 0.2036,
+        "y": 0.1259
+      },
+      {
+        "x": 0.3037,
+        "y": 0.1302
+      },
+      {
+        "x": 0.307,
+        "y": 0.1345
+      },
+      {
+        "x": 0.3159,
+        "y": 0.1602
+      },
+      {
+        "x": 0.3181,
+        "y": 0.1631
+      },
+      {
+        "x": 0.3215,
+        "y": 0.1645
+      },
+      {
+        "x": 0.5072,
+        "y": 0.1645
+      },
+      {
+        "x": 0.5095,
+        "y": 0.1617
+      },
+      {
+        "x": 0.5106,
+        "y": 0.1602
+      },
+      {
+        "x": 0.5195,
+        "y": 0.1474
+      },
+      {
+        "x": 0.5217,
+        "y": 0.1445
+      },
+      {
+        "x": 0.5261,
+        "y": 0.1431
+      },
+      {
+        "x": 0.7631,
+        "y": 0.1431
+      },
+      {
+        "x": 0.8031,
+        "y": 0.1946
+      },
+      {
+        "x": 0.8042,
+        "y": 0.1989
+      },
+      {
+        "x": 0.8042,
+        "y": 0.3948
+      },
+      {
+        "x": 0.7575,
+        "y": 0.4506
+      },
+      {
+        "x": 0.7531,
+        "y": 0.4521
+      },
+      {
+        "x": 0.6997,
+        "y": 0.4649
+      },
+      {
+        "x": 0.6941,
+        "y": 0.4721
+      },
+      {
+        "x": 0.6908,
+        "y": 0.4735
+      },
+      {
+        "x": 0.4105,
+        "y": 0.4764
+      },
+      {
+        "x": 0.2948,
+        "y": 0.4864
+      },
+      {
+        "x": 0.2881,
+        "y": 0.495
+      },
+      {
+        "x": 0.287,
+        "y": 0.4964
+      },
+      {
+        "x": 0.2825,
+        "y": 0.4979
+      },
+      {
+        "x": 0.2314,
+        "y": 0.525
+      },
+      {
+        "x": 0.2024,
+        "y": 0.5622
+      },
+      {
+        "x": 0.2013,
+        "y": 0.5665
+      },
+      {
+        "x": 0.2013,
+        "y": 0.7639
+      },
+      {
+        "x": 0.2291,
+        "y": 0.7997
+      },
+      {
+        "x": 0.2336,
+        "y": 0.8011
+      },
+      {
+        "x": 0.2937,
+        "y": 0.8126
+      },
+      {
+        "x": 0.2948,
+        "y": 0.814
+      },
+      {
+        "x": 0.2992,
+        "y": 0.8155
+      },
+      {
+        "x": 0.4994,
+        "y": 0.8255
+      },
+      {
+        "x": 0.5028,
+        "y": 0.8298
+      },
+      {
+        "x": 0.5128,
+        "y": 0.8512
+      },
+      {
+        "x": 0.515,
+        "y": 0.8541
+      },
+      {
+        "x": 0.5195,
+        "y": 0.8555
+      },
+      {
+        "x": 0.7097,
+        "y": 0.8555
+      },
+      {
+        "x": 0.713,
+        "y": 0.8512
+      },
+      {
+        "x": 0.723,
+        "y": 0.8283
+      },
+      {
+        "x": 0.7241,
+        "y": 0.8269
+      },
+      {
+        "x": 0.7253,
+        "y": 0.8255
+      },
+      {
+        "x": 0.7297,
+        "y": 0.824
+      },
+      {
+        "x": 0.8176,
+        "y": 0.8197
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 31,
+    "attempt": 19,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2112164453,
+    "style_seed": 387243707,
+    "augmentation_seed": 1462955327,
+    "sampler_seed": 1892812191,
+    "family": "rooms",
+    "tier_target": "hard",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 16,
+      "extra_edges": 0,
+      "endpoint_quantile": 0.997
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 0.981
+    },
+    "measures": {
+      "geodesic_length_px": 2020.8,
+      "normalized_length": 1.7724,
+      "turns": 16,
+      "route_branches": 0,
+      "difficulty_score": 3.1057,
+      "tier": "hard"
+    },
+    "graph_hash": "a5f5da4861cd9671550b49f887a41698c5e2c54f4392fa286d1afd989940a0d9",
+    "mask_sha256": "a97c599cf7573eea93beca08c2278ce02708ea083580a7aeb55ac38ccd5c06a7",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00432,
+        "start_marker_contrast": 103.55,
+        "goal_marker_contrast": 96.88
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    },
+    "style_swap": {
+      "source_task_id": "rooms",
+      "source_archetype": "glow-cavern",
+      "archetype": "glow-cavern",
+      "style_seed": 37260783
+    }
+  }
+}

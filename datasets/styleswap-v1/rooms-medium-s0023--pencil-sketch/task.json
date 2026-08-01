@@ -1,0 +1,245 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1301797195,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "pencil-sketch",
+    "style_seed": 38260788,
+    "marker": {
+      "radius": 14,
+      "halo": 3
+    },
+    "params": {
+      "paper": [
+        240,
+        238,
+        233
+      ],
+      "corridor_fill": [
+        240,
+        238,
+        233
+      ],
+      "hatch": [
+        135,
+        137,
+        142
+      ],
+      "hatch_spacing": 6,
+      "outline_color": [
+        44,
+        44,
+        47
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.1725,
+    "y": 0.1442
+  },
+  "goal": {
+    "x": 0.3963,
+    "y": 0.8274
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 7,
+    "optimal_length_px": 1576.32,
+    "optimal_length_px_geometric": 1367.55,
+    "corner_cut_headroom_px": 208.77,
+    "min_clearance_px": 8.54,
+    "optimal_path": [
+      {
+        "x": 0.1721,
+        "y": 0.1438
+      },
+      {
+        "x": 0.2951,
+        "y": 0.1374
+      },
+      {
+        "x": 0.6569,
+        "y": 0.1361
+      },
+      {
+        "x": 0.6809,
+        "y": 0.1361
+      },
+      {
+        "x": 0.682,
+        "y": 0.1374
+      },
+      {
+        "x": 0.683,
+        "y": 0.1386
+      },
+      {
+        "x": 0.6976,
+        "y": 0.1579
+      },
+      {
+        "x": 0.6986,
+        "y": 0.1592
+      },
+      {
+        "x": 0.7018,
+        "y": 0.1605
+      },
+      {
+        "x": 0.7591,
+        "y": 0.1784
+      },
+      {
+        "x": 0.7904,
+        "y": 0.2169
+      },
+      {
+        "x": 0.7914,
+        "y": 0.2208
+      },
+      {
+        "x": 0.7914,
+        "y": 0.4172
+      },
+      {
+        "x": 0.7883,
+        "y": 0.4211
+      },
+      {
+        "x": 0.7341,
+        "y": 0.475
+      },
+      {
+        "x": 0.731,
+        "y": 0.4763
+      },
+      {
+        "x": 0.6799,
+        "y": 0.4827
+      },
+      {
+        "x": 0.6257,
+        "y": 0.5109
+      },
+      {
+        "x": 0.5954,
+        "y": 0.5481
+      },
+      {
+        "x": 0.5944,
+        "y": 0.5533
+      },
+      {
+        "x": 0.5839,
+        "y": 0.7805
+      },
+      {
+        "x": 0.5808,
+        "y": 0.7843
+      },
+      {
+        "x": 0.5308,
+        "y": 0.8306
+      },
+      {
+        "x": 0.5266,
+        "y": 0.8318
+      },
+      {
+        "x": 0.3973,
+        "y": 0.8293
+      },
+      {
+        "x": 0.3962,
+        "y": 0.828
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 23,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1301797195,
+    "style_seed": 922980240,
+    "augmentation_seed": 1695163672,
+    "sampler_seed": 197035935,
+    "family": "rooms",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "corridor": 18,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.829
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 0.985
+    },
+    "measures": {
+      "geodesic_length_px": 1367.55,
+      "normalized_length": 1.1056,
+      "turns": 6,
+      "route_branches": 3,
+      "difficulty_score": 1.9056,
+      "tier": "medium"
+    },
+    "graph_hash": "cf78b948e5f790ec7a185b1105b978b90cd7d4f7cc8d2a39dd4ffee3f6614907",
+    "mask_sha256": "d36b9d6a90b1eb3e328d58a6cbddb775bf42e14be3a33dc1ec02d1ca8f151422",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 94.17,
+        "goal_marker_contrast": 99.91
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    },
+    "style_swap": {
+      "source_task_id": "rooms",
+      "source_archetype": "dungeon-pebble",
+      "archetype": "pencil-sketch",
+      "style_seed": 38260788
+    }
+  }
+}

@@ -13,7 +13,7 @@ import os
 import random
 import subprocess
 import time
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 import numpy as np
@@ -22,6 +22,7 @@ from PIL import Image
 from .contract import prompt_text
 from .evaluator import evaluate_task
 from .generators import FAMILIES
+from .imagesrc import ImageSource, ImageSpec
 from .io import load_task
 from .metrics import derive
 from .overlay import render_overlay
@@ -182,6 +183,21 @@ def completed_keys(attempts_path: Path) -> set[tuple]:
     return keys
 
 
+def _task_tiers(dataset_dir: Path | None) -> dict[str, str]:
+    """task_id -> measured difficulty tier, from a split's index."""
+    if dataset_dir is None:
+        return {}
+    index = dataset_dir / "index.jsonl"
+    if not index.exists():
+        return {}
+    tiers = {}
+    for line in index.read_text().splitlines():
+        if line.strip():
+            row = json.loads(line)
+            tiers[row["task_id"]] = row.get("tier", "unknown")
+    return tiers
+
+
 def _redacted(settings: dict) -> dict:
     """Provider settings safe to write into a manifest."""
     return {k: v for k, v in settings.items() if "key" not in k.lower()}
@@ -215,6 +231,7 @@ def run_smoke(
     shard_count: int = 1,
     resume: bool = False,
     order_seed: int | None = None,
+    image_spec: "ImageSpec | None" = None,
 ) -> int:
     config = json.loads(config_path.read_text())
     trial_count = trials if trials is not None else config.get("trials", 1)
@@ -281,6 +298,7 @@ def run_smoke(
                 "trials": trial_count,
                 "order_seed": order_seed,
                 "prompt_variant": "with-dimensions" if include_dimensions else "frozen",
+                "image_spec": asdict(image_spec) if image_spec else None,
                 "planned_units": len(all_units),
                 "shard_units": len(units),
                 "code_version": _code_version(),
@@ -291,6 +309,12 @@ def run_smoke(
             indent=2,
         )
     )
+
+    # The mismatched variant needs the whole pool up front (and each task's
+    # tier) so the derangement can be tier-matched.
+    spec = image_spec or ImageSpec()
+    tiers = _task_tiers(dataset_dir) if spec.mode == "mismatched" else None
+    image_source = ImageSource(spec, sources=sources, tiers=tiers)
 
     adapters: dict[str, object] = {}
     settings_by_name = dict(selected_providers)
@@ -318,7 +342,7 @@ def run_smoke(
             )
 
             task, mask = load_task(unit.task_dir)
-            png_bytes = (unit.task_dir / task["image_file"]).read_bytes()
+            png_bytes, image_variant = image_source.bytes_for(unit.task_id, unit.task_dir, task)
             prompt = (
                 prompt_text(task["width"], task["height"])
                 if include_dimensions
@@ -342,6 +366,7 @@ def run_smoke(
                 "order_seed": order_seed,
                 "task_dir": str(unit.task_dir),
                 "prompt_variant": "with-dimensions" if include_dimensions else "frozen",
+                "image_variant": image_variant,
                 "timestamp": datetime.datetime.now().isoformat(),
             }
             if transport_history:

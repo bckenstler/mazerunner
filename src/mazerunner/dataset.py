@@ -430,9 +430,7 @@ def verify_split(out_dir: Path, split_name: str, sample: int | None = 25) -> lis
         task, mask = load_task(task_dir)
         prov = task["provenance"]
 
-        world = FAMILIES[prov["family"]].build(prov["topo_seed"], prov["difficulty_overrides"])
-        world = apply_augmentation(world, prov["augmentation"])
-        rebuilt_mask = open_mask(world)
+        world, rebuilt_mask = rebuild_from_provenance(prov)
         if mask_sha256(rebuilt_mask) != prov["mask_sha256"]:
             failures.append(f"{row['task_id']}: mask not reproducible from provenance")
             continue
@@ -450,6 +448,22 @@ def verify_split(out_dir: Path, split_name: str, sample: int | None = 25) -> lis
         if not result.success:
             failures.append(f"{row['task_id']}: stored reference fails the scorer")
     return failures
+
+
+def rebuild_from_provenance(prov: dict):
+    """Reconstruct a task's world and mask from its recorded seeds.
+
+    Topology, augmentation, and therefore the scored mask are byte-identical to
+    the original; only the style is left to choose. This is what lets the
+    style-swap ablation vary rendering while holding the maze itself fixed.
+    """
+    world = FAMILIES[prov["family"]].build(prov["topo_seed"], prov["difficulty_overrides"])
+    world = apply_augmentation(world, prov["augmentation"])
+    return world, open_mask(world)
+
+
+def supports_archetype(archetype_name: str, family: str) -> bool:
+    return _supports(archetype_name, family)
 
 
 def split_stats(out_dir: Path, split_name: str) -> dict:

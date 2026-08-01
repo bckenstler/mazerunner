@@ -82,6 +82,71 @@ def _built_splits(out_dir) -> list[str]:
     return sorted(p.parent.name for p in out_dir.glob("*/index.jsonl"))
 
 
+def cmd_feedback(args: argparse.Namespace) -> int:
+    import os
+
+    from .evalset import read_task_list
+    from .feedback import episode_summary, run_episode, write_episodes
+    from .io import load_task
+    from .providers import ENV_KEYS, PROVIDERS
+
+    config = json.loads(Path(args.config).read_text())
+    names = args.providers.split(",") if args.providers else None
+    task_ids = read_task_list(Path(args.tasks))
+    index = {
+        json.loads(line)["task_id"]: json.loads(line)
+        for line in (Path(args.dataset) / "index.jsonl").read_text().splitlines()
+        if line.strip()
+    }
+    selected = [t for t in task_ids if t in index]
+    if args.shard:
+        i, n = (int(x) for x in args.shard.split("/"))
+        selected = selected[i::n]
+
+    out_root = Path(args.results_dir)
+    total = 0
+    for name, settings in config.get("providers", {}).items():
+        if names is not None and name not in names:
+            continue
+        env_key = settings.get("env_key") or ENV_KEYS.get(name)
+        if not env_key or not os.environ.get(env_key):
+            print(f"skipping {name}: {env_key or 'API key'} not set")
+            continue
+        adapter = PROVIDERS[settings.get("type", name)](
+            **{k: v for k, v in settings.items() if k not in ("enabled", "type")}
+        )
+        out_dir = out_root / name
+        for task_id in selected:
+            task_dir = Path(index[task_id]["dir"])
+            task, mask = load_task(task_dir)
+            rows = run_episode(
+                adapter, name, task_id, task_dir, task, mask, max_attempts=args.max_attempts
+            )
+            summary = episode_summary(rows)
+            write_episodes(rows, [summary], out_dir)
+            total += 1
+            mark = "SOLVED" if summary["solved"] else summary["stop_reason"]
+            print(f"{name} · {task_id} · {summary['turns_used']} turns … {mark}")
+    print(f"\n{total} episodes -> {out_root}/")
+    return 0
+
+
+def cmd_styleswap(args: argparse.Namespace) -> int:
+    from .evalset import read_task_list
+    from .styleswap import build_style_swap_set
+
+    task_ids = read_task_list(Path(args.tasks))
+    manifest = build_style_swap_set(
+        Path(args.dataset), task_ids, Path(args.out), seed=args.seed
+    )
+    print(f"built {manifest['variants']} variants in {manifest['complete_groups']}"
+          f"/{manifest['requested_groups']} complete pair-groups -> {args.out}/")
+    print(f"  archetypes: {', '.join(manifest['archetypes'])}")
+    for skip in manifest["skipped"]:
+        print(f"  SKIPPED {skip['task_id']}: {skip['reason']}")
+    return 0 if manifest["complete_groups"] else 1
+
+
 def cmd_merge(args: argparse.Namespace) -> int:
     from .evalset import read_task_list
     from .merge import merge_runs, missing_units, write_missing_task_list
@@ -135,12 +200,31 @@ def cmd_evalset(args: argparse.Namespace) -> int:
 
     out_path = Path(args.out)
     if args.command_es == "build":
+        tiers = None
+        if args.tiers:
+            try:
+                easy, medium, hard = (int(n) for n in args.tiers.split(","))
+            except ValueError:
+                print(f"--tiers expects easy,medium,hard (got {args.tiers!r})")
+                return 1
+            tiers = {"easy": easy, "medium": medium, "hard": hard}
         spec = SelectionSpec(
             size=args.size,
+            per_family_min=args.per_family_min,
+            per_family_max=args.per_family_max,
             archetype_floor=args.archetype_floor,
+            **({"tier_targets": tiers} if tiers else {}),
         )
-        manifest = build_eval_set(Path(args.dataset), out_path, seed=args.seed, spec=spec)
-        print(f"selected {manifest['selected']} tasks -> {out_path} (seed {manifest['seed']})")
+        manifest = build_eval_set(
+            Path(args.dataset),
+            out_path,
+            seed=args.seed,
+            spec=spec,
+            pool_path=Path(args.pool) if args.pool else None,
+        )
+        print(f"selected {manifest['selected']} tasks -> {out_path} (seed {manifest['seed']})"
+              + (f", drawn from {manifest['pool_size']} in {manifest['pool_path']}"
+                 if args.pool else ""))
         for key, counts in manifest["achieved"].items():
             print(f"  {key}: {counts}")
         return 0
@@ -207,6 +291,7 @@ def cmd_archive(args: argparse.Namespace) -> int:
 
 def cmd_run(args: argparse.Namespace) -> int:
     from .evalset import read_task_list
+    from .imagesrc import spec_from_args
     from .runner import run_smoke
 
     mazes = args.mazes.split(",") if args.mazes else None
@@ -238,6 +323,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         shard_count=shard_count,
         resume=args.resume,
         order_seed=args.order_seed,
+        image_spec=spec_from_args(args.image_variant, args.image_scale, args.image_seed),
     )
 
 
@@ -264,6 +350,14 @@ def main() -> None:
     run.add_argument("--results-dir", default="results")
     run.add_argument("--dataset", default=None, help="run against a dataset split dir (e.g. datasets/v1/dev)")
     run.add_argument("--dry-run", action="store_true", help="print planned API call count and exit")
+    run.add_argument(
+        "--image-variant",
+        default="real",
+        choices=["real", "blank", "mismatched", "rescale"],
+        help="ablation: substitute the image sent to the model (scoring is unaffected)",
+    )
+    run.add_argument("--image-scale", type=float, default=1.0, help="rescale factor, e.g. 2.0")
+    run.add_argument("--image-seed", type=int, default=None, help="seed for the mismatched pairing")
     run.add_argument("--run-id", default=None, help="group shards under results/<run-id>/")
     run.add_argument("--shard", default=None, help="run only shard i of N, as i/N")
     run.add_argument("--resume", action="store_true", help="skip attempts already recorded")
@@ -288,6 +382,21 @@ def main() -> None:
     dataset.add_argument("--count", type=int, default=24, help="sheet: tasks per sheet")
     dataset.add_argument("--sheet-seed", type=int, default=0)
 
+    feedback = sub.add_parser("feedback", help="closed-loop retry episodes (separate leaderboard)")
+    feedback.add_argument("--config", default="litellm.config.json")
+    feedback.add_argument("--providers", default=None)
+    feedback.add_argument("--dataset", default="datasets/v1/dev")
+    feedback.add_argument("--tasks", default="evals/ablation-50.txt")
+    feedback.add_argument("--results-dir", default="results/abl/feedback")
+    feedback.add_argument("--max-attempts", type=int, default=4)
+    feedback.add_argument("--shard", default=None, help="run only shard i of N, as i/N")
+
+    styleswap = sub.add_parser("styleswap", help="build same-topology/different-style variants")
+    styleswap.add_argument("--dataset", default="datasets/v1/dev")
+    styleswap.add_argument("--tasks", default="evals/styleswap-20.txt")
+    styleswap.add_argument("--out", default="datasets/styleswap-v1")
+    styleswap.add_argument("--seed", type=int, default=20260731)
+
     merge = sub.add_parser("merge", help="consolidate sharded runs into one result set")
     merge.add_argument("--runs", required=True, help="glob of shard dirs or attempts.jsonl files")
     merge.add_argument("--out", required=True, help="output directory")
@@ -305,6 +414,14 @@ def main() -> None:
     evalset.add_argument("--seed", type=int, default=20260730)
     evalset.add_argument("--size", type=int, default=100)
     evalset.add_argument("--archetype-floor", type=int, default=6)
+    evalset.add_argument("--per-family-min", type=int, default=12)
+    evalset.add_argument("--per-family-max", type=int, default=13)
+    evalset.add_argument("--tiers", default=None, help="easy,medium,hard counts e.g. 7,11,7")
+    evalset.add_argument(
+        "--pool",
+        default=None,
+        help="restrict candidates to an existing frozen list, nesting the subset inside it",
+    )
 
     archive = sub.add_parser("archive", help="durably archive run artifacts with checksums")
     archive.add_argument("command_ar", choices=["inventory", "build", "verify"])
@@ -320,6 +437,8 @@ def main() -> None:
         "archive": cmd_archive,
         "evalset": cmd_evalset,
         "merge": cmd_merge,
+        "styleswap": cmd_styleswap,
+        "feedback": cmd_feedback,
     }
     sys.exit(handler[args.command](args))
 

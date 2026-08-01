@@ -1,0 +1,188 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2077579988,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "candy-pastel",
+    "style_seed": 25260748,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        230,
+        187,
+        199
+      ],
+      "stripe_spacing": 21,
+      "corridor_fill": [
+        225,
+        250,
+        235
+      ],
+      "sprinkles": [
+        [
+          210,
+          54,
+          66
+        ],
+        [
+          233,
+          207,
+          86
+        ],
+        [
+          47,
+          191,
+          229
+        ],
+        [
+          170,
+          55,
+          197
+        ]
+      ],
+      "outline_color": [
+        92,
+        53,
+        26
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7822,
+    "y": 0.1192
+  },
+  "goal": {
+    "x": 0.4143,
+    "y": 0.4843
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 3,
+    "optimal_length_px": 496.65,
+    "optimal_length_px_geometric": 487.34,
+    "corner_cut_headroom_px": 9.31,
+    "min_clearance_px": 7.81,
+    "optimal_path": [
+      {
+        "x": 0.7822,
+        "y": 0.1191
+      },
+      {
+        "x": 0.5294,
+        "y": 0.1488
+      },
+      {
+        "x": 0.5219,
+        "y": 0.157
+      },
+      {
+        "x": 0.4355,
+        "y": 0.2476
+      },
+      {
+        "x": 0.4343,
+        "y": 0.2517
+      },
+      {
+        "x": 0.4105,
+        "y": 0.3058
+      },
+      {
+        "x": 0.4143,
+        "y": 0.4844
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 114,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2077579988,
+    "style_seed": 588712725,
+    "augmentation_seed": 1711628681,
+    "sampler_seed": 1479527219,
+    "family": "island",
+    "tier_target": "easy",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "islands": 11,
+      "corridor": 18,
+      "min_dist": 150,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.511
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 1,
+      "rotation_deg": -3.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 1.019
+    },
+    "measures": {
+      "geodesic_length_px": 487.34,
+      "normalized_length": 0.4472,
+      "turns": 1,
+      "route_branches": 3,
+      "difficulty_score": 0.8305,
+      "tier": "easy"
+    },
+    "graph_hash": "143bacf3db65232ae086e81ea81274c4b7e328dc449123d0540b318a6bd68720",
+    "mask_sha256": "ac4ebe1aea887565f8ebca10dbce0976f83dfc4969f55873d3f93dc43e4e2a3a",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.00257,
+        "start_marker_contrast": 92.59,
+        "goal_marker_contrast": 101.11
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    },
+    "style_swap": {
+      "source_task_id": "island",
+      "source_archetype": "parchment-chart",
+      "archetype": "candy-pastel",
+      "style_seed": 25260748
+    }
+  }
+}

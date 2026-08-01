@@ -1,0 +1,73 @@
+{
+  "seed": 20260731,
+  "spec": {
+    "size": 20,
+    "per_family_min": 2,
+    "per_family_max": 3,
+    "tier_targets": {
+      "easy": 6,
+      "medium": 8,
+      "hard": 6
+    },
+    "archetype_floor": 0
+  },
+  "pool_size": 100,
+  "selected": 20,
+  "task_ids": [
+    "braided-easy-s0024",
+    "braided-easy-s0104",
+    "braided-hard-s0040",
+    "cave-medium-s0153",
+    "cave-medium-s0193",
+    "island-easy-s0114",
+    "island-easy-s0146",
+    "island-medium-s0130",
+    "organic-hard-s0187",
+    "organic-medium-s0107",
+    "pipes-hard-s0092",
+    "pipes-medium-s0180",
+    "radial-easy-s0021",
+    "radial-easy-s0181",
+    "radial-hard-s0109",
+    "rectilinear-hard-s0038",
+    "rectilinear-medium-s0174",
+    "rooms-hard-s0031",
+    "rooms-medium-s0023",
+    "rooms-medium-s0111"
+  ],
+  "achieved": {
+    "family": {
+      "braided": 3,
+      "cave": 2,
+      "island": 3,
+      "organic": 2,
+      "pipes": 2,
+      "radial": 3,
+      "rectilinear": 2,
+      "rooms": 3
+    },
+    "tier": {
+      "easy": 6,
+      "hard": 6,
+      "medium": 8
+    },
+    "archetype": {
+      "blueprint-rooms": 1,
+      "candy-pastel": 4,
+      "circuit-board": 1,
+      "desert-canyon": 2,
+      "dungeon-pebble": 1,
+      "forest-path": 3,
+      "glow-cavern": 1,
+      "hedge-garden": 1,
+      "notebook": 2,
+      "parchment-chart": 3,
+      "treasure-map": 1
+    }
+  },
+  "solver": "scipy.optimize.milp (HiGHS)",
+  "dataset_dir": "datasets/v1/dev",
+  "index_sha256": "5b0dd5104eda884da02372966146cbea6fa8de3b674260605bda1c1f876cbcce",
+  "pool_path": "evals/dev-eval-100.txt",
+  "pool_sha256": "f0fc5419e6c0dee1860613e720af6e7e11c0916515c6f41600fa4c7268ee6876"
+}

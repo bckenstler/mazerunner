@@ -1,0 +1,37 @@
+{
+  "source_dataset": "datasets/v1/dev",
+  "requested_groups": 20,
+  "complete_groups": 20,
+  "archetypes": [
+    "forest-path",
+    "glow-cavern",
+    "candy-pastel",
+    "pencil-sketch",
+    "desert-canyon"
+  ],
+  "seed": 20260731,
+  "variants": 100,
+  "groups": [
+    "braided-easy-s0024",
+    "braided-easy-s0104",
+    "braided-hard-s0040",
+    "cave-medium-s0153",
+    "cave-medium-s0193",
+    "island-easy-s0114",
+    "island-easy-s0146",
+    "island-medium-s0130",
+    "organic-hard-s0187",
+    "organic-medium-s0107",
+    "pipes-hard-s0092",
+    "pipes-medium-s0180",
+    "radial-easy-s0021",
+    "radial-easy-s0181",
+    "radial-hard-s0109",
+    "rectilinear-hard-s0038",
+    "rectilinear-medium-s0174",
+    "rooms-hard-s0031",
+    "rooms-medium-s0023",
+    "rooms-medium-s0111"
+  ],
+  "skipped": []
+}

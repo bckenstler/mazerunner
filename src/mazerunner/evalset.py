@@ -129,14 +129,36 @@ def build_eval_set(
     *,
     seed: int,
     spec: SelectionSpec | None = None,
+    pool_path: Path | None = None,
 ) -> dict:
-    """Select, write the frozen id list, and record a reproducibility manifest."""
+    """Select, write the frozen id list, and record a reproducibility manifest.
+
+    `pool_path` restricts the candidate pool to an existing frozen list, which
+    is how the ablation subsets are nested inside dev-eval-100: every ablation
+    attempt is then paired with that task's main-run attempts.
+    """
     index = Path(dataset_dir) / "index.jsonl"
     rows = [json.loads(line) for line in index.read_text().splitlines() if line.strip()]
+
+    pool_ids = None
+    if pool_path is not None:
+        pool_ids = read_task_list(Path(pool_path))
+        keep = set(pool_ids)
+        rows = [r for r in rows if r["task_id"] in keep]
+        missing = keep - {r["task_id"] for r in rows}
+        if missing:
+            raise InfeasibleSelection(
+                f"{len(missing)} pool ids are absent from {index}: {sorted(missing)[:3]}"
+            )
+
     task_ids, manifest = select_eval_set(rows, seed=seed, spec=spec)
 
     manifest["dataset_dir"] = str(dataset_dir)
     manifest["index_sha256"] = hashlib.sha256(index.read_bytes()).hexdigest()
+    if pool_ids is not None:
+        manifest["pool_path"] = str(pool_path)
+        manifest["pool_size"] = len(pool_ids)
+        manifest["pool_sha256"] = hashlib.sha256(Path(pool_path).read_bytes()).hexdigest()
 
     write_task_list(Path(out_path), task_ids)
     Path(out_path).with_suffix(".json").write_text(json.dumps(manifest, indent=2))
@@ -158,6 +180,21 @@ def verify_eval_set(out_path: Path) -> list[str]:
                         f"{manifest['index_sha256'][:12]})")
 
     rows = [json.loads(line) for line in index.read_text().splitlines() if line.strip()]
+
+    pool_path = manifest.get("pool_path")
+    if pool_path:
+        pool = Path(pool_path)
+        if not pool.exists():
+            failures.append(f"pool list {pool} is missing")
+        else:
+            digest = hashlib.sha256(pool.read_bytes()).hexdigest()
+            if digest != manifest.get("pool_sha256"):
+                failures.append(f"pool list {pool} changed since selection")
+            pool_ids = set(read_task_list(pool))
+            if not set(manifest["task_ids"]) <= pool_ids:
+                failures.append(f"selection is not a subset of {pool}")
+            rows = [r for r in rows if r["task_id"] in pool_ids]
+
     spec_fields = dict(manifest["spec"])
     task_ids, _ = select_eval_set(rows, seed=manifest["seed"], spec=SelectionSpec(**spec_fields))
     if task_ids != manifest["task_ids"]:

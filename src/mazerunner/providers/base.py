@@ -21,6 +21,13 @@ class ProviderResponse:
     model: str | None = None
     raw: dict | None = None  # provider-serialized response for full-trace audit
     reasoning: str | None = None  # summarized reasoning trace, where the API offers one
+    # Opaque, adapter-owned state for continuing the conversation: the typed
+    # assistant turn and tool-call id that a follow-up must replay. Each dialect
+    # needs something different (Anthropic wants its thinking blocks back
+    # *with signatures*, OpenAI just wants the response id), so the shape is
+    # private to the adapter that produced it.
+    conversation: dict | None = None
+    tool_call_id: str | None = None
 
 
 class ProviderError(Exception):
@@ -84,6 +91,16 @@ def is_retryable(error: ProviderError) -> bool:
     if error.status is None:
         return True
     return error.status in RETRYABLE_STATUS
+
+
+# A wedged connection with no timeout stalled one shard of the main run for
+# 106 minutes while the rest of the leg sat idle. Every adapter sets one.
+DEFAULT_TIMEOUT_S = 600.0
+
+# The SDKs retry internally by default (openai and anthropic: max_retries=2),
+# which multiplies against the runner's own classified ladder and makes the
+# recorded transport history undercount real API calls. The runner owns retries.
+DEFAULT_MAX_RETRIES = 0
 
 
 def serving_stack(raw: dict | None) -> str | None:

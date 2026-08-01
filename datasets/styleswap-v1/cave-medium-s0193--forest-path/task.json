@@ -1,0 +1,235 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 141005506,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "forest-path",
+    "style_seed": 24260743,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        25,
+        52,
+        28
+      ],
+      "foliage": [
+        [
+          23,
+          66,
+          21
+        ],
+        [
+          22,
+          45,
+          29
+        ],
+        [
+          29,
+          86,
+          42
+        ],
+        [
+          37,
+          110,
+          40
+        ]
+      ],
+      "foliage_count": 2869,
+      "corridor_fill": [
+        213,
+        199,
+        151
+      ],
+      "corridor_noise": [
+        197,
+        183,
+        135
+      ],
+      "corridor_light": [
+        227,
+        213,
+        165
+      ],
+      "corridor_extra": [
+        [
+          197,
+          183,
+          135
+        ],
+        [
+          227,
+          213,
+          165
+        ]
+      ],
+      "outline_color": [
+        35,
+        84,
+        39
+      ],
+      "outline_px": 4
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.1786,
+    "y": 0.1406
+  },
+  "goal": {
+    "x": 0.6731,
+    "y": 0.1682
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 64,
+    "optimal_length_px": 1236.91,
+    "optimal_length_px_geometric": 1025.74,
+    "corner_cut_headroom_px": 211.17,
+    "min_clearance_px": 9.0,
+    "optimal_path": [
+      {
+        "x": 0.1791,
+        "y": 0.1402
+      },
+      {
+        "x": 0.1869,
+        "y": 0.4492
+      },
+      {
+        "x": 0.1924,
+        "y": 0.4564
+      },
+      {
+        "x": 0.2703,
+        "y": 0.5994
+      },
+      {
+        "x": 0.3159,
+        "y": 0.6567
+      },
+      {
+        "x": 0.3204,
+        "y": 0.6581
+      },
+      {
+        "x": 0.3949,
+        "y": 0.6552
+      },
+      {
+        "x": 0.4661,
+        "y": 0.5637
+      },
+      {
+        "x": 0.4694,
+        "y": 0.5622
+      },
+      {
+        "x": 0.6407,
+        "y": 0.5479
+      },
+      {
+        "x": 0.7086,
+        "y": 0.4607
+      },
+      {
+        "x": 0.7097,
+        "y": 0.4549
+      },
+      {
+        "x": 0.7097,
+        "y": 0.216
+      },
+      {
+        "x": 0.673,
+        "y": 0.1688
+      }
+    ]
+  },
+  "provenance": {
+    "dataset_split": "dev",
+    "slot": 193,
+    "attempt": 4,
+    "master_seed": 20260726,
+    "seed_base": 0,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 141005506,
+    "style_seed": 292102709,
+    "augmentation_seed": 1493427960,
+    "sampler_seed": 2005153703,
+    "family": "cave",
+    "tier_target": "medium",
+    "tier_relaxed": false,
+    "difficulty_overrides": {
+      "open_probability": 0.6,
+      "endpoint_quantile": 0.839
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.018
+    },
+    "measures": {
+      "geodesic_length_px": 1025.74,
+      "normalized_length": 0.8996,
+      "turns": 6,
+      "route_branches": 56,
+      "difficulty_score": 2.8996,
+      "tier": "medium"
+    },
+    "graph_hash": "f35533045679461e71ffb79539029c727640c99a6b58cc2dac473a3aaf903b9a",
+    "mask_sha256": "460852ad9449652e3a382a1bf2a580cdabc8fedf5e2f5432aaf8832abb534245",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 134.68,
+        "goal_marker_contrast": 49.14
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-15.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    },
+    "style_swap": {
+      "source_task_id": "cave",
+      "source_archetype": "candy-pastel",
+      "archetype": "forest-path",
+      "style_seed": 24260743
+    }
+  }
+}
