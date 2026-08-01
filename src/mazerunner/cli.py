@@ -82,6 +82,20 @@ def _built_splits(out_dir) -> list[str]:
     return sorted(p.parent.name for p in out_dir.glob("*/index.jsonl"))
 
 
+def cmd_failuremodes(args: argparse.Namespace) -> int:
+    from .analysis.failuremodes import classify_run
+
+    summary = classify_run(Path(args.attempts), Path(args.dataset), Path(args.out) if args.out else None)
+    n = summary["failures"]
+    print(f"classified {n} failures  (coverage {100*summary['coverage']:.1f}%)")
+    for mode, count in summary["counts"].items():
+        print(f"  {mode:<28}{count:>5}{100*count/n:>7.1f}%")
+    print(f"\n  trace quality: {summary['trace_quality']}")
+    if args.out:
+        print(f"  per-attempt verdicts -> {args.out}")
+    return 0
+
+
 def cmd_feedback(args: argparse.Namespace) -> int:
     import os
 
@@ -391,6 +405,11 @@ def main() -> None:
     dataset.add_argument("--count", type=int, default=24, help="sheet: tasks per sheet")
     dataset.add_argument("--sheet-seed", type=int, default=0)
 
+    fm = sub.add_parser("failuremodes", help="classify why each failed attempt failed")
+    fm.add_argument("--attempts", default="results/main/merged/attempts.jsonl")
+    fm.add_argument("--dataset", default="datasets/v1/dev")
+    fm.add_argument("--out", default="results/failure-modes.jsonl")
+
     feedback = sub.add_parser("feedback", help="closed-loop retry episodes (separate leaderboard)")
     feedback.add_argument("--config", default="litellm.config.json")
     feedback.add_argument("--providers", default=None)
@@ -448,6 +467,7 @@ def main() -> None:
         "merge": cmd_merge,
         "styleswap": cmd_styleswap,
         "feedback": cmd_feedback,
+        "failuremodes": cmd_failuremodes,
     }
     sys.exit(handler[args.command](args))
 
