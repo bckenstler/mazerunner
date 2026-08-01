@@ -139,9 +139,47 @@ published without more data behind it.
 
 ---
 
-## 5. Style-swap (H3)
+## 5. Style-swap (H3) — is rendering style a difficulty axis of its own?
 
-Running; results appended on completion.
+20 topologies × 5 archetypes = 100 variants, k=3, 5 legs, 1,494 scored
+attempts. Every variant in a pair-group is asserted to share its source's
+`mask_sha256` and to still pass the certified reference route, so within a
+group the *only* thing that changes is how the maze is painted.
+
+**Marginal style effect is small; topology dominates.**
+
+| Archetype (topology held fixed) | pass@1 |
+|---|---|
+| desert-canyon | 38.3% |
+| pencil-sketch | 36.5% |
+| glow-cavern | 36.3% |
+| forest-path | 35.5% |
+| candy-pastel | 32.1% |
+
+Two-way decomposition over the (topology × style) grid:
+
+| Source | Share of variance | Effect range |
+|---|---|---|
+| **Topology** | **85.7%** | 92pp |
+| Style (main effect) | 0.6% | 6pp |
+| Topology × style interaction | 13.7% | — |
+
+Averaged over mazes, style barely matters: the best and worst archetypes differ
+by 6 points, against a 92-point spread across topologies. But the marginal view
+understates it. **Within a single fixed maze, the best and worst styles differ
+by 24 points on average and up to 51 points**, and the interaction term is
+13.7% — more than twenty times the style main effect.
+
+So H3 resolves in a specific way: style is not a global difficulty dial, it is
+a *per-maze* one. No archetype is uniformly harder; particular renderings are
+hard for particular topologies. That is exactly the effect the factorized
+engine was built to expose and that a benchmark pairing one style to one maze
+would report as topology difficulty.
+
+It also has a practical consequence for the benchmark: because style effects
+are interaction-dominated, sampling many topologies with one style each would
+give an unbiased mean but understate per-task variance — the dataset's
+independent style sampling per task is the right construction.
 
 ---
 
