@@ -12,12 +12,14 @@ __pycache__/
 results/*
 !results/*.md
 !results/*.txt
+!results/figures/
+!results/failure-modes.jsonl
 # ...but not the hidden-split build log: it names hidden task ids alongside
 # their topology seeds, and generation is deterministic, so publishing it
 # would let anyone rebuild the held-out mazes.
 results/dataset-build-hidden-log.txt
 .pytest_cache/
-# Archived attempt traces ARE tracked (archive/runs/**/attempts.jsonl.gz, ~39MB).
-# Overlay tarballs are not: 165MB of PNGs that are derived artifacts, fully
-# regenerable from the stored submissions via overlay.render_overlay().
-archive/runs/**/overlays.tar.gz
+# The archive stays local; full traces ship as GitHub Release assets.
+archive/
+litellm.config.json
+results/promo-frames/

@@ -361,7 +361,7 @@ def main() -> None:
     validate.add_argument("--skip-tests", action="store_true")
 
     run = sub.add_parser("run", help="live provider smoke run (needs API keys)")
-    run.add_argument("--config", default="smoke.config.json")
+    run.add_argument("--config", default="configs/providers.example.json")
     run.add_argument("--providers", default=None, help="comma-separated subset")
     run.add_argument("--mazes", default=None, help="comma-separated subset")
     run.add_argument(
@@ -411,7 +411,7 @@ def main() -> None:
     fm.add_argument("--out", default="results/failure-modes.jsonl")
 
     feedback = sub.add_parser("feedback", help="closed-loop retry episodes (separate leaderboard)")
-    feedback.add_argument("--config", default="litellm.config.json")
+    feedback.add_argument("--config", default="configs/providers.example.json")
     feedback.add_argument("--providers", default=None)
     feedback.add_argument("--dataset", default="datasets/v1/dev")
     feedback.add_argument("--tasks", default="evals/ablation-50.txt")

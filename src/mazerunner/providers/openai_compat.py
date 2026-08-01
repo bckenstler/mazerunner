@@ -2,7 +2,7 @@
 
 Covers Moonshot (Kimi K3), Meta Model API (Muse Spark), OpenRouter /
 Together / Fireworks (Inkling and other open-weight models), and Z.ai —
-configured per provider in smoke.config.json with `type: "openai_compat"`,
+configured per provider in configs/*.json with `type: "openai_compat"`,
 a `base_url`, an `env_key`, and a `model` id. The shared contract (image +
 prompt + submit_drag_path schema) is unchanged.
 """

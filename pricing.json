@@ -1,12 +1,36 @@
 {
-  "_note": "USD per million tokens. Exact values are from the LiteLLM proxy's own rate card (/model/info) on 2026-07-30. Routes the proxy does not price are recorded as null rather than guessed; the economics table reports them as unpriced.",
-  "source": "litellm-proxy /v1/model/info, 2026-07-30",
+  "_note": "USD per million tokens. Exact values are from the serving gateway's rate card on 2026-07-30. Routes the proxy does not price are recorded as null rather than guessed; the economics table reports them as unpriced.",
+  "source": "provider gateway rate card, retrieved 2026-07-30",
   "models": {
-    "openai/gpt-5.6-sol":     {"input": 5.00, "output": 30.00, "exact": true},
-    "anthropic/claude-opus-5": {"input": 5.00, "output": 25.00, "exact": true},
-    "gemini/gemini-3.6-flash": {"input": 1.25, "output": 10.00, "exact": true},
-    "fireworks_ai/kimi-k3":   {"input": null, "output": null, "exact": false},
-    "muse-spark-1.1":         {"input": null, "output": null, "exact": false},
-    "thinkingmachines/inkling": {"input": null, "output": null, "exact": false}
+    "openai/gpt-5.6-sol": {
+      "input": 5.0,
+      "output": 30.0,
+      "exact": true
+    },
+    "anthropic/claude-opus-5": {
+      "input": 5.0,
+      "output": 25.0,
+      "exact": true
+    },
+    "gemini/gemini-3.6-flash": {
+      "input": 1.25,
+      "output": 10.0,
+      "exact": true
+    },
+    "fireworks_ai/kimi-k3": {
+      "input": null,
+      "output": null,
+      "exact": false
+    },
+    "muse-spark-1.1": {
+      "input": null,
+      "output": null,
+      "exact": false
+    },
+    "thinkingmachines/inkling": {
+      "input": null,
+      "output": null,
+      "exact": false
+    }
   }
 }

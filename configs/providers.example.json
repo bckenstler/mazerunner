@@ -1,0 +1,69 @@
+{
+  "_readme": [
+    "Provider configuration for `mazerunner run --config`.",
+    "Every entry resolves its API key from the environment variable named in",
+    "`env_key` \u2014 no secrets belong in this file. `base_url` may point at any",
+    "OpenAI-compatible gateway; the adapters speak Responses (type=openai),",
+    "Messages (type=anthropic), google-genai (type=gemini), and generic",
+    "chat-completions (type=openai_compat).",
+    "Reasoning knobs vary per vendor; see results/effort-sweeps.md for the",
+    "verified ladder of each model family."
+  ],
+  "trials": 1,
+  "providers": {
+    "openai": {
+      "enabled": true,
+      "type": "openai",
+      "model": "gpt-5.6-sol",
+      "reasoning_effort": "medium",
+      "tool_choice": "forced"
+    },
+    "anthropic": {
+      "enabled": true,
+      "type": "anthropic",
+      "model": "claude-opus-5",
+      "max_tokens": 60000,
+      "thinking": "adaptive"
+    },
+    "gemini": {
+      "enabled": true,
+      "type": "gemini",
+      "model": "gemini-3.6-flash"
+    },
+    "kimi": {
+      "enabled": false,
+      "type": "openai_compat",
+      "model": "moonshotai/kimi-k3",
+      "base_url": "https://openrouter.ai/api/v1",
+      "env_key": "OPENROUTER_API_KEY",
+      "max_tokens": 32000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "provider": {
+          "order": [
+            "fireworks"
+          ],
+          "allow_fallbacks": false
+        },
+        "reasoning_effort": "high"
+      }
+    },
+    "inkling": {
+      "enabled": false,
+      "type": "openai_compat",
+      "model": "thinkingmachines/inkling",
+      "base_url": "https://openrouter.ai/api/v1",
+      "env_key": "OPENROUTER_API_KEY",
+      "max_tokens": 32000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "provider": {
+          "order": [
+            "baseten"
+          ],
+          "allow_fallbacks": false
+        }
+      }
+    }
+  }
+}

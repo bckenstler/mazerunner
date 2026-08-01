@@ -18,11 +18,11 @@ from pathlib import Path
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 import sys
-sys.path.insert(0, str(Path("/Users/bradley.kenstler/projects/mazerunner/src")))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from mazerunner.analysis.stats import pass_at_k
 
-ROOT = Path("/Users/bradley.kenstler/projects/mazerunner")
-OUT = Path("/private/tmp/claude-502/-Users-bradley-kenstler-projects-mazerunner/ab5eb1e4-059e-4a58-8268-7e0ec2e27363/scratchpad/frames")
+ROOT = Path(__file__).resolve().parent.parent
+OUT = ROOT / "results" / "promo-frames"
 W = H = 1080
 FPS = 30
 
