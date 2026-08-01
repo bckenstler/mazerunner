@@ -140,3 +140,57 @@ untouched.
 Raising resolution moves the other lever: collisions fall 64%→56% while
 wrong-start is unchanged. The two interventions repair different halves of the
 task.
+
+## H1 — does measured difficulty predict success?
+
+Logistic regression of per-attempt success on the four measured task features,
+standardized so coefficients are comparable across units, with a
+task-clustered bootstrap CI (`*` marks intervals excluding zero).
+
+| Feature | All models | GPT @ xhigh | Gemini |
+|---|---|---|---|
+| normalized length | +0.18 | −0.19 | +0.62 |
+| **turns** | **−0.72 \*** | −0.12 | **−1.70 \*** |
+| **route branches** | **−0.19 \*** | +0.08 | **−0.67 \*** |
+| **min clearance** | +0.19 | **+0.37 \*** | −0.14 |
+
+**Turn count, not route length, is what makes a maze hard.** Pooled across
+models, normalized geodesic length has no detectable effect while turns are
+strongly negative (odds ratio 0.49 per standard deviation). A long straight
+corridor is easy; a short twisty one is not. Each turn is a point where the
+model must re-locate the corridor, and errors compound there.
+
+⚠️ This is a live criticism of our own tier assignment: `difficulty_score`
+weights normalized length, which turns out not to predict success. The tiers
+are still monotone in observed pass rate (they are built from a blend), but a
+v2 difficulty model should down-weight length in favour of turns and branching.
+
+**The two models are bound by different things**, and this is the sharpest
+statement of H2 in the study:
+
+- **GPT at xhigh is limited by corridor width.** Minimum clearance is its only
+  significant predictor (OR 1.45 per SD); turns and branches do not move it. It
+  has solved "follow a complex route" and now fails only where the corridor is
+  too narrow for it to place points precisely.
+- **Gemini is limited by route complexity.** Turns (OR 0.18) and branches
+  (OR 0.51) dominate; clearance is irrelevant to it. It fails as the route gets
+  intricate, well before precision becomes the binding constraint.
+
+The same benchmark is therefore measuring two different abilities depending on
+where a model sits on it — which is exactly why a single scalar score, without
+this decomposition, would be misleading about *why* one model beats another.
+
+## H3 — variance components with intervals
+
+Bootstrapped by resampling topologies over the 20 × 5 grid.
+
+| Component | Share | 95% CI |
+|---|---|---|
+| Topology | 85.4% | [69.7, 91.8] |
+| Style (main effect) | 0.4% | [0.2, 3.8] |
+| **Topology × style interaction** | **14.2%** | **[7.4, 28.5]** |
+
+The intervals separate cleanly: style's main effect is bounded below 4% while
+the interaction's lower bound is 7.4%. Style is not a global difficulty dial —
+it is a per-maze one, and the effect is real rather than an artifact of the
+point estimate.

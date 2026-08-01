@@ -161,3 +161,60 @@ def test_localization_error_measures_distance_to_the_start_badge():
 def test_percentiles_are_ordered():
     q = percentiles([float(i) for i in range(100)])
     assert q[50] < q[75] < q[90] < q[95]
+
+
+# ---------- difficulty models ----------
+
+def test_logistic_recovers_a_known_effect():
+    """A feature that drives success must come back with the right sign."""
+    import numpy as np
+    from mazerunner.analysis.difficulty import fit_logistic
+
+    rng = np.random.default_rng(0)
+    x = rng.normal(size=2000)
+    y = (rng.random(2000) < 1 / (1 + np.exp(-(0.5 + 1.5 * x)))).astype(float)
+    X = np.column_stack([np.ones(2000), x])
+
+    beta = fit_logistic(X, y)
+    assert beta[1] == pytest.approx(1.5, abs=0.25)
+    assert beta[0] == pytest.approx(0.5, abs=0.25)
+
+
+def test_logistic_handles_perfect_separation_without_diverging():
+    import numpy as np
+    from mazerunner.analysis.difficulty import fit_logistic
+
+    x = np.array([-2.0, -1.0, 1.0, 2.0])
+    y = np.array([0.0, 0.0, 1.0, 1.0])
+    beta = fit_logistic(np.column_stack([np.ones(4), x]), y)
+    assert np.all(np.isfinite(beta))
+
+
+def test_variance_components_detect_a_pure_row_effect():
+    """Topology-only variation must load on topology, not style."""
+    from mazerunner.analysis.difficulty import variance_components
+
+    grid = {(f"t{i}", f"s{j}"): i / 10 for i in range(10) for j in range(4)}
+    vc = variance_components(grid, resamples=200)
+    assert vc["components"]["topology"]["share"] > 0.95
+    assert vc["components"]["style"]["share"] < 0.05
+
+
+def test_variance_components_detect_a_pure_column_effect():
+    from mazerunner.analysis.difficulty import variance_components
+
+    grid = {(f"t{i}", f"s{j}"): j / 4 for i in range(10) for j in range(4)}
+    vc = variance_components(grid, resamples=200)
+    assert vc["components"]["style"]["share"] > 0.95
+
+
+def test_variance_components_detect_interaction():
+    """Neither margin varies, but the cells do — that is pure interaction."""
+    from mazerunner.analysis.difficulty import variance_components
+
+    grid = {}
+    for i in range(10):
+        for j in range(4):
+            grid[(f"t{i}", f"s{j}")] = 1.0 if (i + j) % 2 == 0 else 0.0
+    vc = variance_components(grid, resamples=200)
+    assert vc["components"]["interaction"]["share"] > 0.9
