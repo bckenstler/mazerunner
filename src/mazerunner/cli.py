@@ -82,6 +82,27 @@ def _built_splits(out_dir) -> list[str]:
     return sorted(p.parent.name for p in out_dir.glob("*/index.jsonl"))
 
 
+def cmd_serve(args: argparse.Namespace) -> int:
+    import functools
+    import http.server
+
+    docs = Path(args.dir).resolve()
+    if not (docs / "viewer" / "data" / "index.json").exists():
+        print("viewer data missing — run: uv run python scripts/make_viewer_data.py")
+    handler = functools.partial(
+        http.server.SimpleHTTPRequestHandler, directory=str(docs)
+    )
+    print(f"serving {docs}")
+    print(f"  viewer: http://localhost:{args.port}/viewer/")
+    print(f"  site:   http://localhost:{args.port}/")
+    with http.server.ThreadingHTTPServer(("127.0.0.1", args.port), handler) as httpd:
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            pass
+    return 0
+
+
 def cmd_failuremodes(args: argparse.Namespace) -> int:
     from .analysis.failuremodes import classify_run
 
@@ -405,6 +426,10 @@ def main() -> None:
     dataset.add_argument("--count", type=int, default=24, help="sheet: tasks per sheet")
     dataset.add_argument("--sheet-seed", type=int, default=0)
 
+    serve = sub.add_parser("serve", help="serve the landing page + trace viewer locally")
+    serve.add_argument("--port", type=int, default=8639)
+    serve.add_argument("--dir", default="docs")
+
     fm = sub.add_parser("failuremodes", help="classify why each failed attempt failed")
     fm.add_argument("--attempts", default="results/main/merged/attempts.jsonl")
     fm.add_argument("--dataset", default="datasets/v1/dev")
@@ -468,6 +493,7 @@ def main() -> None:
         "styleswap": cmd_styleswap,
         "feedback": cmd_feedback,
         "failuremodes": cmd_failuremodes,
+        "serve": cmd_serve,
     }
     sys.exit(handler[args.command](args))
 

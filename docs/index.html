@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MazeRunner — a continuous-control benchmark for multimodal models</title>
+<meta name="description" content="Can a multimodal model draw its way out of a maze? 1,000 certified-fair mazes, 7 models, full traces.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+<style>
+:root {
+  --bg:#090B12; --panel:#0E121C; --grid:#1A2030;
+  --cyan:#22D3EE; --amber:#F59E0B; --green:#34D399; --red:#F84454;
+  --white:#EDF2F7; --dim:#6E7A8C;
+}
+* { box-sizing:border-box; margin:0; }
+body {
+  background:var(--bg); color:var(--white);
+  font-family:Menlo,"DejaVu Sans Mono",monospace;
+  line-height:1.6; font-size:14px;
+}
+.wrap { max-width:920px; margin:0 auto; padding:0 22px; }
+a { color:var(--cyan); text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+.hero { padding:90px 0 50px; text-align:center;
+  background:radial-gradient(ellipse 60% 40% at 50% 35%, rgba(34,211,238,.07), transparent); }
+.hero h1 { font-size:64px; letter-spacing:1px; }
+.hero h1 b { color:var(--cyan); }
+.hero .tag { color:var(--dim); margin-top:10px; font-size:16px; }
+.stats { display:flex; justify-content:center; gap:44px; margin-top:38px; flex-wrap:wrap; }
+.stat .n { font-size:34px; font-weight:700; color:var(--amber); }
+.stat .l { color:var(--dim); font-size:12px; }
+.cta { margin-top:38px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap; }
+.cta a { border:1px solid var(--grid); padding:10px 20px; border-radius:4px; }
+.cta a.primary { border-color:var(--cyan); background:rgba(34,211,238,.08); }
+.cta a:hover { text-decoration:none; border-color:var(--cyan); }
+
+section { padding:44px 0; border-top:1px solid var(--grid); }
+h2 { font-size:22px; margin-bottom:6px; }
+.sub { color:var(--dim); margin-bottom:22px; }
+
+video { width:100%; border:1px solid var(--grid); border-radius:6px; }
+
+table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
+th { text-align:left; color:var(--dim); font-weight:400; font-size:12px;
+  padding:6px 10px; border-bottom:1px solid var(--grid); }
+td { padding:9px 10px; border-bottom:1px solid var(--panel); }
+tr.lead td { color:var(--white); font-weight:700; }
+tr.lead td:first-child { color:var(--amber); }
+td.bar { width:34%; }
+.barfill { height:8px; background:#2B7A8C; border-radius:2px; }
+tr.lead .barfill { background:var(--cyan); }
+td.num { text-align:right; }
+.ci { color:var(--dim); font-size:11px; }
+
+.fig { margin:34px 0; }
+.fig img { width:100%; border:1px solid var(--grid); border-radius:6px; }
+.fig p { color:var(--dim); font-size:12.5px; margin-top:8px; }
+
+pre { background:var(--panel); border:1px solid var(--grid); border-radius:6px;
+  padding:16px; overflow-x:auto; font-size:12.5px; }
+footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1><b>MAZE</b>RUNNER</h1>
+  <div class="tag">Can a multimodal model draw its way out of a maze?</div>
+  <div class="stats">
+    <div class="stat"><div class="n">61%</div><div class="l">best model pass@1</div></div>
+    <div class="stat"><div class="n">0/700</div><div class="l">passes when blind</div></div>
+    <div class="stat"><div class="n">4,140</div><div class="l">failures, each classified</div></div>
+  </div>
+  <div class="cta">
+    <a class="primary" href="viewer/">🔬 explore the traces</a>
+    <a href="https://github.com/bkenstler/mazerunner/blob/main/STUDY.md">📊 read the study</a>
+    <a href="https://github.com/bkenstler/mazerunner">code + dataset</a>
+  </div>
+</div>
+
+<div class="wrap">
+<section>
+  <h2>The task</h2>
+  <p class="sub">One image. One continuous drag from the cyan badge to the amber one.
+  Scored by sweeping a 3px pointer along the submitted path against the exact
+  mask that stenciled the render — the picture can never disagree with the
+  physics.</p>
+  <video controls muted playsinline preload="metadata" src="assets/mazerunner-promo.mp4"></video>
+</section>
+
+<section>
+  <h2>Leaderboard</h2>
+  <p class="sub">100 mazes × 8 attempts · frozen protocol · CIs clustered over tasks</p>
+  <table id="board">
+    <thead><tr><th>#</th><th>model</th><th class="bar"></th>
+    <th class="num">pass@1</th><th class="num">pass@8</th></tr></thead>
+    <tbody></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>What the study found</h2>
+  <p class="sub">Nine figures; the full argument with caveats is in the
+  <a href="https://github.com/bkenstler/mazerunner/blob/main/STUDY.md">study</a>.</p>
+  <div id="figs"></div>
+</section>
+
+<section>
+  <h2>Run it</h2>
+<pre>git clone https://github.com/bkenstler/mazerunner && cd mazerunner
+uv sync && uv run pytest -q            # 255 tests, no network
+uv run mazerunner run --config configs/providers.example.json \
+    --dataset datasets/v1/dev --mazes-file evals/dev-eval-100.txt --trials 8</pre>
+  <p class="sub" style="margin-top:12px">Full traces for every attempt in this
+  study are in the <a href="https://github.com/bkenstler/mazerunner/releases">release assets</a>;
+  the hidden test split ships encrypted.</p>
+</section>
+</div>
+
+<footer>
+  MIT · every path shown anywhere on this site is a real model submission
+</footer>
+
+<script>
+(async () => {
+  const board = await (await fetch("assets/leaderboard.json")).json();
+  const tbody = document.querySelector("#board tbody");
+  board.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    if (i === 0) tr.className = "lead";
+    tr.innerHTML =
+      `<td>${i + 1}</td><td>${r.name}</td>` +
+      `<td class="bar"><div class="barfill" style="width:${r.pass1}%"></div></td>` +
+      `<td class="num">${r.pass1.toFixed(1)}% <span class="ci">[${r.ci[0]}, ${r.ci[1]}]</span></td>` +
+      `<td class="num">${r.pass8}%</td>`;
+    tbody.appendChild(tr);
+  });
+  const figs = await (await fetch("assets/figures.json")).json();
+  const box = document.getElementById("figs");
+  for (const f of figs) {
+    const div = document.createElement("div");
+    div.className = "fig";
+    div.innerHTML = `<img loading="lazy" src="assets/${f.file}" alt=""><p>${f.caption}</p>`;
+    box.appendChild(div);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+[
+  {
+    "id": "gpt-xhigh",
+    "name": "GPT-5.6 Sol \u00b7 xhigh",
+    "pass1": 60.6,
+    "ci": [
+      53.4,
+      67.4
+    ],
+    "pass8": 86
+  },
+  {
+    "id": "openai",
+    "name": "GPT-5.6 Sol",
+    "pass1": 48.4,
+    "ci": [
+      40.6,
+      55.8
+    ],
+    "pass8": 74
+  },
+  {
+    "id": "gemini",
+    "name": "Gemini 3.6 Flash",
+    "pass1": 29.8,
+    "ci": [
+      22.2,
+      37.5
+    ],
+    "pass8": 46
+  },
+  {
+    "id": "kimi",
+    "name": "Kimi K3",
+    "pass1": 20.6,
+    "ci": [
+      14.6,
+      27.0
+    ],
+    "pass8": 38
+  },
+  {
+    "id": "anthropic",
+    "name": "Claude Opus 5",
+    "pass1": 16.4,
+    "ci": [
+      10.2,
+      23.1
+    ],
+    "pass8": 26
+  },
+  {
+    "id": "muse-spark",
+    "name": "Muse Spark 1.1",
+    "pass1": 6.0,
+    "ci": [
+      2.8,
+      9.8
+    ],
+    "pass8": 14
+  },
+  {
+    "id": "inkling",
+    "name": "Inkling",
+    "pass1": 0.0,
+    "ci": [
+      0.0,
+      0.0
+    ],
+    "pass8": 0
+  }
+]

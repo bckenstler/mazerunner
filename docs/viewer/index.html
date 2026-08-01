@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MazeRunner · Trace Viewer</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+<style>
+:root {
+  --bg:#090B12; --panel:#0E121C; --panel2:#131826; --grid:#1A2030;
+  --cyan:#22D3EE; --amber:#F59E0B; --green:#34D399; --red:#F84454;
+  --white:#EDF2F7; --dim:#6E7A8C; --dimmer:#3B4658;
+}
+* { box-sizing:border-box; margin:0; }
+body {
+  background:var(--bg); color:var(--white);
+  font-family:Menlo,"DejaVu Sans Mono",monospace; font-size:13px;
+  height:100vh; display:flex; flex-direction:column; overflow:hidden;
+}
+header {
+  padding:10px 18px; border-bottom:1px solid var(--grid);
+  display:flex; align-items:baseline; gap:14px; flex-shrink:0;
+}
+header .mark b { color:var(--cyan); font-weight:700; }
+header .mark { font-size:16px; letter-spacing:.5px; }
+header .sub { color:var(--dim); font-size:11px; }
+header a { color:var(--dim); margin-left:auto; text-decoration:none; }
+header a:hover { color:var(--cyan); }
+main { flex:1; display:flex; min-height:0; }
+
+#rail {
+  width:330px; flex-shrink:0; border-right:1px solid var(--grid);
+  display:flex; flex-direction:column; min-height:0;
+}
+#filters { padding:10px 12px; border-bottom:1px solid var(--grid); }
+#filters select, #filters input {
+  background:var(--panel2); color:var(--white); border:1px solid var(--grid);
+  font:inherit; padding:3px 6px; border-radius:3px; margin:2px 3px 2px 0;
+}
+#count { color:var(--dim); font-size:11px; padding:4px 2px 0; }
+#list { flex:1; overflow-y:auto; }
+.row {
+  padding:7px 12px; border-bottom:1px solid var(--panel2); cursor:pointer;
+  display:flex; gap:8px; align-items:center;
+}
+.row:hover { background:var(--panel); }
+.row.sel { background:var(--panel2); border-left:3px solid var(--cyan); padding-left:9px; }
+.badge { font-size:10px; padding:1px 6px; border-radius:3px; font-weight:700; }
+.badge.win { background:rgba(52,211,153,.15); color:var(--green); }
+.badge.fail { background:rgba(248,68,84,.15); color:var(--red); }
+.row .who { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.row .who small { color:var(--dim); display:block; font-size:10px; }
+.row .rp { color:var(--dim); font-size:11px; }
+
+#stage { flex:1; display:flex; flex-direction:column; min-width:0; }
+#canvasbox { flex:1; display:flex; align-items:center; justify-content:center;
+  min-height:0; position:relative; }
+canvas { max-width:96%; max-height:96%; border:1px solid var(--grid); }
+#controls {
+  padding:10px 16px; border-top:1px solid var(--grid); display:flex;
+  gap:10px; align-items:center; flex-wrap:wrap; flex-shrink:0;
+}
+button {
+  background:var(--panel2); color:var(--white); border:1px solid var(--grid);
+  font:inherit; padding:5px 12px; border-radius:3px; cursor:pointer;
+}
+button:hover { border-color:var(--cyan); }
+button.active { border-color:var(--cyan); color:var(--cyan); }
+#scrub { flex:1; min-width:120px; accent-color:var(--cyan); }
+label.tog { color:var(--dim); cursor:pointer; user-select:none; }
+label.tog input { accent-color:var(--cyan); }
+
+#side {
+  width:400px; flex-shrink:0; border-left:1px solid var(--grid);
+  display:flex; flex-direction:column; min-height:0;
+}
+#verdict { padding:12px 14px; border-bottom:1px solid var(--grid); }
+#verdict h2 { font-size:14px; margin-bottom:2px; }
+#verdict .meta { color:var(--dim); font-size:11px; margin-bottom:8px; }
+.chips { display:flex; flex-wrap:wrap; gap:5px; }
+.chip { font-size:10px; padding:2px 8px; border-radius:10px; border:1px solid var(--grid); color:var(--dim); }
+.chip.good { border-color:var(--green); color:var(--green); }
+.chip.bad { border-color:var(--red); color:var(--red); }
+#mode { margin-top:10px; font-size:11px; }
+#mode .name { color:var(--amber); font-weight:700; }
+#mode .why { color:var(--dim); margin-top:2px; }
+#mode .quote { color:var(--dim); font-style:italic; margin-top:4px;
+  border-left:2px solid var(--dimmer); padding-left:8px; }
+#tracehead { padding:8px 14px 4px; color:var(--dim); font-size:11px;
+  text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
+#trace {
+  flex:1; overflow-y:auto; padding:4px 14px 16px; white-space:pre-wrap;
+  color:#B9C2D0; font-size:12px; line-height:1.55;
+}
+#trace.empty { color:var(--dimmer); font-style:italic; }
+#empty {
+  position:absolute; inset:0; display:flex; align-items:center;
+  justify-content:center; color:var(--dimmer); font-size:14px;
+}
+</style>
+</head>
+<body>
+<header>
+  <span class="mark"><b>MAZE</b>RUNNER</span>
+  <span class="sub">trace viewer · every attempt is a real model submission</span>
+  <a href="../index.html">← results</a>
+</header>
+<main>
+  <div id="rail">
+    <div id="filters">
+      <select id="f-model"><option value="">all models</option></select>
+      <select id="f-outcome">
+        <option value="">win + fail</option>
+        <option value="1">wins</option>
+        <option value="0">fails</option>
+      </select>
+      <select id="f-family"><option value="">all families</option></select>
+      <select id="f-tier">
+        <option value="">all tiers</option>
+        <option>easy</option><option>medium</option><option>hard</option>
+      </select>
+      <select id="f-mode"><option value="">all failure modes</option></select>
+      <select id="f-sort">
+        <option value="rp-desc">sort: progress ↓</option>
+        <option value="rp-asc">sort: progress ↑</option>
+        <option value="lat-desc">sort: latency ↓</option>
+      </select>
+      <div id="count"></div>
+    </div>
+    <div id="list"></div>
+  </div>
+  <div id="stage">
+    <div id="canvasbox">
+      <canvas id="cv" width="800" height="700"></canvas>
+      <div id="empty">select an attempt</div>
+    </div>
+    <div id="controls">
+      <button id="play">▶ replay</button>
+      <input id="scrub" type="range" min="0" max="1000" value="1000">
+      <button id="speed" title="replay speed">1×</button>
+      <button id="zoom" title="zoom to the collision">⊕ collision</button>
+      <label class="tog"><input type="checkbox" id="t-ref"> reference route</label>
+      <label class="tog"><input type="checkbox" id="t-mask"> open mask</label>
+      <label class="tog"><input type="checkbox" id="t-radii" checked> badges</label>
+    </div>
+  </div>
+  <div id="side">
+    <div id="verdict">
+      <h2 id="v-title">—</h2>
+      <div class="meta" id="v-meta"></div>
+      <div class="chips" id="v-chips"></div>
+      <div id="mode" hidden>
+        <div class="name" id="m-name"></div>
+        <div class="why" id="m-why"></div>
+        <div class="quote" id="m-quote" hidden></div>
+      </div>
+    </div>
+    <div id="tracehead">reasoning trace</div>
+    <div id="trace" class="empty">no attempt selected</div>
+  </div>
+</main>
+<script src="viewer.js"></script>
+</body>
+</html>

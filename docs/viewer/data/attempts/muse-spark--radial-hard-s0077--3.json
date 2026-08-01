@@ -1,0 +1,1 @@
+{"provider":"muse-spark","model_name":"Muse Spark 1.1","maze":"radial-hard-s0077","trial":3,"submission":null,"evaluation":{},"derived":{"route_progress":0.0,"failure_category":"no_tool_call"},"reasoning":null,"latency_s":6.89,"usage":{},"failure_mode":{"primary":"no_usable_path","why":null,"quote":null}}

@@ -1,0 +1,38 @@
+[
+  {
+    "file": "01-leaderboard.png",
+    "caption": "The full picture: pass@1 with task-clustered CIs, pass@8 as the ghost bar."
+  },
+  {
+    "file": "02-tiers.png",
+    "caption": "Difficulty is monotone for every model \u2014 the tiers measure something real."
+  },
+  {
+    "file": "03-effort.png",
+    "caption": "Only GPT converts test-time compute into accuracy. Gemini returns 32% three times."
+  },
+  {
+    "file": "04-tolerance.png",
+    "caption": "Re-scored at pointer radii 1\u20138px: the ranking never inverts."
+  },
+  {
+    "file": "05-failure-modes.png",
+    "caption": "4,140 failures classified from trace + geometry: every model fails its own way."
+  },
+  {
+    "file": "06-resolution.png",
+    "caption": "Kimi doubles on pixels alone \u2014 its effort ladder was flat."
+  },
+  {
+    "file": "07-feedback.png",
+    "caption": "Seeing its own mistake beats a blind retry for no model."
+  },
+  {
+    "file": "08-variance.png",
+    "caption": "Style is a per-maze difficulty axis: tiny main effect, 20\u00d7 larger interaction."
+  },
+  {
+    "file": "09-fingerprints.png",
+    "caption": "Measuring vs. writing round numbers: Inkling snaps to a 0.01 grid and misses the badge by 25px."
+  }
+]
