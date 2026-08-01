@@ -1,7 +1,23 @@
 [project]
 name = "mazerunner"
 version = "0.1.0"
-description = "MazeRunner smoke benchmark: multimodal maze-tracing with automatic ground truth"
+description = "A continuous-control maze benchmark for multimodal models: one drag path, swept-disk scoring, certified-fair renders"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Bradley Kenstler" }]
+keywords = ["benchmark", "multimodal", "evaluation", "vision", "llm"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.urls]
+Homepage = "https://github.com/bkenstler/mazerunner"
+Study = "https://github.com/bkenstler/mazerunner/blob/main/STUDY.md"
 requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.0",

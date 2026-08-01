@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+title: "MazeRunner: A Continuous-Control Benchmark for Multimodal Models"
+message: "If you use MazeRunner, please cite it as below."
+type: software
+authors:
+  - family-names: Kenstler
+    given-names: Bradley
+license: MIT
+version: 1.0.0
+date-released: 2026-08-02
+abstract: >
+  MazeRunner evaluates whether multimodal models can perceive a rendered maze
+  and execute one continuous drag trajectory through it, scored by swept-disk
+  collision against the mask that stenciled the render. 1,000 tasks across 8
+  topology families and 20 certified visual styles; full traces released.
