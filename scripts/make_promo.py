@@ -149,7 +149,7 @@ def walk(points, frac):
     return out
 
 
-def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
+def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34):
     provider, task_id, trial, family, archetype, tier, success, points_norm, collision, caption = rec
     task = tasks[task_id]
     src = Image.open(Path(task["_dir"]) / task["image_file"]).convert("RGB")
@@ -167,7 +167,7 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
     # A "stage" holds the maze with whatever has been drawn on it, so the zoom
     # phase can magnify the real pixels rather than re-deriving them.
     frames = []
-    zoom_phase = n_zoom if (not success and col) else 0
+    zoom_phase = (n_zoom + n_linger) if (not success and col) else 0
     total = n_in + n_draw + n_hold + zoom_phase
     for i in range(total):
         img, d = base_frame()
@@ -201,16 +201,18 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
 
         done = i >= n_in + n_draw - 1
         if done and not success and col:
-            for target, o in ((d, (0, 0)), (sd, (ox, oy))):
-                cx, cy = col[0] - o[0], col[1] - o[1]
-                target.ellipse([cx - 26, cy - 26, cx + 26, cy + 26], outline=RED, width=6)
-                target.line([(cx - 17, cy - 17), (cx + 17, cy + 17)], fill=RED, width=7)
-                target.line([(cx - 17, cy + 17), (cx + 17, cy - 17)], fill=RED, width=7)
+            cx, cy = col
+            d.ellipse([cx - 26, cy - 26, cx + 26, cy + 26], outline=RED, width=6)
+            d.line([(cx - 17, cy - 17), (cx + 17, cy + 17)], fill=RED, width=7)
+            d.line([(cx - 17, cy + 17), (cx + 17, cy - 17)], fill=RED, width=7)
 
         zoom_start = n_in + n_draw + n_hold
         if zoom_phase and i >= zoom_start:
-            z = (i - zoom_start) / max(1, zoom_phase - 1)
+            step = i - zoom_start
+            # push in, then linger at full magnification with the marker gone
+            z = min(1.0, step / max(1, n_zoom - 1))
             ease = z * z * (3 - 2 * z)                       # smoothstep
+            lingering = step >= n_zoom
             tile = 150                                        # final crop half-size
             half_w, half_h = maze.width / 2, maze.height / 2
             cw = half_w + (tile - half_w) * ease
@@ -219,8 +221,9 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
             cy = half_h + (col[1] - oy - half_h) * ease
             box = (max(0, cx - cw), max(0, cy - ch),
                    min(maze.width, cx + cw), min(maze.height, cy + ch))
-            crop = stage.crop(tuple(int(v) for v in box)).resize(
-                (maze.width, maze.height), Image.LANCZOS)
+            crop_box = tuple(int(v) for v in box)
+            crop = stage.crop(crop_box).resize((maze.width, maze.height), Image.LANCZOS)
+            mag = maze.width / max(1, crop_box[2] - crop_box[0])
             # Rebuild the frame: the normal HUD was already drawn above and
             # would show through beneath the zoom labels.
             img, d = base_frame()
@@ -231,7 +234,23 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
             text(d, (46, 74), NAMES.get(provider, provider.upper()), F_MODEL, WHITE)
             text(d, (46, 122), caption.upper(), F_META, RED)
             text(d, (W - 46, 74), "ZOOM", F_META, DIM, anchor="ra")
-            text(d, (W - 46, 104), f"{maze.width / (2 * cw):.0f}×", F_MODEL, RED, anchor="ra")
+            text(d, (W - 46, 104), f"{mag:.0f}×", F_MODEL, RED, anchor="ra")
+
+            # Where the collision sits inside the magnified crop.
+            zx = ox + (col[0] - ox - crop_box[0]) * mag
+            zy = oy + (col[1] - oy - crop_box[1]) * mag
+            if not lingering:
+                r = 26 * min(2.2, mag)
+                d.ellipse([zx - r, zy - r, zx + r, zy + r], outline=RED, width=6)
+                k = r * 0.65
+                d.line([(zx - k, zy - k), (zx + k, zy + k)], fill=RED, width=7)
+                d.line([(zx - k, zy + k), (zx + k, zy - k)], fill=RED, width=7)
+            else:
+                # Marker removed: an open ring points at the crossing without
+                # covering the pixels the viewer is here to see.
+                r = 46 * min(2.2, mag)
+                for a0, a1 in ((200, 250), (290, 340), (20, 70), (110, 160)):
+                    d.arc([zx - r, zy - r, zx + r, zy + r], a0, a1, fill=RED, width=5)
             f = ImageFont.truetype(HELV, 96, index=1)
             bw = d.textlength("FAIL", font=f)
             bx, by = (W - bw) / 2, oy + maze.height + 28
@@ -453,6 +472,7 @@ def main():
         "corridor_departure": "cut the corner through a wall",
         "satisficing": "said 'approximate is fine'",
         "almost": "made it the whole way — then clipped a wall",
+        "hard_win": "hardest tier — solved it",
         "procedural_template": "never looked at the maze",
     }
 
@@ -478,6 +498,12 @@ def main():
                meta["tier"], bool(ev.get("success")), pts, ev.get("first_collision"))
         if ev.get("success"):
             wins[r["provider"]].append((ev.get("efficiency", 0), rec))
+            # Solving a 50-turn maze is the counterweight to the failure reel:
+            # rank hard-tier wins by how gnarly the maze actually is.
+            if meta["tier"] == "hard" and len(pts) >= 12:
+                m = meta.get("measures") or {}
+                by_mode["hard_win"].append(
+                    (m.get("turns", 0) + 2 * m.get("route_branches", 0), rec))
             continue
         # "Almost there": the route is essentially complete and the pointer
         # leaves the corridor in the final stretch. The most painful failures
@@ -523,15 +549,15 @@ def main():
     # Alternate: a clean win, then a failure that is funny to look at.
     picked += take_win("gpt-xhigh")
     picked += take_mode("endpoint_misidentification", 2)
-    picked += take_win("gemini")
+    picked += take_mode("hard_win", 1)
     picked += take_mode("figure_ground_inversion", 2)
     picked += take_win("openai")
     picked += take_mode("analytic_parameterisation", 2)
     picked += take_win("kimi")
     picked += take_mode("graph_abstraction", 1)
-    picked += take_win("anthropic")
+    picked += take_mode("hard_win", 1)
     picked += take_mode("clearance_failure", 2)      # the subtle ones, with zoom
-    picked += take_win("gpt-xhigh")
+    picked += take_mode("hard_win", 1)
     picked += take_mode("almost", 2)
     picked += take_mode("satisficing", 1)
     print(f"selected {len(picked)} clips: "
