@@ -146,6 +146,7 @@ def evaluate(
     goal_radius_px: float,
     pointer_radius_px: int,
     reference_length_px: float,
+    compute_clearance: bool = True,
 ) -> Evaluation:
     ev = Evaluation(reference_length_px=reference_length_px)
 
@@ -173,7 +174,10 @@ def evaluate(
     ev.collision_free, ev.first_collision = check_path_collision(
         mask, pixel_points, pointer_radius_px
     )
-    ev.min_clearance_px = min_clearance(mask, pixel_points)
+    # A full distance transform over the mask on every call; the tolerance
+    # sweep re-scores thousands of stored submissions and does not need it.
+    if compute_clearance:
+        ev.min_clearance_px = min_clearance(mask, pixel_points)
 
     ev.success = ev.starts_correctly and ev.ends_correctly and ev.collision_free
     if ev.success and ev.path_length_px > 0:
