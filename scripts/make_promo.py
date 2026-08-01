@@ -452,6 +452,7 @@ def main():
         "clearance_failure": "right route — clipped the wall",
         "corridor_departure": "cut the corner through a wall",
         "satisficing": "said 'approximate is fine'",
+        "almost": "made it the whole way — then clipped a wall",
         "procedural_template": "never looked at the maze",
     }
 
@@ -478,6 +479,15 @@ def main():
         if ev.get("success"):
             wins[r["provider"]].append((ev.get("efficiency", 0), rec))
             continue
+        # "Almost there": the route is essentially complete and the pointer
+        # leaves the corridor in the final stretch. The most painful failures
+        # to watch, and invisible without the zoom.
+        collision = ev.get("first_collision") or {}
+        progress = (r.get("derived") or {}).get("route_progress", 0)
+        died_at = collision.get("segment_index", 0) / max(1, len(pts) - 1)
+        if collision and progress > 0.75 and died_at > 0.6:
+            by_mode["almost"].append((progress + died_at, rec))
+
         v = verdicts.get((r["provider"], r["maze"], r["trial"]))
         if not v:
             continue
@@ -522,6 +532,7 @@ def main():
     picked += take_win("anthropic")
     picked += take_mode("clearance_failure", 2)      # the subtle ones, with zoom
     picked += take_win("gpt-xhigh")
+    picked += take_mode("almost", 2)
     picked += take_mode("satisficing", 1)
     print(f"selected {len(picked)} clips: "
           f"{sum(1 for p in picked if p[6])} wins, {sum(1 for p in picked if not p[6])} fails")
