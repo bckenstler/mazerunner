@@ -15,9 +15,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
 ]
 
-[project.urls]
-Homepage = "https://github.com/bkenstler/mazerunner"
-Study = "https://github.com/bkenstler/mazerunner/blob/main/STUDY.md"
 requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.0",
@@ -27,6 +24,10 @@ dependencies = [
     "anthropic>=0.45",
     "google-genai>=1.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/bkenstler/mazerunner"
+Study = "https://github.com/bkenstler/mazerunner/blob/main/STUDY.md"
 
 [project.scripts]
 mazerunner = "mazerunner.cli:main"
