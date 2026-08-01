@@ -110,16 +110,24 @@ and never use it. The actual test restricts to episodes whose first turn
 failed, and asks whether seeing your own error beats simply trying again blind
 (the model's own pass@1 on these tasks):
 
-| Model | Failed turn 1 | Rescued | Rescue rate | Blind retry | Delta |
-|---|---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 15 | 10 | **67%** | 63% | +3pp |
-| GPT-5.6 Sol @ medium | 20 | 5 | 25% | 48% | **−24pp** |
-| Gemini 3.6 Flash | 37 | 3 | 8% | 24% | **−16pp** |
-| Kimi K3 | 31 | 5 | 16% | 18% | −2pp |
-| Claude Opus 5 | 34 | 4 | 12% | 14% | −2pp |
+All 250 episodes, bootstrap CI over episodes:
 
-**Seeing its own failed path makes most models worse than starting fresh.**
-Only the strongest configuration beats a blind retry, and only barely.
+| Model | Failed turn 1 | Rescued | Rescue rate | Blind retry | Delta | 95% CI |
+|---|---|---|---|---|---|---|
+| GPT-5.6 Sol @ xhigh | 20 | 12 | 60% | 63% | −3pp | [40, 80] |
+| GPT-5.6 Sol @ medium | 20 | 5 | 25% | 48% | **−24pp** | [5, 45] |
+| Gemini 3.6 Flash | 37 | 3 | 8% | 24% | **−16pp** | [0, 19] |
+| Kimi K3 | 42 | 5 | 12% | 18% | −6pp | [2, 21] |
+| Claude Opus 5 | 44 | 4 | 9% | 14% | −5pp | [2, 18] |
+
+**No model benefits from seeing its own failed path.** The strongest
+configuration is statistically indistinguishable from a blind retry — its
+interval [40, 80] contains the 63% baseline — and every other model is worse,
+GPT-medium and Gemini clearly so.
+
+(An earlier partial reading of this ablation, at 15 failed-first-turn episodes,
+put GPT-xhigh at 67% and appeared to show a small benefit. The complete set of
+20 puts it at 60%, below its own baseline. The apparent advantage was noise.)
 
 The route-progress column explains the mechanism: every model advances further
 along the certified route after feedback (+0.15 to +0.58) while converting
@@ -128,14 +136,18 @@ collision point and then fail somewhere else — repairing the reported error
 rather than re-perceiving the corridor. The overlay anchors them to the failed
 route instead of prompting a fresh measurement.
 
-This inverts the naive reading of H6. Closed-loop correction is not a general
-capability that weaker models merely lack; for mid-tier models the loop is
-actively harmful, and independent resampling is the better use of the same
-budget.
+This inverts the naive reading of H6. Closed-loop correction is not a capability
+the strong models have and the weak ones lack — **none of them have it here.**
+For mid-tier models the loop is actively harmful, and independent resampling is
+a strictly better use of the same budget.
 
-⚠️ GPT-xhigh's 67% rests on only 15 failed-first-turn episodes, because it
-rarely fails first. That interval is wide and the number should not be
-published without more data behind it.
+⚠️ Interpretation limits. Failed-first-turn counts are small for the strongest
+legs (20 for both GPT configurations, because they rarely fail first), so their
+intervals are wide; the safe claim is "no detectable benefit," not "harmful."
+And this tests *one* feedback design — failure category plus the model's own
+overlaid path. A richer signal (an explicit corridor-boundary trace, or several
+prior attempts at once) might do better. What these data rule out is the
+cheapest and most natural version working at all.
 
 ---
 
