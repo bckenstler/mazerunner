@@ -88,3 +88,55 @@ A subtler separation: **Gemini localizes better than GPT** (2.1px median, 4px
 at p90, a tighter tail than GPT's 15px) yet scores half as well. Finding where
 things are and tracing a corridor between them are different abilities, and
 this benchmark measures the second one.
+
+## Economics
+
+Reported beside capability, never blended into it. Routes the proxy does not
+publish a price for are marked unpriced rather than estimated.
+
+| Model | Passes | Output tok/attempt | Mean latency | Total cost | Cost per solve |
+|---|---|---|---|---|---|
+| GPT-5.6 Sol @ medium | 387 | 2,542 | 54s | $66 | **$0.17** |
+| GPT-5.6 Sol @ xhigh | 485 | 5,746 | 131s | $142 | $0.29 |
+| Gemini 3.6 Flash | 238 | 8,831 | 45s | $72 | $0.30 |
+| Claude Opus 5 | 131 | 5,522 | 93s | $117 | $0.89 |
+| Kimi K3 | 165 | 9,662 | 198s | unpriced | — |
+| Muse Spark 1.1 | 48 | 5,863 | 38s | unpriced | — |
+| Inkling | 0 | 1,042 | 7s | unpriced | — |
+
+**GPT at medium is the efficiency winner at $0.17 per solved maze**; the
+ceiling arm buys 12 more points for 1.7× the cost per solve. Opus costs 5×
+GPT-medium per solve. Gemini is cheap per token but its low pass rate makes it
+no cheaper per *result* than GPT at xhigh.
+
+Inkling's 1,042 output tokens and 7-second latency are themselves diagnostic:
+it is not failing after long deliberation, it is answering almost immediately.
+
+## Failure taxonomy across conditions
+
+| Condition | pass | collision | wrong start | stopped short | no tool call |
+|---|---|---|---|---|---|
+| Main run | 26% | 64% | 9% | 0% | 0% |
+| Blind (blank) | 0% | **0%** | **97%** | 0% | 3% |
+| Resolution 0.5× | 22% | 64% | 13% | 0% | 0% |
+| Resolution 2.0× | 35% | 56% | 9% | 0% | 0% |
+| Dimensions disclosed | 39% | 60% | **1%** | 0% | 0% |
+
+Two mechanisms show up here that the pass rates alone conceal.
+
+**Blind failure is total, not degraded.** With no image, 97% of attempts do not
+even begin on the start badge and *zero* reach a wall — models never get far
+enough to collide. This is the cleanest possible statement of H4: without the
+image there is no attempt, only a guess.
+
+**Dimension disclosure works by fixing start localization.** It cuts
+wrong-start errors from 9% to 1% while barely moving collisions (64%→60%).
+Knowing the canvas size lets a model convert its perception of the badge into
+correct normalized coordinates; it does nothing for tracing the corridor. That
+explains H7's redistribution: the models it helps are those whose errors were
+in the normalization step, and once that is fixed the remaining failure mode is
+untouched.
+
+Raising resolution moves the other lever: collisions fall 64%→56% while
+wrong-start is unchanged. The two interventions repair different halves of the
+task.
