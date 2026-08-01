@@ -105,3 +105,36 @@ def test_archiving_a_growing_run_records_what_was_copied(tmp_path, monkeypatch):
     manifest = json.loads((tmp_path / "archive" / "MANIFEST.json").read_text())
     assert manifest["records"][0]["rows"] == 2
     assert "in progress" in (manifest["records"][0]["note"] or "")
+
+
+def test_appended_source_is_superseded_not_corrupt(tmp_path):
+    """A run that kept writing leaves the archived bytes intact at the head."""
+    results = tmp_path / "results"
+    run = _run(results, "leg/stamp", [{"provider": "a", "maze": "t1", "trial": 0}])
+    records = inventory(results)
+    records[0].snapshot = True
+    archive_runs(records, tmp_path / "archive", results_root=results)
+
+    with (run / "attempts.jsonl").open("a") as handle:
+        handle.write(json.dumps({"provider": "a", "maze": "t2", "trial": 0}) + "\n")
+
+    report = verify_archive(tmp_path / "archive")
+    assert report["ok"]
+    assert report["superseded_snapshots"]
+
+
+def test_rewritten_source_is_corrupt_even_if_marked_snapshot(tmp_path):
+    """Timing must never excuse a rewrite: the archived bytes are gone."""
+    results = tmp_path / "results"
+    run = _run(results, "leg/stamp", [{"provider": "a", "maze": "t1", "trial": 0}])
+    records = inventory(results)
+    records[0].snapshot = True
+    archive_runs(records, tmp_path / "archive", results_root=results)
+
+    (run / "attempts.jsonl").write_text(
+        json.dumps({"provider": "a", "maze": "REWRITTEN", "trial": 0}) + "\n"
+    )
+
+    report = verify_archive(tmp_path / "archive")
+    assert not report["ok"]
+    assert report["mismatched"]

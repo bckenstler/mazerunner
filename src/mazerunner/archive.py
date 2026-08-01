@@ -275,6 +275,31 @@ def archive_runs(
     return manifest
 
 
+def _archived_is_prefix_of(dest: Path, rel: str, source: Path) -> bool:
+    """Is the archived copy still an unmodified prefix of the live source?
+
+    A run that kept appending leaves the archived bytes intact at the head of
+    the file. A rewrite, truncation, or corruption does not. This is what
+    separates "stale archive, refresh it" from "the source changed under us",
+    without relying on timestamps.
+    """
+    archived = dest / (f"{rel}.gz" if rel == "attempts.jsonl" else rel)
+    if not archived.exists():
+        return False
+    opener = gzip.open if archived.suffix == ".gz" else open
+    try:
+        with opener(archived, "rb") as a, source.open("rb") as b:
+            while True:
+                chunk_a = a.read(65536)
+                if not chunk_a:
+                    return True  # archived content exhausted; source only grew
+                chunk_b = b.read(len(chunk_a))
+                if chunk_a != chunk_b:
+                    return False
+    except OSError:
+        return False
+
+
 def verify_archive(out_dir: Path) -> dict:
     """Re-hash every archived source file and compare against the manifest.
 
@@ -296,6 +321,7 @@ def verify_archive(out_dir: Path) -> dict:
     for record in manifest["records"]:
         source = Path(record["source_dir"])
         is_snapshot = record.get("snapshot", False)
+        dest = out_dir / "runs" / record["leg"] / record["stamp"]
         for rel, digest in record["files"].items():
             path = source / rel
             if not path.exists():
@@ -304,11 +330,15 @@ def verify_archive(out_dir: Path) -> dict:
             checked += 1
             if file_sha256(path) == digest:
                 continue
-            # A run that was mid-flight when archived has legitimately grown.
-            # That is a stale archive to refresh, not a corrupted one.
-            (superseded if is_snapshot else mismatched).append(str(path))
+            # The source differs. Append-only growth is expected when the run
+            # was still writing; anything else is a rewrite we must flag.
+            # Timing cannot tell these apart, but content can: what we archived
+            # must still be a prefix of what is on disk.
+            if is_snapshot and _archived_is_prefix_of(dest, rel, path):
+                superseded.append(str(path))
+            else:
+                mismatched.append(str(path))
 
-        dest = out_dir / "runs" / record["leg"] / record["stamp"]
         gz = dest / "attempts.jsonl.gz"
         if gz.exists():
             try:
