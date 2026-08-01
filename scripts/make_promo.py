@@ -149,8 +149,8 @@ def walk(points, frac):
     return out
 
 
-def clip_frames(rec, tasks, n_draw=40, n_hold=22, n_in=6):
-    provider, task_id, trial, family, archetype, tier, success, points_norm, collision = rec
+def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26):
+    provider, task_id, trial, family, archetype, tier, success, points_norm, collision, caption = rec
     task = tasks[task_id]
     src = Image.open(Path(task["_dir"]) / task["image_file"]).convert("RGB")
     canvas_w, canvas_h = 880, 700
@@ -164,18 +164,22 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=22, n_in=6):
     if collision:
         col = (collision["x_px"] * scale + ox, collision["y_px"] * scale + oy)
 
+    # A "stage" holds the maze with whatever has been drawn on it, so the zoom
+    # phase can magnify the real pixels rather than re-deriving them.
     frames = []
-    total = n_in + n_draw + n_hold
+    zoom_phase = n_zoom if (not success and col) else 0
+    total = n_in + n_draw + n_hold + zoom_phase
     for i in range(total):
         img, d = base_frame()
+        stage = maze.copy()
+        sd = ImageDraw.Draw(stage)
         img.paste(maze, (ox, oy))
         d = ImageDraw.Draw(img)
         d.rectangle([ox - 2, oy - 2, ox + maze.width + 1, oy + maze.height + 1], outline=(38, 46, 62), width=2)
 
         # HUD
         text(d, (46, 74), NAMES.get(provider, provider.upper()), F_MODEL, WHITE)
-        text(d, (46, 122), f"{family.upper()} · {tier.upper()} · {archetype.replace('-', ' ').upper()}",
-             F_META, DIM)
+        text(d, (46, 122), caption.upper(), F_META, RED if not success else DIM)
         text(d, (W - 46, 74), "ATTEMPT", F_META, DIM, anchor="ra")
         text(d, (W - 46, 104), f"#{trial + 1}", F_MODEL, CYAN, anchor="ra")
 
@@ -183,18 +187,60 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=22, n_in=6):
             frac = min(1.0, (i - n_in) / max(1, n_draw - 1))
             drawn = walk(pts, frac)
             if len(drawn) >= 2:
-                d.line(drawn, fill=(255, 255, 255), width=9, joint="curve")
-                d.line(drawn, fill=CYAN if frac < 1 or success else RED, width=5, joint="curve")
+                for target, off in ((d, 0), (sd, 1)):
+                    line = drawn if off == 0 else [(x - ox, y - oy) for x, y in drawn]
+                    target.line(line, fill=(255, 255, 255), width=9, joint="curve")
+                    target.line(line, fill=CYAN if frac < 1 or success else RED, width=5,
+                                joint="curve")
                 hx, hy = drawn[-1]
                 d.ellipse([hx - 9, hy - 9, hx + 9, hy + 9], fill=WHITE)
             sx, sy = pts[0]
             d.ellipse([sx - 11, sy - 11, sx + 11, sy + 11], outline=WHITE, width=3)
+            sd.ellipse([sx - ox - 11, sy - oy - 11, sx - ox + 11, sy - oy + 11],
+                       outline=WHITE, width=3)
 
         done = i >= n_in + n_draw - 1
         if done and not success and col:
-            d.ellipse([col[0] - 26, col[1] - 26, col[0] + 26, col[1] + 26], outline=RED, width=6)
-            d.line([(col[0] - 17, col[1] - 17), (col[0] + 17, col[1] + 17)], fill=RED, width=7)
-            d.line([(col[0] - 17, col[1] + 17), (col[0] + 17, col[1] - 17)], fill=RED, width=7)
+            for target, o in ((d, (0, 0)), (sd, (ox, oy))):
+                cx, cy = col[0] - o[0], col[1] - o[1]
+                target.ellipse([cx - 26, cy - 26, cx + 26, cy + 26], outline=RED, width=6)
+                target.line([(cx - 17, cy - 17), (cx + 17, cy + 17)], fill=RED, width=7)
+                target.line([(cx - 17, cy + 17), (cx + 17, cy - 17)], fill=RED, width=7)
+
+        zoom_start = n_in + n_draw + n_hold
+        if zoom_phase and i >= zoom_start:
+            z = (i - zoom_start) / max(1, zoom_phase - 1)
+            ease = z * z * (3 - 2 * z)                       # smoothstep
+            tile = 150                                        # final crop half-size
+            half_w, half_h = maze.width / 2, maze.height / 2
+            cw = half_w + (tile - half_w) * ease
+            ch = half_h + (tile - half_h) * ease
+            cx = half_w + (col[0] - ox - half_w) * ease
+            cy = half_h + (col[1] - oy - half_h) * ease
+            box = (max(0, cx - cw), max(0, cy - ch),
+                   min(maze.width, cx + cw), min(maze.height, cy + ch))
+            crop = stage.crop(tuple(int(v) for v in box)).resize(
+                (maze.width, maze.height), Image.LANCZOS)
+            # Rebuild the frame: the normal HUD was already drawn above and
+            # would show through beneath the zoom labels.
+            img, d = base_frame()
+            img.paste(crop, (ox, oy))
+            d = ImageDraw.Draw(img)
+            d.rectangle([ox - 2, oy - 2, ox + maze.width + 1, oy + maze.height + 1],
+                        outline=RED, width=3)
+            text(d, (46, 74), NAMES.get(provider, provider.upper()), F_MODEL, WHITE)
+            text(d, (46, 122), caption.upper(), F_META, RED)
+            text(d, (W - 46, 74), "ZOOM", F_META, DIM, anchor="ra")
+            text(d, (W - 46, 104), f"{maze.width / (2 * cw):.0f}×", F_MODEL, RED, anchor="ra")
+            f = ImageFont.truetype(HELV, 96, index=1)
+            bw = d.textlength("FAIL", font=f)
+            bx, by = (W - bw) / 2, oy + maze.height + 28
+            img = glow(img, (bx - 30, by, bx + bw + 30, by + 96), RED, 26, 110)
+            d = ImageDraw.Draw(img)
+            d.text((bx, by), "FAIL", font=f, fill=RED)
+            wordmark(d)
+            frames.append(img)
+            continue
 
         if done:
             k = (i - (n_in + n_draw - 1)) / max(1, n_hold)
@@ -376,7 +422,7 @@ def end_frames(n=60):
         d.text((x0 + d.textlength("MAZE", font=f), 452), "RUNNER", font=f, fill=WHITE)
         text(d, (W / 2, 596), "A CONTINUOUS-CONTROL BENCHMARK FOR MULTIMODAL MODELS",
              F_META, DIM, anchor="ma")
-        text(d, (W / 2, 646), "OPEN DATASET · FULL TRACES · PRE-REGISTERED", F_META, (70, 82, 98), anchor="ma")
+        text(d, (W / 2, 646), "EVERY PATH IN THIS CLIP IS A REAL MODEL SUBMISSION", F_META, (70, 82, 98), anchor="ma")
         frames.append(img)
     return frames
 
@@ -386,52 +432,99 @@ def main():
     index = {json.loads(l)["task_id"]: json.loads(l)
              for l in (ROOT / "datasets/v1/dev/index.jsonl").read_text().splitlines() if l.strip()}
 
-    wins, fails = defaultdict(list), defaultdict(list)
+    # Clip selection is driven by the failure-mode classifier, so the reel
+    # shows *named* failures — a model starting in the wrong place, drawing an
+    # arc over a maze, hopping between imagined nodes — rather than a wall of
+    # near-misses that all look alike at a glance.
+    verdicts = {}
+    fm = ROOT / "results/failure-modes.jsonl"
+    if fm.exists():
+        for line in fm.read_text().splitlines():
+            if line.strip():
+                v = json.loads(line)
+                verdicts[(v["provider"], v["maze"], v["trial"])] = v
+
+    CAPTION = {
+        "endpoint_misidentification": "didn't even start on the badge",
+        "figure_ground_inversion": "drove straight through the walls",
+        "analytic_parameterisation": "drew an arc and hoped",
+        "graph_abstraction": "hopped between imaginary nodes",
+        "clearance_failure": "right route — clipped the wall",
+        "corridor_departure": "cut the corner through a wall",
+        "satisficing": "said 'approximate is fine'",
+        "procedural_template": "never looked at the maze",
+    }
+
+    def in_frame(row):
+        pts = (row.get("submission") or {}).get("points") or []
+        try:
+            return bool(pts) and all(-0.02 <= float(p["x"]) <= 1.02
+                                     and -0.02 <= float(p["y"]) <= 1.02 for p in pts)
+        except (TypeError, ValueError, KeyError):
+            return False
+
+    wins = defaultdict(list)
+    by_mode = defaultdict(list)
     for r in rows:
         if r.get("error") or not r.get("submission"):
             continue
         ev = r.get("evaluation") or {}
         meta = index.get(r["maze"])
-        pts = (r["submission"].get("points") or [])
-        if not meta or len(pts) < 8:
+        pts = r["submission"].get("points") or []
+        if not meta or len(pts) < 6 or not in_frame(r):
             continue
-        rp = (r.get("derived") or {}).get("route_progress", 0)
         rec = (r["provider"], r["maze"], r["trial"], meta["family"], meta["archetype"],
                meta["tier"], bool(ev.get("success")), pts, ev.get("first_collision"))
         if ev.get("success"):
-            wins[(r["provider"], meta["archetype"])].append((ev.get("efficiency", 0), rec))
-        elif ev.get("first_collision") and 0.3 < rp < 0.9:
-            fails[(r["provider"], meta["archetype"])].append((rp, rec))
+            wins[r["provider"]].append((ev.get("efficiency", 0), rec))
+            continue
+        v = verdicts.get((r["provider"], r["maze"], r["trial"]))
+        if not v:
+            continue
+        mode = v["primary"]
+        m = v["measures"]
+        # rank spectacle: how obviously wrong does this look on screen
+        spectacle = (m.get("start_error_px", 0) / 50 if mode == "endpoint_misidentification"
+                     else m.get("outside_fraction", 0))
+        by_mode[mode].append((spectacle, rec))
 
-    rng = random.Random(7)
-    picked, used_tasks, used_arch = [], set(), []
-    # alternate WIN / FAIL, spread across models and archetypes
-    win_keys = sorted(wins, key=lambda k: -max(w[0] for w in wins[k]))
-    fail_keys = sorted(fails, key=lambda k: -max(f[0] for f in fails[k]))
-    strong = ["gpt-xhigh", "openai", "gemini", "kimi", "anthropic", "muse-spark"]
+    used_tasks, picked = set(), []
 
-    def take(keys, pool, want_provider):
-        for k in keys:
-            if k[0] != want_provider or k[1] in used_arch[-4:]:
+    def take_mode(mode, n=1):
+        out = []
+        for _score, rec in sorted(by_mode.get(mode, []), key=lambda x: -x[0]):
+            if rec[1] in used_tasks:
                 continue
-            for _score, rec in sorted(pool[k], key=lambda x: -x[0]):
-                if rec[1] in used_tasks:
-                    continue
-                used_tasks.add(rec[1])
-                used_arch.append(k[1])
-                return rec
-        return None
+            used_tasks.add(rec[1])
+            out.append(rec + (CAPTION.get(mode, mode.replace("_", " ")),))
+            if len(out) >= n:
+                break
+        return out
 
-    seq = [("w", "gpt-xhigh"), ("f", "gemini"), ("w", "gemini"), ("f", "anthropic"),
-           ("w", "openai"), ("f", "kimi"), ("w", "kimi"), ("f", "openai"),
-           ("w", "anthropic"), ("f", "gpt-xhigh"), ("w", "gpt-xhigh"), ("f", "muse-spark"),
-           ("w", "openai"), ("f", "gemini")]
-    for kind, prov in seq:
-        rec = take(win_keys if kind == "w" else fail_keys,
-                   wins if kind == "w" else fails, prov)
-        if rec:
-            picked.append(rec)
-    print(f"selected {len(picked)} clips")
+    def take_win(provider):
+        for _eff, rec in sorted(wins.get(provider, []), key=lambda x: -x[0]):
+            if rec[1] in used_tasks:
+                continue
+            used_tasks.add(rec[1])
+            meta = index[rec[1]]
+            return [rec + (f"{meta['family']} · {meta['archetype'].replace('-', ' ')}",)]
+        return []
+
+    # Alternate: a clean win, then a failure that is funny to look at.
+    picked += take_win("gpt-xhigh")
+    picked += take_mode("endpoint_misidentification", 2)
+    picked += take_win("gemini")
+    picked += take_mode("figure_ground_inversion", 2)
+    picked += take_win("openai")
+    picked += take_mode("analytic_parameterisation", 2)
+    picked += take_win("kimi")
+    picked += take_mode("graph_abstraction", 1)
+    picked += take_win("anthropic")
+    picked += take_mode("clearance_failure", 2)      # the subtle ones, with zoom
+    picked += take_win("gpt-xhigh")
+    picked += take_mode("satisficing", 1)
+    print(f"selected {len(picked)} clips: "
+          f"{sum(1 for p in picked if p[6])} wins, {sum(1 for p in picked if not p[6])} fails")
 
     tasks = {}
     for rec in picked:
