@@ -17,12 +17,15 @@ import gzip
 import json
 import shutil
 import tarfile
+import time
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 
 from .io import file_sha256
 
 MANIFEST_NAME = "MANIFEST.json"
+# A run whose attempts file was touched this recently is treated as live.
+LIVE_RUN_SECONDS = 180
 ARCHIVE_VERSION = 1
 
 
@@ -46,6 +49,10 @@ class RunRecord:
     files: dict[str, str] = field(default_factory=dict)  # relative path -> sha256
     bytes_total: int = 0
     note: str | None = None
+    # True when the run was still appending as we copied. The archived payload
+    # is a valid prefix, but the source will not match its recorded hash — a
+    # later archive supersedes it. Verification must not call that corruption.
+    snapshot: bool = False
 
     @property
     def is_empty(self) -> bool:
@@ -143,6 +150,13 @@ def inventory(results_root: Path) -> list[RunRecord]:
                 record.log_file = str(candidate)
                 break
 
+        # A directory touched moments ago is almost certainly still being
+        # written. Its hashes will be stale before verification runs, so mark
+        # it a snapshot up front rather than discovering the mismatch later.
+        if time.time() - attempts.stat().st_mtime < LIVE_RUN_SECONDS:
+            record.snapshot = True
+            record.note = "archived while the run was still writing; re-archive once quiesced"
+
         if record.rows == 0:
             record.note = "empty — run produced no attempts (killed before first write)"
         elif record.rows_with_raw == 0 and record.rows_with_error == 0:
@@ -213,10 +227,11 @@ def archive_runs(
             with gzip.open(target, "rt") as handle:
                 archived_rows = sum(1 for line in handle if line.strip())
             if archived_rows != record.rows + record.malformed_lines:
+                record.snapshot = True
                 record.note = (
                     (record.note + "; " if record.note else "")
                     + f"snapshot of a run in progress ({archived_rows} rows at copy time, "
-                    f"{record.rows} at scan time)"
+                    f"{record.rows} at scan time); re-archive once quiesced"
                 )
                 record.rows = archived_rows - record.malformed_lines
             record.files["attempts.jsonl"] = file_sha256(attempts)
@@ -275,18 +290,23 @@ def verify_archive(out_dir: Path) -> dict:
     mismatched: list[str] = []
     missing_source: list[str] = []
     unreadable: list[str] = []
+    superseded: list[str] = []
     checked = 0
 
     for record in manifest["records"]:
         source = Path(record["source_dir"])
+        is_snapshot = record.get("snapshot", False)
         for rel, digest in record["files"].items():
             path = source / rel
             if not path.exists():
                 missing_source.append(str(path))
                 continue
             checked += 1
-            if file_sha256(path) != digest:
-                mismatched.append(str(path))
+            if file_sha256(path) == digest:
+                continue
+            # A run that was mid-flight when archived has legitimately grown.
+            # That is a stale archive to refresh, not a corrupted one.
+            (superseded if is_snapshot else mismatched).append(str(path))
 
         dest = out_dir / "runs" / record["leg"] / record["stamp"]
         gz = dest / "attempts.jsonl.gz"
@@ -313,5 +333,6 @@ def verify_archive(out_dir: Path) -> dict:
         "mismatched": mismatched,
         "missing_source": missing_source,
         "unreadable_archives": unreadable,
+        "superseded_snapshots": superseded,
         "coverage": manifest["coverage"],
     }

@@ -287,7 +287,11 @@ def cmd_archive(args: argparse.Namespace) -> int:
                 print(f"FAIL {report['error']}")
             return 1
         missing = report.get("missing_source", [])
+        stale = report.get("superseded_snapshots", [])
         print(f"archive verify green — {report['files_checked']} files re-hashed and matching")
+        if stale:
+            print(f"  note: {len(stale)} file(s) archived mid-run have since grown; "
+                  f"re-run `archive build` once the run is quiesced")
         if missing:
             print(f"  note: {len(missing)} source files no longer present (archived copy retained)")
         return 0
