@@ -259,8 +259,6 @@ priors about where goals sit, geometry that "usually works." A blank canvas
 measures that floor; *another maze's* image is the stricter probe, catching a
 model that uses generic vision but not this picture.
 
-![Blind](results/figures/11-blind.png)
-
 25 tasks × 2 trials × 7 models × {blank canvas, another task's image}:
 **0 passes in 700 scored attempts**, route progress ~0.000 throughout. Blind
 failure is *total, not degraded* — 97% of attempts never begin on the start

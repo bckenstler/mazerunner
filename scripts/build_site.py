@@ -33,7 +33,6 @@ FIGURES = [
     ("06-resolution.png", "Kimi doubles on pixels alone — its effort ladder was flat."),
     ("07-feedback.png", "Seeing its own mistake beats a blind retry for no model."),
     ("10-dimensions.png", "Disclosing the canvas size helps some models exactly as much as it hurts others."),
-    ("11-blind.png", "Take the image away and every model drops to zero — the scores come from seeing."),
     ("08-variance.png", "Style is a per-maze difficulty axis: tiny main effect, 20× larger interaction."),
     ("09-fingerprints.png", "Measuring vs. writing round numbers: Inkling snaps to a 0.01 grid and misses the badge by 25px."),
 ]
