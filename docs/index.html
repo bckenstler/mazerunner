@@ -74,8 +74,8 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
   </div>
   <div class="cta">
     <a class="primary" href="viewer/">🔬 explore the traces</a>
-    <a href="https://github.com/bkenstler/mazerunner/blob/main/STUDY.md">📊 read the study</a>
-    <a href="https://github.com/bkenstler/mazerunner">code + dataset</a>
+    <a href="https://github.com/bckenstler/mazerunner/blob/main/STUDY.md">📊 read the study</a>
+    <a href="https://github.com/bckenstler/mazerunner">code + dataset</a>
   </div>
 </div>
 
@@ -102,18 +102,18 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
 <section>
   <h2>What the study found</h2>
   <p class="sub">Nine figures; the full argument with caveats is in the
-  <a href="https://github.com/bkenstler/mazerunner/blob/main/STUDY.md">study</a>.</p>
+  <a href="https://github.com/bckenstler/mazerunner/blob/main/STUDY.md">study</a>.</p>
   <div id="figs"></div>
 </section>
 
 <section>
   <h2>Run it</h2>
-<pre>git clone https://github.com/bkenstler/mazerunner && cd mazerunner
+<pre>git clone https://github.com/bckenstler/mazerunner && cd mazerunner
 uv sync && uv run pytest -q            # 255 tests, no network
 uv run mazerunner run --config configs/providers.example.json \
     --dataset datasets/v1/dev --mazes-file evals/dev-eval-100.txt --trials 8</pre>
   <p class="sub" style="margin-top:12px">Full traces for every attempt in this
-  study are in the <a href="https://github.com/bkenstler/mazerunner/releases">release assets</a>;
+  study are in the <a href="https://github.com/bckenstler/mazerunner/releases">release assets</a>;
   the hidden test split ships encrypted.</p>
 </section>
 </div>

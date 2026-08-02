@@ -26,8 +26,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/bkenstler/mazerunner"
-Study = "https://github.com/bkenstler/mazerunner/blob/main/STUDY.md"
+Homepage = "https://github.com/bckenstler/mazerunner"
+Study = "https://github.com/bckenstler/mazerunner/blob/main/STUDY.md"
 
 [project.scripts]
 mazerunner = "mazerunner.cli:main"
