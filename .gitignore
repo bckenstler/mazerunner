@@ -24,3 +24,4 @@ archive/
 litellm.config.json
 results/promo-frames/
 release-assets/
+.release-scrub.json

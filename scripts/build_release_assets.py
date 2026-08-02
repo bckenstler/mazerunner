@@ -38,15 +38,14 @@ ROUTE_SCRUB = {
 SCRUB_FIELDS = ("model", "response_model", "serving_stack")
 FORBIDDEN = ("REDACTED-DOMAIN", "ml-serving-internal", "Inkling-evals", "meta_ai/", "litellm-proxy")
 
-# String-level replacements applied to the serialized row AFTER field scrubs:
-# error messages in the transport-retry history quote the gateway URL verbatim.
-STRING_SCRUB = {
-    "https://REDACTED-GATEWAY/v1": "<gateway>",
-    "REDACTED-GATEWAY": "<gateway>",
-    "litellm.RateLimitError": "RateLimitError",
-    "litellm.BadRequestError": "BadRequestError",
-    "litellm.APIConnectionError": "APIConnectionError",
-}
+# String-level replacements applied to the serialized row AFTER field scrubs
+# (error messages in the retry history quote gateway URLs verbatim). The
+# private patterns live in an untracked local file so this public script never
+# itself contains the strings it exists to remove.
+STRING_SCRUB: dict[str, str] = {}
+_local = ROOT / ".release-scrub.json"
+if _local.exists():
+    STRING_SCRUB.update(json.loads(_local.read_text()))
 
 
 def scrub_row(row: dict) -> dict:
