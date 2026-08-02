@@ -18,7 +18,10 @@ fails 39% of the time.
 
 ## Results
 
-100 mazes × 8 attempts, frozen protocol, task-clustered 95% CIs:
+100 mazes × 8 attempts, frozen protocol, task-clustered 95% CIs. (The dataset
+is 1,000 tasks; every evaluated number here is from the frozen 100-task dev
+subset — the other 800 tasks ship unevaluated as headroom for future runs and
+contamination auditing.)
 
 | Model | pass@1 | 95% CI | pass@8 | Route progress |
 |---|---|---|---|---|

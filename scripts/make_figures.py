@@ -55,9 +55,9 @@ def _frame(ax, title=None, sub=None):
     ax.grid(True, alpha=0.35, linewidth=0.6)
     ax.set_axisbelow(True)
     if title:
-        ax.set_title(title, loc="left", pad=18 if sub else 10)
+        ax.set_title(title, loc="left", pad=34 if sub else 10)
     if sub:
-        ax.text(0, 1.045, sub, transform=ax.transAxes, color=DIM, fontsize=9)
+        ax.text(0, 1.055, sub, transform=ax.transAxes, color=DIM, fontsize=9)
 
 
 def save(fig, name):
@@ -93,9 +93,11 @@ def fig_leaderboard(rows):
         ax.barh(i, 100 * p8, height=0.62, color=CYAN, alpha=0.16)
         ax.barh(i, 100 * m, height=0.62, color=CYAN if lead else "#2B7A8C")
         ax.plot([100 * lo, 100 * hi], [i, i], color=WHITE, lw=1.6, alpha=0.75)
-        ax.text(100 * m + 1.4, i, f"{100*m:.1f}%", va="center", color=WHITE if lead else DIM,
+        label_x = 100 * hi + 1.6              # past the whisker, never under it
+        ax.text(label_x, i, f"{100*m:.1f}%", va="center", color=WHITE if lead else DIM,
                 fontsize=10, fontweight="bold" if lead else "normal")
-        ax.text(100 * p8 + 1.4, i, f"pass@8 {100*p8:.0f}%", va="center", color=DIM, fontsize=8)
+        p8_x = max(100 * p8, label_x + 11) + 1.6   # clears the pass@1 label too
+        ax.text(p8_x, i, f"pass@8 {100*p8:.0f}%", va="center", color=DIM, fontsize=8)
     ax.set_yticks(y, [NAMES[p] for *_, p in data])
     ax.set_xlim(0, 100)
     ax.set_xlabel("pass@1  (%)")

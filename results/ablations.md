@@ -8,6 +8,13 @@ same task's main-run attempts. Baselines below are each model's main-run rate
 
 ## 1. Blind (H4) — does the score come from seeing *this* image?
 
+**The intuition:** a model could score above zero without doing the task —
+memorized maze layouts, priors about where goals usually sit, or geometry that
+"usually works" on benchmark mazes. Sending a blank canvas measures that
+prior-only floor directly; sending *another maze's* image is the stricter
+version, catching a model that uses generic vision but not this picture. If
+either scores above zero, the leaderboard partly measures guessing.
+
 `evals/ablation-25.txt`, k=2, 7 legs, 700 attempts. Two variants: a neutral
 canvas at the task's true dimensions, and another task's render assigned by a
 tier-matched seeded derangement.
@@ -39,6 +46,16 @@ have been the single most damaging possible result, and it did not happen.
 
 ## 2. Input resolution — is perception resolution-bound?
 
+**The intuition:** vision encoders see a downsampled image, so a corridor a
+few pixels wide may simply not survive into the model's internal
+representation — in which case no amount of reasoning can recover it. Resending
+the identical maze at 2× and 0.5× isolates that channel: if a model improves
+with pixels but not with thinking (Kimi), its ceiling was perceptual acuity all
+along. And a model stuck at zero *regardless of resolution* (Inkling) cannot
+blame the encoder — its failure is upstream of pixel budget, which is exactly
+what its coordinate fingerprints (0.01-grid snapping, 25px badge misses)
+independently suggest: it is not reading the image at any resolution.
+
 `evals/ablation-25.txt`, k=2, 6 legs, 600 attempts. Send-time rescale only;
 mask and ground truth untouched, so scoring is identical.
 
@@ -67,6 +84,15 @@ the explanation for its 42% start-badge miss.
 
 ## 3. Dimension disclosure (H7) — does telling the model the canvas size help?
 
+**The intuition:** submissions are normalized coordinates, so a model must
+implicitly know the canvas size to convert "the badge is at pixel (55, 527)"
+into (0.069, 0.712). Telling it the true dimensions removes that conversion
+step. If disclosure helps, the model was measuring pixels correctly and
+fumbling the normalization; if it hurts, the model was reasoning
+proportionally and the numbers distracted it. Either way it localizes *where*
+in the pipeline errors live — which is why the effect redistributes instead of
+lifting.
+
 Full `dev-eval-100`, k=2, 4 legs, 800 attempts, paired per task against each
 model's main-run attempts under the frozen dimension-free prompt.
 
@@ -89,6 +115,21 @@ scale from the image alone, so the disclosure becomes redundant — the benefit 
 ---
 
 ## 4. Feedback (H6) — can a model correct its own failed drag?
+
+**The intuition:** the agentic-loop assumption is that showing a model its
+error makes the retry better than a fresh guess. This tests the cheapest
+version of that loop on a task where the error is *visually exact*: here is
+your path, here is the pixel where it left the corridor. If closed-loop
+correction works anywhere, it should work here — the fix requires no
+diagnosis, only re-perception of one marked location. The baseline that makes
+the test fair is the model's own pass@1: an informed retry must beat an
+uninformed one, or the loop is worthless.
+
+**Message history:** true multi-turn — each turn's context contains the full
+prior conversation. At turn 2 the model sees 2 images (the original maze and
+the overlay of its first attempt); at turn 3, 3 images, and so on. Verified
+from stored usage: input tokens grow monotonically per turn (e.g. 1.4K → 19K →
+25K → 30K). The original image is never dropped.
 
 `evals/ablation-50.txt`, ≤4 turns, stop at first success, 5 legs, true
 multi-turn conversations. Feedback is the failure category plus the model's own
@@ -152,6 +193,14 @@ cheapest and most natural version working at all.
 ---
 
 ## 5. Style-swap (H3) — is rendering style a difficulty axis of its own?
+
+**The intuition:** every rendered benchmark quietly entangles two questions —
+is the *structure* hard, or is the *picture* hard? Because MazeRunner generates
+topology and rendering from independent seeds, the same maze can be re-painted
+with a byte-identical scored mask, making the picture the only variable. If
+pass rates move across renderings of one fixed maze, "style difficulty" is
+real and a fixed-style benchmark would be silently mis-attributing it to
+topology.
 
 20 topologies × 5 archetypes = 100 variants, k=3, 5 legs, 1,494 scored
 attempts. Every variant in a pair-group is asserted to share its source's

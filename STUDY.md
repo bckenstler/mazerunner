@@ -82,6 +82,7 @@ subsequent departure is recorded as a dated amendment in `ANALYSIS_PLAN.md`.
 | | |
 |---|---|
 | Task set | `evals/dev-eval-100.txt` — 100 dev tasks, ILP-selected for 12–13 per family, tiers 30/40/30, every archetype ≥6 |
+| Dataset vs. study | the dataset is 1,000 tasks; **every number in this study is from the 100-task subset** (×8 trials). test-public (300) and test-hidden (500, encrypted) ship unevaluated, as headroom for future runs and contamination auditing |
 | Design | uniform flat: every model × every task × exactly 8 trials |
 | Prompt | frozen, dimension-free |
 | Order | randomized per model leg, seed recorded |
@@ -234,6 +235,11 @@ same task's main-run attempts.
 
 ### Vision validity — is it really reading *this* image?
 
+**The intuition:** a model could score above zero without doing the task —
+priors about where goals sit, geometry that "usually works." A blank canvas
+measures that floor; *another maze's* image is the stricter probe, catching a
+model that uses generic vision but not this picture.
+
 25 tasks × 2 trials × 7 models × {blank canvas, another task's image}:
 **0 passes in 700 scored attempts**, route progress ~0.000 throughout. Blind
 failure is *total, not degraded* — 97% of attempts never begin on the start
@@ -244,6 +250,11 @@ no prior-guessable floor, every leaderboard number is attributable to reading
 the specific image, and Inkling's 0.0% and Muse's 6.0% are real measurements.
 
 ### Style vs topology
+
+**The intuition:** every rendered benchmark entangles "is the structure hard?"
+with "is the picture hard?" Because topology and rendering come from
+independent seeds, the same maze can be re-painted over a byte-identical
+scored mask — making the picture the only variable.
 
 20 topologies rebuilt in 5 visual styles each, with byte-identical scored masks
 asserted per group and the reference route re-verified under every rendering.
@@ -261,6 +272,13 @@ topology difficulty.
 
 ### Input resolution
 
+**The intuition:** vision encoders downsample, so a corridor a few pixels wide
+may not survive into the model's internal representation at all — a failure no
+amount of reasoning can fix. Resending the identical maze at 0.5× and 2×
+isolates that channel. A model that improves with pixels but not with thinking
+was perception-bound; a model stuck at zero at *every* resolution cannot blame
+the encoder — its failure sits upstream of pixel budget.
+
 ![Resolution](results/figures/06-resolution.png)
 
 **Kimi more than doubles at 2× resolution (20% → 42%)** while its effort ladder
@@ -270,14 +288,27 @@ binding constraint is perceptual acuity rather than deliberation.
 
 Halving resolution hurts nearly everyone (Opus 18→6%, GPT-medium 54→32%). Two
 exceptions carry information: Gemini is flat across all three scales, and
-Inkling is 0% at every resolution — ruling out resolution as the explanation
-for its start-badge misses.
+**Inkling is 0% at every resolution** — which closes the loop on its diagnosis.
+Its coordinate fingerprints (§8) show 68% of its outputs on an exact 0.01 grid
+and 25px median start-badge misses, i.e. round numbers from a mental sketch;
+this ablation rules out the charitable alternative that it simply couldn't see
+fine detail. More pixels change nothing because it was not using the pixels.
 
 ### Closed-loop feedback
+
+**The intuition:** the agentic-loop assumption is that showing a model its
+error beats a fresh guess. This tests the cheapest version on a task where the
+error is visually exact — no diagnosis required, only re-perception of one
+marked location. If closed-loop correction works anywhere, it should work here.
 
 Models were shown their own failed path drawn over the maze with a ⊗ at the
 exact point they left the corridor, told only the failure category, and asked
 again — up to four turns, stopping at first success. No oracle geometry.
+These are true multi-turn conversations with the full history retained: at
+turn 2 the context holds two images (the original maze plus the overlay of
+attempt 1), at turn 3 three, and so on — verified from stored usage, where
+input tokens grow monotonically per turn (e.g. 1.4K → 19K → 25K → 30K). The
+original image is never dropped.
 
 ![Feedback](results/figures/07-feedback.png)
 
@@ -296,6 +327,11 @@ signal might do better. What these data rule out is that the obvious version
 works.
 
 ### Dimension disclosure
+
+**The intuition:** submissions are normalized, so the model must implicitly
+know the canvas size to convert a measured pixel into a coordinate. Disclosure
+removes that conversion step — so whether it helps or hurts localizes whether
+a model's errors live in measurement or in normalization.
 
 Telling the model the canvas size redistributes rather than lifts: GPT +8pp,
 Gemini −8pp, Opus +2pp, netting ~zero — replicating a 25-task pilot within 1–4
