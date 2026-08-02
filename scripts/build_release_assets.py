@@ -36,7 +36,7 @@ ROUTE_SCRUB = {
     "gemini/gemini-3.6-flash": "gemini-3.6-flash",
 }
 SCRUB_FIELDS = ("model", "response_model", "serving_stack")
-FORBIDDEN = ("REDACTED-DOMAIN", "ml-serving-internal", "Inkling-evals", "meta_ai/", "litellm-proxy")
+FORBIDDEN = ["ml-serving-internal", "Inkling-evals", "meta_ai/", "litellm-proxy"]
 
 # String-level replacements applied to the serialized row AFTER field scrubs
 # (error messages in the retry history quote gateway URLs verbatim). The
@@ -46,6 +46,7 @@ STRING_SCRUB: dict[str, str] = {}
 _local = ROOT / ".release-scrub.json"
 if _local.exists():
     STRING_SCRUB.update(json.loads(_local.read_text()))
+    FORBIDDEN.extend(STRING_SCRUB.keys())
 
 
 def scrub_row(row: dict) -> dict:

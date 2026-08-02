@@ -8,13 +8,17 @@ Exits non-zero with file:line evidence on any hit.
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-MARKERS = (
-    r"scale\.com",
+# Generic markers live here; site-specific ones (private hostnames, employer
+# domains) come from the untracked .release-scrub.json so this public file
+# never itself names what must not ship. CI runs the generic set; maintainers
+# with the local file run the full set.
+MARKERS = [
     r"ml-serving-internal",
     r"Inkling-evals",
     r"meta_ai/",
@@ -22,11 +26,15 @@ MARKERS = (
     r"llama_experimental",
     r"litellm-proxy",
     r"/Users/[a-z]",
-)
+]
+_local = Path(__file__).resolve().parent.parent / ".release-scrub.json"
+if _local.exists():
+    for needle in json.loads(_local.read_text()):
+        MARKERS.append(re.escape(needle))
 
 # Files allowed to *name* the markers (this script, and docs that discuss the
 # sanitization itself).
-EXEMPT = {"scripts/sanitize_release.py"}
+EXEMPT = {"scripts/sanitize_release.py", "scripts/build_release_assets.py"}
 
 
 def main() -> int:
