@@ -34,7 +34,7 @@ success criterion. Three properties follow:
   the corridor, which makes failure analysis possible rather than anecdotal.
 - **Difficulty is decomposable.** Topology and rendering style are generated
   independently, so "hard maze" and "hard picture" can be separated — and they
-  behave very differently (§7).
+  behave very differently (§7 below).
 
 ---
 
@@ -167,6 +167,25 @@ not act on, and act on confusions they never narrate.
 
 ![Failure modes](results/figures/05-failure-modes.png)
 
+The modes, in plain terms:
+
+| Mode | What actually happened |
+|---|---|
+| **Cut through a wall** | Committed to a route and drew it straight through a barrier. The catch-all when the trace names no deeper cause. |
+| **Clearance failure** | The route is *right* — the path's centreline stays inside the corridor the whole way — but the 3px pointer still grazes a wall. A precision failure, not a navigation one. |
+| **Wrong start** | The path never begins on the cyan start badge. Failed at the easiest perceptual target on the board. |
+| **Walls ↔ corridors** | Decided the walls were the walkable space (or vice versa) and traced the solid regions. A figure–ground parse error. |
+| **Never looked** | The reasoning trace contains no coordinate, colour, or spatial reference at all — generic procedure with nothing image-specific in it. |
+| **Gave up verifying** | Said out loud that the path was approximate or unchecked ("maybe. Fine.") and submitted anyway. A policy failure, not a perception one. |
+| **Drew from formula** | Generated the path analytically — arcs, radii, evenly spaced angles — instead of tracing observed corridors. Smooth, regular, and wrong. |
+| **Graph, not pixels** | Reduced the maze to imagined nodes and edges, then submitted a tour of the node positions. Corridor width stops being represented at all. |
+| **Fabricated verification** | Claimed to have checked the whole route ("verified all dead ends") on a path that collides. |
+| **Invented topology** | Justified an impossible route by asserting connections that don't exist ("there might be a hidden passage… badge teleport"). |
+
+Every label requires *both* the model's own words and corroborating geometry
+from its submitted path — wording alone never assigns a cause. Per-attempt
+verdicts with their evidence are in `results/failure-modes.jsonl`.
+
 | Model | Signature failure |
 |---|---|
 | GPT (both configs) | **Clearance, 30%** — centreline legal the entire way; the swept pointer still clips a wall |
@@ -239,6 +258,8 @@ same task's main-run attempts.
 priors about where goals sit, geometry that "usually works." A blank canvas
 measures that floor; *another maze's* image is the stricter probe, catching a
 model that uses generic vision but not this picture.
+
+![Blind](results/figures/11-blind.png)
 
 25 tasks × 2 trials × 7 models × {blank canvas, another task's image}:
 **0 passes in 700 scored attempts**, route progress ~0.000 throughout. Blind
@@ -333,6 +354,8 @@ know the canvas size to convert a measured pixel into a coordinate. Disclosure
 removes that conversion step — so whether it helps or hurts localizes whether
 a model's errors live in measurement or in normalization.
 
+![Dimensions](results/figures/10-dimensions.png)
+
 Telling the model the canvas size redistributes rather than lifts: GPT +8pp,
 Gemini −8pp, Opus +2pp, netting ~zero — replicating a 25-task pilot within 1–4
 points at n=100. The mechanism is specific: disclosure cuts **wrong-start
@@ -345,6 +368,16 @@ scale from the image alone, making the disclosure redundant.
 ---
 
 ## 8. Fingerprints: measuring vs. writing round numbers
+
+**The intuition:** you can tell whether someone measured something by looking
+at the numbers they wrote down. Real measurements are messy — a model that
+located the badge in the image reports it at (0.9184, 0.1507). A model
+*imagining* a plausible maze reports (0.90, 0.15), because round numbers are
+what invention produces. The second signature is even simpler: the start badge
+is drawn at a known place, so the distance between it and the first point of
+the submitted path is a direct test of whether the model found it. Neither
+signal involves routing at all — together they separate "perceived the image"
+from "wrote plausible geometry" using nothing but the submitted coordinates.
 
 ![Fingerprints](results/figures/09-fingerprints.png)
 
@@ -371,7 +404,7 @@ across vendors is not comparing like with like.
 **Perception, not planning, is the binding constraint for most of the field** —
 and the evidence is convergent rather than a single test: the effort sweeps
 (more thinking doesn't help), the resolution ablation (more pixels does), the
-H1 regression (clearance and turns predict; length doesn't), and the trace
+difficulty regression (clearance and turns predict; length doesn't), and the trace
 taxonomy (clearance failures, figure–ground inversions, models that never
 looked).
 

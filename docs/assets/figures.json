@@ -28,6 +28,14 @@
     "caption": "Seeing its own mistake beats a blind retry for no model."
   },
   {
+    "file": "10-dimensions.png",
+    "caption": "Disclosing the canvas size helps some models exactly as much as it hurts others."
+  },
+  {
+    "file": "11-blind.png",
+    "caption": "Take the image away and every model drops to zero \u2014 the scores come from seeing."
+  },
+  {
     "file": "08-variance.png",
     "caption": "Style is a per-maze difficulty axis: tiny main effect, 20\u00d7 larger interaction."
   },

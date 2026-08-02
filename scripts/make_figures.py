@@ -57,7 +57,10 @@ def _frame(ax, title=None, sub=None):
     if title:
         ax.set_title(title, loc="left", pad=34 if sub else 10)
     if sub:
-        ax.text(0, 1.055, sub, transform=ax.transAxes, color=DIM, fontsize=9)
+        lines = sub.count("\n") + 1
+        ax.set_title(ax.get_title(loc="left"), loc="left", pad=34 + (lines - 1) * 14)
+        ax.text(0, 1.055, sub, transform=ax.transAxes, color=DIM, fontsize=9,
+                va="bottom", linespacing=1.5)
 
 
 def save(fig, name):
@@ -126,7 +129,7 @@ def fig_tiers(rows):
     ax.set_ylabel("pass@1  (%)")
     ax.set_xlim(-0.15, 2.9)
     _frame(ax, "Difficulty is monotone for every model",
-           "measured tiers, not declared — H1")
+           "measured tiers, not declared")
     save(fig, "02-tiers.png")
 
 
@@ -151,7 +154,7 @@ def fig_effort():
     ax.set_xlim(-0.1, 4.4)
     ax.set_ylim(0, 80)
     _frame(ax, "Only GPT converts test-time compute into accuracy",
-           "25-task sweep set × 3 trials — H5. Gemini returns 32% three times across a "
+           "25-task sweep set × 3 trials. Gemini returns 32% three times across a "
            "6× increase in thinking tokens")
     save(fig, "03-effort.png")
 
@@ -260,7 +263,7 @@ def fig_feedback():
     ax.legend(fontsize=8, frameon=False, labelcolor=DIM, loc="lower right")
     ax.invert_yaxis()
     _frame(ax, "Showing a model its own mistake makes it worse",
-           "episodes whose first turn failed — H6. No model beats simply trying again")
+           "episodes whose first turn failed. No model beats simply trying again")
     save(fig, "07-feedback.png")
 
 
@@ -280,29 +283,97 @@ def fig_variance():
     ax.set_xlabel("share of variance  (%)")
     ax.invert_yaxis()
     _frame(ax, "Style is a per-maze axis, not a global one",
-           "20 topologies × 5 archetypes, identical masks — H3")
+           "20 topologies × 5 archetypes, identical masks")
     save(fig, "08-variance.png")
 
 
+def fig_dimensions():
+    """Paired delta chart: what disclosing the canvas size does per model."""
+    data = [("GPT-5.6 Sol", 48, 56, 7), ("Claude Opus 5", 16, 18, 0),
+            ("GPT-5.6 Sol · xhigh", 61, 61, None), ("Gemini 3.6 Flash", 30, 22, -12)]
+    fig, ax = plt.subplots(figsize=(8.4, 4.2))
+    y = np.arange(len(data))
+    for i, (name, frozen, disclosed, pilot) in enumerate(data):
+        delta = disclosed - frozen
+        colr = GREEN if delta > 2 else (RED if delta < -2 else DIM)
+        ax.plot([frozen, disclosed], [i, i], color=colr, lw=3, solid_capstyle="round")
+        ax.scatter([frozen], [i], s=70, color=DIM, zorder=3, label="_")
+        ax.scatter([disclosed], [i], s=90, color=colr, zorder=3, marker="D")
+        ax.annotate("", xy=(disclosed, i), xytext=(frozen, i),
+                    arrowprops=dict(arrowstyle="-|>", color=colr, lw=2))
+        ax.text(max(frozen, disclosed) + 2, i, f"{delta:+d}pp", va="center",
+                color=colr, fontsize=10, fontweight="bold")
+        if pilot is not None:
+            ax.text(max(frozen, disclosed) + 11, i, f"(pilot {pilot:+d})", va="center",
+                    color=DIM, fontsize=8)
+    ax.set_yticks(y, [d[0] for d in data])
+    ax.set_xlabel("pass@1  (%)   ○ frozen prompt → ◆ canvas size disclosed")
+    ax.set_xlim(0, 80)
+    ax.invert_yaxis()
+    _frame(ax, "Telling the model the canvas size redistributes, nets ~zero",
+           "100 mazes × 2 trials, paired per task against the main run")
+    save(fig, "10-dimensions.png")
+
+
+def fig_blind():
+    """The blind control as a picture: sighted vs blank vs wrong image."""
+    sighted = {"gpt-xhigh": 68, "openai": 54, "gemini": 26, "kimi": 20,
+               "anthropic": 18, "muse-spark": 4, "inkling": 0}
+    fig, ax = plt.subplots(figsize=(8.4, 4.2))
+    y = np.arange(len(ORDER))
+    ax.barh(y - 0.2, [sighted[p] for p in ORDER], height=0.38,
+            color="#2B7A8C", label="real image")
+    ax.barh(y + 0.2, [0] * len(ORDER), height=0.38, color=RED)
+    for i, p in enumerate(ORDER):
+        ax.text(sighted[p] + 1.2, i - 0.2, f"{sighted[p]}%", va="center",
+                color=DIM, fontsize=9)
+        ax.text(1.2, i + 0.2, "0%  blank · 0%  wrong image", va="center",
+                color=RED, fontsize=8)
+    ax.set_yticks(y, [NAMES[p] for p in ORDER])
+    ax.set_xlim(0, 80)
+    ax.set_xlabel("pass@1  (%)  ·  25 tasks × 2 trials per condition")
+    ax.invert_yaxis()
+    ax.legend(fontsize=8, frameon=False, labelcolor=DIM, loc="lower right")
+    _frame(ax, "Take the image away and every model drops to zero",
+           "same tasks, same prompt — only the pixels change. 0 passes in 700 attempts")
+    save(fig, "11-blind.png")
+
+
 def fig_fingerprints():
+    """Two perception signatures, one scatter. Labels hand-placed to avoid
+    collisions; the subtitle wraps so the canvas keeps its aspect."""
     snap = {"gpt-xhigh": 8.7, "openai": 11.5, "kimi": 19.7, "gemini": 38.9,
             "anthropic": 27.3, "muse-spark": 19.2, "inkling": 67.9}
     loc = {"gpt-xhigh": 1.3, "openai": 1.3, "kimi": 1.8, "gemini": 2.1,
            "anthropic": 2.1, "muse-spark": 8.2, "inkling": 24.7}
-    fig, ax = plt.subplots(figsize=(7.6, 4.6))
+    # (dx, dy multiplier, alignment) per label, to keep them off each other
+    nudge = {"gpt-xhigh": (1.5, 0.88, "left"), "openai": (1.5, 1.12, "left"),
+             "kimi": (1.5, 1.0, "left"), "gemini": (1.5, 1.0, "left"),
+             "anthropic": (-1.5, 1.0, "right"), "muse-spark": (1.5, 1.0, "left"),
+             "inkling": (-1.5, 1.0, "right")}
+    fig, ax = plt.subplots(figsize=(8.6, 5.0))
     for p in ORDER:
         hero = p == "inkling"
-        ax.scatter(snap[p], loc[p], s=190 if hero else 90,
-                   color=RED if hero else (CYAN if p.startswith("gpt") else DIM),
+        colr = RED if hero else (CYAN if p.startswith("gpt") else DIM)
+        ax.scatter(snap[p], loc[p], s=190 if hero else 90, color=colr,
                    zorder=3, edgecolor=BG, linewidth=1.2)
-        ax.text(snap[p] + 1.4, loc[p], NAMES[p], fontsize=8,
-                color=RED if hero else (CYAN if p.startswith("gpt") else DIM), va="center")
-    ax.set_xlabel("coordinates landing on an exact 0.01 grid  (%)")
-    ax.set_ylabel("start-badge error, median (px)")
+        dx, dy, ha = nudge[p]
+        ax.text(snap[p] + dx, loc[p] * dy, NAMES[p], fontsize=8, color=colr,
+                va="center", ha=ha)
+    ax.annotate("reads the image:\nmessy decimals, starts on the badge",
+                xy=(9, 1.3), xytext=(24, 0.72), color=CYAN, fontsize=8.5,
+                arrowprops=dict(arrowstyle="-", color=CYAN, lw=0.8, alpha=0.6))
+    ax.annotate("invents the answer:\nround numbers, misses the badge",
+                xy=(66, 22), xytext=(38, 12), color=RED, fontsize=8.5,
+                arrowprops=dict(arrowstyle="-", color=RED, lw=0.8, alpha=0.6))
+    ax.set_xlabel("share of coordinates that are round numbers (exact 0.01 grid)")
+    ax.set_ylabel("how far the path starts from\nthe start badge (median px, log)")
     ax.set_yscale("log")
     ax.set_xlim(0, 88)
-    _frame(ax, "Measuring vs. writing round numbers",
-           "bottom-left reads the image; top-right emits a mental sketch")
+    ax.set_ylim(0.55, 45)
+    _frame(ax, "Is the model measuring, or making numbers up?",
+           "every submitted coordinate, two questions: are the numbers round, and does\n"
+           "the path begin where the start badge actually is")
     save(fig, "09-fingerprints.png")
 
 
@@ -317,6 +388,8 @@ def main():
     fig_resolution()
     fig_feedback()
     fig_variance()
+    fig_dimensions()
+    fig_blind()
     fig_fingerprints()
 
 
