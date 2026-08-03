@@ -223,6 +223,8 @@ taxonomy, which is a sanity check and not a measured accuracy.
 A logistic regression of per-attempt success on the measured task features,
 standardized, with task-clustered bootstrap CIs:
 
+![Regression](results/figures/12-regression.png)
+
 | Feature | All models | GPT @ xhigh | Gemini |
 |---|---|---|---|
 | normalized length | +0.18 | −0.19 | +0.62 |
@@ -251,22 +253,6 @@ length in favour of turns and branching.
 
 Every ablation draws from `dev-eval-100`, so each attempt is paired with the
 same task's main-run attempts.
-
-### Vision validity — is it really reading *this* image?
-
-**The intuition:** a model could score above zero without doing the task —
-priors about where goals sit, geometry that "usually works." A blank canvas
-measures that floor; *another maze's* image is the stricter probe, catching a
-model that uses generic vision but not this picture.
-
-25 tasks × 2 trials × 7 models × {blank canvas, another task's image}:
-**0 passes in 700 scored attempts**, route progress ~0.000 throughout. Blind
-failure is *total, not degraded* — 97% of attempts never begin on the start
-badge, and **zero** reach a wall, because they never get far enough to collide.
-
-This is a methods check rather than a discovery, but it is load-bearing: with
-no prior-guessable floor, every leaderboard number is attributable to reading
-the specific image, and Inkling's 0.0% and Muse's 6.0% are real measurements.
 
 ### Style vs topology
 
@@ -307,11 +293,13 @@ binding constraint is perceptual acuity rather than deliberation.
 
 Halving resolution hurts nearly everyone (Opus 18→6%, GPT-medium 54→32%). Two
 exceptions carry information: Gemini is flat across all three scales, and
-**Inkling is 0% at every resolution** — which closes the loop on its diagnosis.
-Its coordinate fingerprints (§8) show 68% of its outputs on an exact 0.01 grid
-and 25px median start-badge misses, i.e. round numbers from a mental sketch;
-this ablation rules out the charitable alternative that it simply couldn't see
-fine detail. More pixels change nothing because it was not using the pixels.
+**Inkling is 0% at every resolution** — which sharpens its diagnosis. Its
+fingerprints (§8) show coarse, grid-quantized position reports with ~25px of
+slop. If that coarseness were an *input* limitation — detail lost in the
+encoder — doubling the resolution should recover some of it. It recovers
+nothing. The bottleneck is not how much detail reaches the model but the
+fidelity at which it reports what it perceives: the sketch stays coarse no
+matter how sharp the input.
 
 ### Closed-loop feedback
 
@@ -363,26 +351,44 @@ normalization step and does nothing for corridor tracing.
 At GPT-xhigh the effect vanishes entirely (0pp) — enough reasoning establishes
 scale from the image alone, making the disclosure redundant.
 
+### Vision validity (control)
+
+A methods check rather than a finding, reported last for completeness: 25
+tasks × 2 trials × 7 models with a blank canvas or another task's image
+produced **0 passes in 700 attempts**, route progress ~0.000 — 97% of blind
+attempts never even start on the badge. There is no prior-guessable floor;
+every score in this study comes from reading the specific image. (This is
+also what licenses the Inkling reading in §8: with the image its route
+progress is 0.029, without it 0.000, so it demonstrably uses the picture —
+just coarsely.)
+
 ---
 
 ## 8. Fingerprints: measuring vs. writing round numbers
 
-**The intuition:** you can tell whether someone measured something by looking
-at the numbers they wrote down. Real measurements are messy — a model that
-located the badge in the image reports it at (0.9184, 0.1507). A model
-*imagining* a plausible maze reports (0.90, 0.15), because round numbers are
-what invention produces. The second signature is even simpler: the start badge
-is drawn at a known place, so the distance between it and the first point of
-the submitted path is a direct test of whether the model found it. Neither
-signal involves routing at all — together they separate "perceived the image"
-from "wrote plausible geometry" using nothing but the submitted coordinates.
+**The intuition:** you can tell how someone obtained a number by looking at
+the digits. A measurement comes out messy — a model that located the badge in
+the image reports it at (0.9184, 0.1507). An *estimate* comes out round —
+(0.90, 0.15) — because rounding is what a coarse internal representation
+produces. The second signature is simpler: the start badge is drawn at a known
+place, so the distance from it to the path's first point measures how
+precisely the model registered what it saw. Neither signal involves routing —
+together they place each model on a spectrum from pixel-level measurement to
+coarse, quantized estimation.
 
 ![Fingerprints](results/figures/09-fingerprints.png)
 
-Two signatures separate a model reading the image from one emitting plausible
-geometry. **Inkling places 67.9% of its coordinates on an exact 0.01 grid and
-misses the start badge by 25 pixels at the median** — it is not looking at the
-maze. GPT is the mirror image: irregular coordinates, 1.3px badge accuracy.
+**Inkling places 67.9% of its coordinates on an exact 0.01 grid and misses
+the start badge by 25 pixels at the median.** To be precise about what that
+means: it *does* perceive the maze — 25px on an ~800px canvas is near the
+badge, not across the image, and the blind control confirms it (route progress
+0.029 with the image, 0.000 without). What it does not do is measure. Its
+coordinates come from a coarse, quantized internal sketch — positions rounded
+to a 0.01 grid — and on a task whose acceptance radii and corridor widths are
+tens of pixels, 25px of systematic slop fails every time. The gap between
+"sees roughly where things are" and "can report where they are precisely" is
+the whole distance between Inkling and the scoreboard. GPT is the other end of
+the spectrum: irregular coordinates, 1.3px badge accuracy.
 
 A subtler separation: **Gemini localizes better than GPT** (2.1px median, 4px
 at p90 — a tighter tail than GPT's 15px) yet scores half as well. Finding where

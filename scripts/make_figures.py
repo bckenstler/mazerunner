@@ -346,16 +346,16 @@ def fig_fingerprints():
         dx, dy, ha = nudge[p]
         ax.text(snap[p] + dx, loc[p] * dy, NAMES[p], fontsize=8, color=colr,
                 va="center", ha=ha)
-    ax.text(2, 0.66, "reads the image:\nmessy decimals, starts on the badge",
+    ax.text(2, 0.66, "measures the image:\nmessy decimals, lands on the badge",
             color=CYAN, fontsize=8.5)
-    ax.text(50, 13, "invents the answer:\nround numbers, misses the badge",
+    ax.text(50, 13, "estimates from a coarse sketch:\nround numbers, ~25px of slop",
             color=RED, fontsize=8.5, va="top")
     ax.set_xlabel("share of coordinates that are round numbers (exact 0.01 grid)")
     ax.set_ylabel("how far the path starts from\nthe start badge (median px, log)")
     ax.set_yscale("log")
     ax.set_xlim(0, 88)
     ax.set_ylim(0.55, 45)
-    _frame(ax, "Is the model measuring, or making numbers up?",
+    _frame(ax, "Is the model measuring, or estimating?",
            "two signals from the submitted coordinates alone")
     save(fig, "09-fingerprints.png")
 

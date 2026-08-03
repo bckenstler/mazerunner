@@ -42,15 +42,15 @@ Findings that survived the ablations (details and caveats in
 - **Showing a model its own mistake makes it worse.** After a failed attempt,
   seeing its own path with the collision marked beats a blind retry for *no*
   model; for mid-tier models it costs up to 24 points.
-- **Blind control: 0 passes in 700 attempts.** With a blank or mismatched
-  image, models don't merely fail — route progress is ~0.000. Every score
-  above comes from reading the specific image.
 - **Style is a per-maze difficulty axis.** Identical mazes re-rendered in five
   styles: style's average effect is ~0, but the per-maze swing is 24pp.
 - **Each model fails differently** (per-trace classification of all 4,140
   failures): GPT runs out of corridor *width*, Gemini and Claude drive through
   walls, Kimi announces its path is approximate and submits anyway, Inkling
-  never finds the start badge.
+  perceives the layout only coarsely — its reported positions are quantized to
+  a 0.01 grid with ~25px of slop, fatal at this task's tolerances.
+- Control: with a blank or wrong image, 0 passes in 700 attempts — the scores
+  come from reading the specific picture.
 
 ## Quickstart
 

@@ -52,9 +52,10 @@ representation — in which case no amount of reasoning can recover it. Resendin
 the identical maze at 2× and 0.5× isolates that channel: if a model improves
 with pixels but not with thinking (Kimi), its ceiling was perceptual acuity all
 along. And a model stuck at zero *regardless of resolution* (Inkling) cannot
-blame the encoder — its failure is upstream of pixel budget, which is exactly
-what its coordinate fingerprints (0.01-grid snapping, 25px badge misses)
-independently suggest: it is not reading the image at any resolution.
+blame the encoder: its fingerprints (0.01-grid snapping, ~25px badge slop)
+show it perceives the layout coarsely, and no amount of extra input detail
+changes the fidelity at which it reports positions. The bottleneck is
+report precision, not pixel availability.
 
 `evals/ablation-25.txt`, k=2, 6 legs, 600 attempts. Send-time rescale only;
 mask and ground truth untouched, so scoring is identical.
