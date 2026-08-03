@@ -255,7 +255,7 @@ function dot(ctx, x, y, r, style) {
 
 function renderSide() {
   const a = state.attempt, ev = a.evaluation || {}, d = a.derived || {};
-  $("v-title").textContent = `${a.model_name} · ${a.maze}`;
+  $("v-title").textContent = `${modelName(a.provider)} · ${a.maze}`;
   $("v-meta").textContent =
     `trial ${a.trial + 1} · ${state.task.family}/${state.task.tier}/${state.task.archetype}` +
     ` · route progress ${(d.route_progress * 100 || 0).toFixed(0)}%` +

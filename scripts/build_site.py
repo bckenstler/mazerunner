@@ -19,9 +19,10 @@ from mazerunner.analysis.load import load_attempts, task_means, by_task  # noqa:
 from mazerunner.analysis.stats import bootstrap_ci, pass_at_k  # noqa: E402
 
 NAMES = {
-    "gpt-xhigh": "GPT-5.6 Sol · xhigh", "openai": "GPT-5.6 Sol",
-    "gemini": "Gemini 3.6 Flash", "kimi": "Kimi K3",
-    "anthropic": "Claude Opus 5", "muse-spark": "Muse Spark 1.1", "inkling": "Inkling",
+    "gpt-xhigh": "GPT-5.6 Sol · xhigh", "openai": "GPT-5.6 Sol · medium",
+    "gemini": "Gemini 3.6 Flash · medium", "kimi": "Kimi K3 · high",
+    "anthropic": "Claude Opus 5 · high", "muse-spark": "Muse Spark 1.1 · medium",
+    "inkling": "Inkling · default",
 }
 
 FIGURES = [

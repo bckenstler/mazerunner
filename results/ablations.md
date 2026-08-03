@@ -21,13 +21,13 @@ tier-matched seeded derangement.
 
 | Model | Sighted | Blank | Mismatched |
 |---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 68% | **0%** (rp 0.000) | **0%** (rp 0.000) |
-| GPT-5.6 Sol @ medium | 54% | **0%** | **0%** |
-| Gemini 3.6 Flash | 26% | **0%** | **0%** (rp 0.002) |
-| Kimi K3 | 20% | **0%** | **0%** (rp 0.006) |
-| Claude Opus 5 | 18% | **0%** | **0%** |
-| Muse Spark 1.1 | 4% | **0%** | **0%** |
-| Inkling | 0% | **0%** | **0%** |
+| GPT-5.6 Sol · xhigh | 68% | **0%** (rp 0.000) | **0%** (rp 0.000) |
+| GPT-5.6 Sol · medium | 54% | **0%** | **0%** |
+| Gemini 3.6 Flash · medium | 26% | **0%** | **0%** (rp 0.002) |
+| Kimi K3 · high | 20% | **0%** | **0%** (rp 0.006) |
+| Claude Opus 5 · high | 18% | **0%** | **0%** |
+| Muse Spark 1.1 · medium | 4% | **0%** | **0%** |
+| Inkling · default | 0% | **0%** | **0%** |
 
 **Zero passes in 700 scored attempts** (full coverage after 50 attempts lost to
 a network outage were requeued). Route progress is ~0.000 throughout: a blind
@@ -62,12 +62,12 @@ mask and ground truth untouched, so scoring is identical.
 
 | Model | 0.5× | 1.0× (main) | 2.0× |
 |---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 51% | 68% | 65% |
-| GPT-5.6 Sol @ medium | 32% | 54% | 58% |
-| Gemini 3.6 Flash | 30% | 26% | 28% |
+| GPT-5.6 Sol · xhigh | 51% | 68% | 65% |
+| GPT-5.6 Sol · medium | 32% | 54% | 58% |
+| Gemini 3.6 Flash · medium | 30% | 26% | 28% |
 | **Kimi K3** | 17% | 20% | **42%** |
-| Claude Opus 5 | 6% | 18% | 22% |
-| Inkling | 0% | 0% | 0% |
+| Claude Opus 5 · high | 6% | 18% | 22% |
+| Inkling · default | 0% | 0% | 0% |
 
 **Kimi more than doubles at 2× (20% → 42%).** Read against its effort sweep —
 flat at ~16% across low, high, and max — this is a clean dissociation: extra
@@ -99,10 +99,10 @@ model's main-run attempts under the frozen dimension-free prompt.
 
 | Model | Frozen | With dimensions | Delta | Pilot (n=25) |
 |---|---|---|---|---|
-| GPT-5.6 Sol @ medium | 48% | 56% | **+8pp** | +7pp |
-| Claude Opus 5 | 16% | 18% | +2pp | 0pp |
-| GPT-5.6 Sol @ xhigh | 61% | 61% | **0pp** | — |
-| Gemini 3.6 Flash | 30% | 22% | **−8pp** | −12pp |
+| GPT-5.6 Sol · medium | 48% | 56% | **+8pp** | +7pp |
+| Claude Opus 5 · high | 16% | 18% | +2pp | 0pp |
+| GPT-5.6 Sol · xhigh | 61% | 61% | **0pp** | — |
+| Gemini 3.6 Flash · medium | 30% | 22% | **−8pp** | −12pp |
 
 Replicates the pilot within 1–4 points at four times the sample. Disclosure
 **redistributes rather than lifts**: GPT gains roughly what Gemini loses and the
@@ -141,11 +141,11 @@ attempts already buy:
 
 | Model | Solved ≤4 | Any-of-8 baseline | Mean turns to solve |
 |---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 85% | 82% | 1.3 |
-| GPT-5.6 Sol @ medium | 70% | 72% | 1.2 |
-| Gemini 3.6 Flash | 32% | 38% | 1.2 |
-| Kimi K3 | 31% | 32% | 1.9 |
-| Claude Opus 5 | 24% | 22% | 1.7 |
+| GPT-5.6 Sol · xhigh | 85% | 82% | 1.3 |
+| GPT-5.6 Sol · medium | 70% | 72% | 1.2 |
+| Gemini 3.6 Flash · medium | 32% | 38% | 1.2 |
+| Kimi K3 · high | 31% | 32% | 1.9 |
+| Claude Opus 5 · high | 24% | 22% | 1.7 |
 
 That comparison flatters feedback, because most episodes are solved on turn 1
 and never use it. The actual test restricts to episodes whose first turn
@@ -156,11 +156,11 @@ All 250 episodes, bootstrap CI over episodes:
 
 | Model | Failed turn 1 | Rescued | Rescue rate | Blind retry | Delta | 95% CI |
 |---|---|---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 20 | 12 | 60% | 63% | −3pp | [40, 80] |
-| GPT-5.6 Sol @ medium | 20 | 5 | 25% | 48% | **−24pp** | [5, 45] |
-| Gemini 3.6 Flash | 37 | 3 | 8% | 24% | **−16pp** | [0, 19] |
-| Kimi K3 | 42 | 5 | 12% | 18% | −6pp | [2, 21] |
-| Claude Opus 5 | 44 | 4 | 9% | 14% | −5pp | [2, 18] |
+| GPT-5.6 Sol · xhigh | 20 | 12 | 60% | 63% | −3pp | [40, 80] |
+| GPT-5.6 Sol · medium | 20 | 5 | 25% | 48% | **−24pp** | [5, 45] |
+| Gemini 3.6 Flash · medium | 37 | 3 | 8% | 24% | **−16pp** | [0, 19] |
+| Kimi K3 · high | 42 | 5 | 12% | 18% | −6pp | [2, 21] |
+| Claude Opus 5 · high | 44 | 4 | 9% | 14% | −5pp | [2, 18] |
 
 **No model benefits from seeing its own failed path.** The strongest
 configuration is statistically indistinguishable from a blind retry — its

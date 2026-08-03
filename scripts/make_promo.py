@@ -39,9 +39,10 @@ MONO = "/System/Library/Fonts/Menlo.ttc"
 HELV = "/System/Library/Fonts/HelveticaNeue.ttc"
 
 NAMES = {
-    "gpt-xhigh": "GPT-5.6 SOL · XHIGH", "openai": "GPT-5.6 SOL",
-    "gemini": "GEMINI 3.6 FLASH", "kimi": "KIMI K3",
-    "anthropic": "CLAUDE OPUS 5", "muse-spark": "MUSE SPARK 1.1", "inkling": "INKLING",
+    "gpt-xhigh": "GPT-5.6 SOL · XHIGH", "openai": "GPT-5.6 SOL · MEDIUM",
+    "gemini": "GEMINI 3.6 FLASH · MEDIUM", "kimi": "KIMI K3 · HIGH",
+    "anthropic": "CLAUDE OPUS 5 · HIGH", "muse-spark": "MUSE SPARK 1.1 · MEDIUM",
+    "inkling": "INKLING · DEFAULT",
 }
 
 

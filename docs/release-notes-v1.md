@@ -23,12 +23,12 @@ fails 39% of the time.
 | Model | pass@1 | pass@8 |
 |---|---|---|
 | GPT-5.6 Sol · xhigh | 60.6% | 86% |
-| GPT-5.6 Sol | 48.4% | 74% |
-| Gemini 3.6 Flash | 29.8% | 46% |
-| Kimi K3 | 20.6% | 38% |
-| Claude Opus 5 | 16.4% | 26% |
-| Muse Spark 1.1 | 6.0% | 14% |
-| Inkling | 0.0% | 0% |
+| GPT-5.6 Sol · medium | 48.4% | 74% |
+| Gemini 3.6 Flash · medium | 29.8% | 46% |
+| Kimi K3 · high | 20.6% | 38% |
+| Claude Opus 5 · high | 16.4% | 26% |
+| Muse Spark 1.1 · medium | 6.0% | 14% |
+| Inkling · default | 0.0% | 0% |
 
 - Test-time compute is not a portable knob: the same effort ladder scales GPT
   (+37pp), steps once for Gemini, and does nothing for Claude or Kimi.

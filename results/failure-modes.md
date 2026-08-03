@@ -163,13 +163,13 @@ uv run mazerunner failuremodes
 
 | Model | cut wall | clearance | wrong start | fig/ground | no percept | satisfice | analytic | graph |
 |---|---|---|---|---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 36% | **30%** | 4% | 6% | 5% | 5% | 9% | 2% |
-| GPT-5.6 Sol @ medium | 44% | **30%** | 6% | 6% | 8% | 1% | 3% | 1% |
-| Gemini 3.6 Flash | **63%** | 10% | 0% | 1% | 0% | 1% | 3% | 4% |
-| Kimi K3 | 4% | 0% | 1% | 25% | 0% | **35%** | 11% | 14% |
-| Claude Opus 5 | **58%** | 8% | 0% | 2% | 8% | 9% | 12% | 2% |
-| Muse Spark 1.1 | 41% | 3% | 12% | 1% | **28%** | 0% | 1% | 12% |
-| Inkling | 34% | 0% | **41%** | 22% | 0% | 0% | 0% | 0% |
+| GPT-5.6 Sol · xhigh | 36% | **30%** | 4% | 6% | 5% | 5% | 9% | 2% |
+| GPT-5.6 Sol · medium | 44% | **30%** | 6% | 6% | 8% | 1% | 3% | 1% |
+| Gemini 3.6 Flash · medium | **63%** | 10% | 0% | 1% | 0% | 1% | 3% | 4% |
+| Kimi K3 · high | 4% | 0% | 1% | 25% | 0% | **35%** | 11% | 14% |
+| Claude Opus 5 · high | **58%** | 8% | 0% | 2% | 8% | 9% | 12% | 2% |
+| Muse Spark 1.1 · medium | 41% | 3% | 12% | 1% | **28%** | 0% | 1% | 12% |
+| Inkling · default | 34% | 0% | **41%** | 22% | 0% | 0% | 0% | 0% |
 
 This is the most model-specific result in the study. The same benchmark elicits
 categorically different failures:

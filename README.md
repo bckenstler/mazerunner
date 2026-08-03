@@ -25,13 +25,13 @@ contamination auditing.)
 
 | Model | pass@1 | 95% CI | pass@8 | Route progress |
 |---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
-| GPT-5.6 Sol @ medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
-| Gemini 3.6 Flash | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
-| Kimi K3 | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
-| Claude Opus 5 | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
-| Muse Spark 1.1 | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
-| Inkling | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
+| GPT-5.6 Sol · xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
+| GPT-5.6 Sol · medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
+| Gemini 3.6 Flash · medium | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
+| Kimi K3 · high | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
+| Claude Opus 5 · high | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
+| Muse Spark 1.1 · medium | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
+| Inkling · default | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
 
 Findings that survived the ablations (details and caveats in
 [STUDY.md](STUDY.md)):

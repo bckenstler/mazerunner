@@ -33,9 +33,10 @@ DIM = "#6E7A8C"
 GRID = "#1A2030"
 
 NAMES = {
-    "gpt-xhigh": "GPT-5.6 Sol · xhigh", "openai": "GPT-5.6 Sol",
-    "gemini": "Gemini 3.6 Flash", "kimi": "Kimi K3",
-    "anthropic": "Claude Opus 5", "muse-spark": "Muse Spark 1.1", "inkling": "Inkling",
+    "gpt-xhigh": "GPT-5.6 Sol · xhigh", "openai": "GPT-5.6 Sol · medium",
+    "gemini": "Gemini 3.6 Flash · medium", "kimi": "Kimi K3 · high",
+    "anthropic": "Claude Opus 5 · high", "muse-spark": "Muse Spark 1.1 · medium",
+    "inkling": "Inkling · default",
 }
 ORDER = ["gpt-xhigh", "openai", "gemini", "kimi", "anthropic", "muse-spark", "inkling"]
 
@@ -299,8 +300,8 @@ def fig_variance():
 
 def fig_dimensions():
     """Paired delta chart: what disclosing the canvas size does per model."""
-    data = [("GPT-5.6 Sol", 48, 56, 7), ("Claude Opus 5", 16, 18, 0),
-            ("GPT-5.6 Sol · xhigh", 61, 61, None), ("Gemini 3.6 Flash", 30, 22, -12)]
+    data = [("GPT-5.6 Sol · medium", 48, 56, 7), ("Claude Opus 5 · high", 16, 18, 0),
+            ("GPT-5.6 Sol · xhigh", 61, 61, None), ("Gemini 3.6 Flash · medium", 30, 22, -12)]
     fig, ax = plt.subplots(figsize=(8.4, 4.2))
     y = np.arange(len(data))
     for i, (name, frozen, disclosed, pilot) in enumerate(data):
@@ -377,7 +378,7 @@ def fig_regression():
     groups = [
         ("All models pooled", rows, WHITE),
         ("GPT-5.6 Sol · xhigh", [r for r in rows if r["provider"] == "gpt-xhigh"], CYAN),
-        ("Gemini 3.6 Flash", [r for r in rows if r["provider"] == "gemini"], AMBER),
+        ("Gemini 3.6 Flash · medium", [r for r in rows if r["provider"] == "gemini"], AMBER),
     ]
     FEATS = [("normalized_length", "route length"), ("turns", "turns"),
              ("route_branches", "branches"), ("min_clearance_px", "corridor width")]
@@ -433,7 +434,7 @@ def fig_response():
     }
     groups = [("All models", None, "#A8B2C4"),
               ("GPT-5.6 Sol · xhigh", "gpt-xhigh", CYAN),
-              ("Gemini 3.6 Flash", "gemini", AMBER)]
+              ("Gemini 3.6 Flash · medium", "gemini", AMBER)]
 
     # per-group task-level pass rates
     per = {}

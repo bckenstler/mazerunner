@@ -8,13 +8,13 @@ model comparisons are paired per task.
 
 | Model | pass@1 | 95% CI | pass@8 | Route progress |
 |---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
-| GPT-5.6 Sol @ medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
-| Gemini 3.6 Flash | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
-| Kimi K3 | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
-| Claude Opus 5 | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
-| Muse Spark 1.1 | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
-| Inkling | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
+| GPT-5.6 Sol · xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
+| GPT-5.6 Sol · medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
+| Gemini 3.6 Flash · medium | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
+| Kimi K3 · high | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
+| Claude Opus 5 · high | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
+| Muse Spark 1.1 · medium | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
+| Inkling · default | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
 
 ## Paired comparisons (adjacent ranks)
 
@@ -34,13 +34,13 @@ the start badge. One that confabulates snaps to round numbers and misses it.
 
 | Model | On 0.01 grid | Start error p50 | p90 |
 |---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 8.7% | 1.3px | 15px |
-| GPT-5.6 Sol @ medium | 11.5% | 1.3px | 11px |
-| Gemini 3.6 Flash | 38.9% | 2.1px | 4px |
-| Kimi K3 | 19.7% | 1.8px | 3px |
-| Claude Opus 5 | 27.3% | 2.1px | 7px |
-| Muse Spark 1.1 | 19.2% | 8.2px | 30px |
-| Inkling | 67.9% | 24.7px | 77px |
+| GPT-5.6 Sol · xhigh | 8.7% | 1.3px | 15px |
+| GPT-5.6 Sol · medium | 11.5% | 1.3px | 11px |
+| Gemini 3.6 Flash · medium | 38.9% | 2.1px | 4px |
+| Kimi K3 · high | 19.7% | 1.8px | 3px |
+| Claude Opus 5 · high | 27.3% | 2.1px | 7px |
+| Muse Spark 1.1 · medium | 19.2% | 8.2px | 30px |
+| Inkling · default | 67.9% | 24.7px | 77px |
 
 ## Tolerance-curve rank stability
 
@@ -50,13 +50,13 @@ whether the ranking is a property of the models or of that constant.
 
 | Model | r=1 | r=2 | r=3 | r=5 | r=8 |
 |---|---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | 68.4% | 65.5% | 60.6% | 48.9% | 31.4% |
-| GPT-5.6 Sol @ medium | 55.9% | 53.4% | 48.4% | 38.8% | 26.8% |
-| Gemini 3.6 Flash | 33.2% | 31.1% | 29.8% | 22.0% | 12.9% |
-| Kimi K3 | 22.6% | 22.1% | 20.6% | 15.5% | 8.2% |
-| Claude Opus 5 | 20.4% | 17.8% | 16.4% | 12.1% | 6.0% |
-| Muse Spark 1.1 | 7.1% | 6.6% | 6.0% | 5.1% | 3.6% |
-| Inkling | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
+| GPT-5.6 Sol · xhigh | 68.4% | 65.5% | 60.6% | 48.9% | 31.4% |
+| GPT-5.6 Sol · medium | 55.9% | 53.4% | 48.4% | 38.8% | 26.8% |
+| Gemini 3.6 Flash · medium | 33.2% | 31.1% | 29.8% | 22.0% | 12.9% |
+| Kimi K3 · high | 22.6% | 22.1% | 20.6% | 15.5% | 8.2% |
+| Claude Opus 5 · high | 20.4% | 17.8% | 16.4% | 12.1% | 6.0% |
+| Muse Spark 1.1 · medium | 7.1% | 6.6% | 6.0% | 5.1% | 3.6% |
+| Inkling · default | 0.0% | 0.0% | 0.0% | 0.0% | 0.0% |
 
 **The ranking is identical at every tolerance**, with no inversions anywhere
 between 1px and 8px. The leaderboard is not an artifact of the chosen radius.
@@ -96,13 +96,13 @@ publish a price for are marked unpriced rather than estimated.
 
 | Model | Passes | Output tok/attempt | Mean latency | Total cost | Cost per solve |
 |---|---|---|---|---|---|
-| GPT-5.6 Sol @ medium | 387 | 2,542 | 54s | $66 | **$0.17** |
-| GPT-5.6 Sol @ xhigh | 485 | 5,746 | 131s | $142 | $0.29 |
-| Gemini 3.6 Flash | 238 | 8,831 | 45s | $72 | $0.30 |
-| Claude Opus 5 | 131 | 5,522 | 93s | $117 | $0.89 |
-| Kimi K3 | 165 | 9,662 | 198s | unpriced | — |
-| Muse Spark 1.1 | 48 | 5,863 | 38s | unpriced | — |
-| Inkling | 0 | 1,042 | 7s | unpriced | — |
+| GPT-5.6 Sol · medium | 387 | 2,542 | 54s | $66 | **$0.17** |
+| GPT-5.6 Sol · xhigh | 485 | 5,746 | 131s | $142 | $0.29 |
+| Gemini 3.6 Flash · medium | 238 | 8,831 | 45s | $72 | $0.30 |
+| Claude Opus 5 · high | 131 | 5,522 | 93s | $117 | $0.89 |
+| Kimi K3 · high | 165 | 9,662 | 198s | unpriced | — |
+| Muse Spark 1.1 · medium | 48 | 5,863 | 38s | unpriced | — |
+| Inkling · default | 0 | 1,042 | 7s | unpriced | — |
 
 **GPT at medium is the efficiency winner at $0.17 per solved maze**; the
 ceiling arm buys 12 more points for 1.7× the cost per solve. Opus costs 5×

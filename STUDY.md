@@ -105,13 +105,13 @@ still missing is listed in the run manifest.
 
 | Model | pass@1 | 95% CI | pass@8 | Route progress |
 |---|---|---|---|---|
-| GPT-5.6 Sol @ xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
-| GPT-5.6 Sol @ medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
-| Gemini 3.6 Flash | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
-| Kimi K3 | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
-| Claude Opus 5 | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
-| Muse Spark 1.1 | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
-| Inkling | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
+| GPT-5.6 Sol · xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
+| GPT-5.6 Sol · medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
+| Gemini 3.6 Flash · medium | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
+| Kimi K3 · high | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
+| Claude Opus 5 · high | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
+| Muse Spark 1.1 · medium | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
+| Inkling · default | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
 
 Adjacent ranks separate on paired tests except **Kimi K3 vs Claude Opus 5**
 (+4.2pp, CI spans zero, p=0.25) — those two are tied on pass@1, though McNemar
@@ -190,9 +190,9 @@ verdicts with their evidence are in `results/failure-modes.jsonl`.
 |---|---|
 | GPT (both configs) | **Clearance, 30%** — centreline legal the entire way; the swept pointer still clips a wall |
 | Gemini · Opus | **Wall-cutting, 63% / 58%** — commit to a route and drive it through a barrier |
-| Kimi K3 | **Satisficing, 35%** — states the path is approximate, submits anyway. Only 4% wall cuts |
+| Kimi K3 · high | **Satisficing, 35%** — states the path is approximate, submits anyway. Only 4% wall cuts |
 | Muse Spark | **Never looked, 28%** — traces with no coordinate, colour, or spatial reference at all |
-| Inkling | **Entry-point failure** — 41% wrong start, 22% figure–ground inversion |
+| Inkling · default | **Entry-point failure** — 41% wrong start, 22% figure–ground inversion |
 
 Some individual traces are worth reading in full. GPT-5.6 Sol talking itself
 into an impossible route:

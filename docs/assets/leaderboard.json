@@ -11,7 +11,7 @@
   },
   {
     "id": "openai",
-    "name": "GPT-5.6 Sol",
+    "name": "GPT-5.6 Sol \u00b7 medium",
     "pass1": 48.4,
     "ci": [
       40.6,
@@ -21,7 +21,7 @@
   },
   {
     "id": "gemini",
-    "name": "Gemini 3.6 Flash",
+    "name": "Gemini 3.6 Flash \u00b7 medium",
     "pass1": 29.8,
     "ci": [
       22.2,
@@ -31,7 +31,7 @@
   },
   {
     "id": "kimi",
-    "name": "Kimi K3",
+    "name": "Kimi K3 \u00b7 high",
     "pass1": 20.6,
     "ci": [
       14.6,
@@ -41,7 +41,7 @@
   },
   {
     "id": "anthropic",
-    "name": "Claude Opus 5",
+    "name": "Claude Opus 5 \u00b7 high",
     "pass1": 16.4,
     "ci": [
       10.2,
@@ -51,7 +51,7 @@
   },
   {
     "id": "muse-spark",
-    "name": "Muse Spark 1.1",
+    "name": "Muse Spark 1.1 \u00b7 medium",
     "pass1": 6.0,
     "ci": [
       2.8,
@@ -61,7 +61,7 @@
   },
   {
     "id": "inkling",
-    "name": "Inkling",
+    "name": "Inkling \u00b7 default",
     "pass1": 0.0,
     "ci": [
       0.0,
