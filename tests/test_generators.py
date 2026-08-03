@@ -1,3 +1,5 @@
+"""Generators are deterministic, fail closed, and produce scorable routes."""
+
 import numpy as np
 import pytest
 

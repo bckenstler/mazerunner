@@ -1,9 +1,12 @@
+"""Submission validation — every way a malformed path must be rejected."""
+
 import math
 
 from mazerunner.contract import MAX_POINTS, validate_submission
 
 
 def ok_points(n):
+    """A valid n-point submission — the baseline each rejection test perturbs."""
     return {"points": [{"x": 0.1 + 0.001 * i, "y": 0.5} for i in range(n)]}
 
 

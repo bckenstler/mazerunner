@@ -1,3 +1,5 @@
+"""The mask-certified optimum: shortest, legal, and never beatable."""
+
 import math
 
 import numpy as np

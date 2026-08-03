@@ -29,6 +29,7 @@ const state = {
 
 /* ---------------- data ---------------- */
 
+// Load the manifest, populate the filter rail, and restore any deep link.
 async function boot() {
   state.manifest = await (await fetch(`${DATA}/index.json`)).json();
   const families = new Set(), modes = new Set();
@@ -41,6 +42,9 @@ async function boot() {
     el.addEventListener("change", applyFilters);
   applyFilters();
   const hash = location.hash.slice(1);
+  // Deep links read provider/maze/trial, but attempt keys are joined with
+  // "--" because maze ids themselves contain no slashes and a "/" in the
+  // fragment would look like a path to anything parsing the URL.
   if (hash) selectByKey(hash.replaceAll("/", "--"));
 }
 
@@ -52,6 +56,7 @@ function fill(sel, pairs) {
   }
 }
 
+// Re-filter the attempt list from the rail's current selections.
 function applyFilters() {
   const model = $("f-model").value, outcome = $("f-outcome").value;
   const family = $("f-family").value, tier = $("f-tier").value;
@@ -94,11 +99,14 @@ function renderList() {
 const modelName = (p) =>
   state.manifest.models.find((m) => m.id === p)?.name ?? p;
 
+// Select an attempt by its manifest key, ignoring keys not in the manifest.
 function selectByKey(key) {
   const a = state.manifest.attempts.find((x) => x.k === key);
   if (a) select(a);
 }
 
+// Lazy-load one attempt's payload and its task, then reset the replay.
+// Only the manifest is eager; the 5,594 attempt files are 56MB together.
 async function select(a) {
   state.selected = a;
   location.hash = a.k.replaceAll("--", "/");
@@ -126,12 +134,14 @@ const loadImage = (src) => new Promise((ok, err) => {
 
 /* ---------------- geometry ---------------- */
 
+// The submitted path in task-pixel space — the space all drawing happens in.
 function pointsPx() {
   const { task, attempt } = state;
   const pts = attempt?.submission?.points ?? [];
   return pts.map((p) => [p.x * (task.width - 1), p.y * (task.height - 1)]);
 }
 
+// Running arclength along the polyline, so playback is distance-paced.
 function cumulative(pts) {
   const out = [0];
   for (let i = 1; i < pts.length; i++)
@@ -161,6 +171,7 @@ function walk(pts, lens, frac) {
 
 /* ---------------- drawing ---------------- */
 
+// Redraw everything for the current frame: image, overlays, path, markers.
 function draw() {
   const cv = $("cv"), { task } = state;
   if (!task) return;
@@ -253,6 +264,7 @@ function dot(ctx, x, y, r, style) {
 
 /* ---------------- side panel ---------------- */
 
+// Fill the trace panel: verdict chips, failure mode, reasoning, usage.
 function renderSide() {
   const a = state.attempt, ev = a.evaluation || {}, d = a.derived || {};
   $("v-title").textContent = `${modelName(a.provider)} · ${a.maze}`;
@@ -291,6 +303,8 @@ function renderSide() {
 
 /* ---------------- controls ---------------- */
 
+// Animation frame: advance by drag distance rather than by point index, so
+// a densely-sampled path does not replay faster than a sparse one.
 function tick(ts) {
   if (!state.playing) return;
   const total = state.lengths?.[state.lengths.length - 1] || 1;

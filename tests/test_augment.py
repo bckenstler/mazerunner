@@ -1,3 +1,5 @@
+"""Augmentation preserves ground truth: a transformed world still validates."""
+
 import numpy as np
 
 from mazerunner.augment import apply_augmentation, sample_augmentation

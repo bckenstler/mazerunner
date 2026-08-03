@@ -1,3 +1,5 @@
+"""The scorer, against paths built to slip past a naive implementation."""
+
 import numpy as np
 
 from mazerunner.evaluator import evaluate
@@ -7,6 +9,7 @@ HALF = 7  # corridor half-width in px; pointer radius 3 leaves 4px of slack
 
 
 def norm(x_px, y_px):
+    """Pixel to normalized coordinates, so fixtures can be written in pixels."""
     return {"x": x_px / (SIZE - 1), "y": y_px / (SIZE - 1)}
 
 
@@ -26,6 +29,7 @@ U_REFERENCE_LEN = 480.0  # 160 + 160 + 160 along the corridor centerline
 
 
 def run(mask, points, reference_length=U_REFERENCE_LEN, start=(20, 20), goal=(180, 20)):
+    """Score points against a mask with the U-corridor's endpoints by default."""
     return evaluate(
         {"points": points},
         mask,
