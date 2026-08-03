@@ -24,6 +24,12 @@ DEFAULT_TIER_TARGETS = {"easy": 30, "medium": 40, "hard": 30}
 
 @dataclass(frozen=True)
 class SelectionSpec:
+    """The constraints a frozen subset must satisfy.
+
+    Stored in the selection manifest beside the task list, so a subset can be
+    re-derived and audited rather than taken on trust.
+    """
+
     size: int = 100
     per_family_min: int = 12
     per_family_max: int = 13
@@ -49,6 +55,7 @@ def read_task_list(path: Path) -> list[str]:
 
 
 def write_task_list(path: Path, task_ids: list[str]) -> None:
+    """One task id per line — the frozen-subset format read by --mazes-file."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text("\n".join(task_ids) + "\n")
 

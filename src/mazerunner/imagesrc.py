@@ -28,6 +28,14 @@ RESAMPLE = {"lanczos": Image.LANCZOS, "nearest": Image.NEAREST, "bicubic": Image
 
 @dataclass(frozen=True)
 class ImageSpec:
+    """Which image a run actually sends, for the perception ablations.
+
+    "real" is the benchmark; "blank" and "mismatched" are the controls that
+    establish the score floor, and "rescale" resends the same maze at another
+    resolution. Validated on construction, so an impossible combination
+    (rescale at 1.0x) fails at configuration rather than mid-run.
+    """
+
     mode: str = "real"
     scale: float = 1.0
     resample: str = "lanczos"

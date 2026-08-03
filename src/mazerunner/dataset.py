@@ -353,6 +353,12 @@ def build_split(
 
 
 def build_all(config_path: Path, workers: int = 8, splits: list[str] | None = None) -> dict:
+    """Build the splits named in the config (all of them by default).
+
+    Splits share one dedup registry, and any split already on disk that is not
+    being rebuilt is loaded into it first — otherwise a partial rebuild could
+    mint a task identical to one in a split it is supposed to be disjoint from.
+    """
     config = json.loads(config_path.read_text())
     out_dir = Path(config["out_dir"])
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -463,10 +469,12 @@ def rebuild_from_provenance(prov: dict):
 
 
 def supports_archetype(archetype_name: str, family: str) -> bool:
+    """Whether an archetype claims this topology family."""
     return _supports(archetype_name, family)
 
 
 def split_stats(out_dir: Path, split_name: str) -> dict:
+    """Coverage counts for one split: family x archetype x tier."""
     index = out_dir / split_name / "index.jsonl"
     rows = [json.loads(line) for line in index.read_text().splitlines()]
     coverage: dict[str, Counter] = {}
@@ -491,6 +499,11 @@ def split_stats(out_dir: Path, split_name: str) -> dict:
 
 
 def qc_sheet(out_dir: Path, split_name: str, count: int, seed: int = 0) -> Path:
+    """Contact sheet of `count` sampled tasks, for eyeballing a built split.
+
+    Certification is automated and fail-closed; this is the human check that
+    the tasks also *look* like the benchmark they claim to be.
+    """
     from PIL import Image, ImageDraw, ImageFont
 
     index = out_dir / split_name / "index.jsonl"

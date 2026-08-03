@@ -21,6 +21,9 @@ MAZES_DIR = Path("mazes")
 
 
 def build_family(name: str):
+    """Build one family's default task end to end: world, mask, validation,
+    render, style record. The smoke-set path — the dataset pipeline drives the
+    same steps with sampled parameters."""
     module = FAMILIES[name]
     world = module.build()
     mask = open_mask(world)

@@ -23,6 +23,7 @@ KEEP = (
 
 
 def load_index(dataset_dir: Path) -> dict[str, dict]:
+    """task_id -> its dataset index row (family, archetype, tier, measures)."""
     return {
         json.loads(line)["task_id"]: json.loads(line)
         for line in (Path(dataset_dir) / "index.jsonl").read_text().splitlines()

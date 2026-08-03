@@ -24,6 +24,11 @@ def render_overlay(
     success: bool,
     collision_px: tuple[float, float] | None = None,
 ) -> Image.Image:
+    """Draw a submitted path over the maze, marking the first collision.
+
+    This is the image the model sees on a feedback retry, so it may show only
+    what its own attempt revealed — never the reference route.
+    """
     img = base.convert("RGB").copy()
     draw = ImageDraw.Draw(img)
     color = GREEN if success else RED

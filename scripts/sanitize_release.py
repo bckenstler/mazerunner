@@ -38,6 +38,11 @@ EXEMPT = {"scripts/sanitize_release.py", "scripts/build_release_assets.py"}
 
 
 def main() -> int:
+    """Fail if any tracked file mentions an internal host, route, or path.
+
+    Site-specific patterns live in an untracked .release-scrub.json so this
+    gate can be public without the markers it hunts for being published in it.
+    """
     tracked = subprocess.run(
         ["git", "ls-files"], capture_output=True, text=True, check=True
     ).stdout.splitlines()

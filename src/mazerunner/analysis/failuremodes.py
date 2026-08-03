@@ -116,6 +116,14 @@ PERCEPTUAL = (
 
 @dataclass
 class Verdict:
+    """One attempt's classification: the mode, plus what justified it.
+
+    `evidence` carries the trace quote and the reason, and `measures` the
+    geometry that corroborated it, so every verdict in
+    results/failure-modes.jsonl can be audited without re-running the
+    classifier.
+    """
+
     primary: str = "unclassified"
     secondary: list[str] = field(default_factory=list)
     evidence: dict = field(default_factory=dict)
@@ -201,6 +209,12 @@ def geometry_measures(task: dict, mask: np.ndarray, points: list[tuple[float, fl
 
 
 def lexical_hits(trace: str | None) -> dict[str, list[str]]:
+    """mode -> matched phrases in the model's own reasoning.
+
+    Lexical evidence alone never decides a verdict: a model claiming it
+    verified the route is a claim, not a fact, so `classify` requires geometry
+    to agree before it assigns the mode.
+    """
     if not trace:
         return {}
     low = trace.lower()
@@ -215,6 +229,12 @@ def lexical_hits(trace: str | None) -> dict[str, list[str]]:
 
 
 def has_perceptual_content(trace: str | None) -> bool:
+    """Whether the trace mentions anything it could only have seen.
+
+    Separates a trace that is uninformative from one that is absent — a model
+    that reasons at length without ever referring to the image is a finding,
+    not missing data.
+    """
     if not trace:
         return False
     return any(re.search(p, trace.lower()) for p in PERCEPTUAL)

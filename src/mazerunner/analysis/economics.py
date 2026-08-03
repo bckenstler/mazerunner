@@ -30,6 +30,11 @@ def normalize_usage(usage: dict | None) -> tuple[int, int]:
 
 
 def load_pricing(path: Path = Path("pricing.json")) -> dict:
+    """model -> per-token prices, or {} when no pricing file is present.
+
+    Missing pricing degrades to token and latency reporting rather than
+    failing: prices go stale and are not part of the benchmark.
+    """
     if not path.exists():
         return {}
     return json.loads(path.read_text()).get("models", {})

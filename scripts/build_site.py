@@ -42,6 +42,9 @@ FIGURES = [
 
 
 def main() -> int:
+    """Rebuild the landing page's data: leaderboard computed from the merged
+    run (never hand-typed, so the page cannot drift from the results), plus
+    figure and video copies."""
     rows = load_attempts(
         [ROOT / "results/main/merged/attempts.jsonl"], ROOT / "datasets/v1/dev"
     )

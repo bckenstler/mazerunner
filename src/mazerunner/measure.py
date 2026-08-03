@@ -21,6 +21,12 @@ BRANCH_CAP = 15  # raster worlds have hundreds of micro-junctions; cap their wei
 
 
 def turn_count(points: list[tuple[float, float]], angle_deg: float = TURN_ANGLE_DEG) -> int:
+    """Direction changes of at least `angle_deg` along a polyline.
+
+    A threshold rather than every vertex: densified curves have hundreds of
+    tiny deflections, and counting those would make a smooth arc look like the
+    hardest maze in the set.
+    """
     turns = 0
     for a, b, c in zip(points, points[1:], points[2:]):
         v1 = (b[0] - a[0], b[1] - a[1])
@@ -42,6 +48,13 @@ def route_branches(world: World) -> int:
 
 
 def measure_task(world: World, validation: WorldValidation) -> dict:
+    """Measured difficulty of a built task, including its tier.
+
+    The score combines normalized route length, turns, and capped branches;
+    the bands are in TIER_BANDS. Branches are capped because raster worlds
+    have hundreds of micro-junctions that would otherwise swamp the other two
+    terms.
+    """
     diagonal = math.hypot(world.width, world.height)
     norm_length = validation.geodesic_length_px / diagonal
     turns = turn_count(validation.geodesic_points_px)

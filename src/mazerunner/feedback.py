@@ -163,6 +163,11 @@ def episode_summary(rows: list[dict]) -> dict:
 
 
 def write_episodes(rows: list[dict], summaries: list[dict], out_dir: Path) -> None:
+    """Append episodes and their summaries, flushing each line.
+
+    Appending and flushing per row means a run killed partway keeps every
+    episode it already paid for.
+    """
     out_dir.mkdir(parents=True, exist_ok=True)
     with (out_dir / "episodes.jsonl").open("a") as handle:
         for row in rows:

@@ -82,6 +82,9 @@ def localization_error(rows: list[dict], tasks: dict[str, dict]) -> dict[str, li
 
 
 def percentiles(values: list[float], points=(50, 75, 90, 95)) -> dict[int, float]:
+    """Nearest-rank percentiles. Empty input yields NaN rather than raising,
+    so a provider with no usable rows reports blank instead of killing the
+    whole table."""
     if not values:
         return {p: float("nan") for p in points}
     ordered = sorted(values)

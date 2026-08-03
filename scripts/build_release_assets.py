@@ -50,6 +50,12 @@ if _local.exists():
 
 
 def scrub_row(row: dict) -> dict:
+    """Rewrite gateway route prefixes to public model names in one row.
+
+    The study ran through a gateway whose route strings name internal
+    deployments; the published traces carry public model ids instead, and the
+    mapping ships inside each tarball so the rewrite is auditable.
+    """
     for field in SCRUB_FIELDS:
         value = row.get(field)
         if isinstance(value, str):
@@ -65,6 +71,8 @@ def scrub_row(row: dict) -> dict:
 
 
 def scrub_jsonl(src: Path, dst: Path) -> int:
+    """Scrub a whole trace file, then verify: any forbidden marker surviving
+    into the output aborts the build rather than shipping."""
     count = 0
     with src.open() as fin, dst.open("w") as fout:
         for line in fin:
@@ -83,6 +91,8 @@ def scrub_jsonl(src: Path, dst: Path) -> int:
 
 
 def tar_of(name: str, members: list[tuple[Path, str]], readme: str) -> Path:
+    """Package members into a release tarball with its own README, so an
+    extracted archive explains itself without the repo."""
     out = OUT / name
     with tempfile.TemporaryDirectory() as tmp:
         readme_path = Path(tmp) / "README.md"
@@ -112,6 +122,8 @@ License: MIT.
 
 
 def main() -> int:
+    """Build every release tarball and its checksums. --hidden additionally
+    packages the encrypted hidden split; the key is never written here."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--hidden", action="store_true", help="also package the encrypted hidden split")
     args = parser.parse_args()

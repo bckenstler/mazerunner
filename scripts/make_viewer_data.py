@@ -34,6 +34,7 @@ NAMES = {
 
 
 def main() -> int:
+    """Emit the viewer's static data tree and assert it fits the Pages budget."""
     attempts_path = ROOT / "results/main/merged/attempts.jsonl"
     modes_path = ROOT / "results/failure-modes.jsonl"
     index_path = ROOT / "datasets/v1/dev/index.jsonl"
