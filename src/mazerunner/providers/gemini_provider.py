@@ -47,6 +47,12 @@ def parse_response(response) -> tuple[dict | None, str | None]:
 
 
 class GeminiProvider:
+    """Google Gen AI SDK with function-calling mode ANY.
+
+    Timeouts go over the wire in **milliseconds** here while every other
+    adapter uses seconds — passing seconds through would be a 1000x error that
+    silently disables the timeout (tests/test_client_config.py pins it).
+    """
     name = NAME
     env_key = ENV_KEY
 

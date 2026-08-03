@@ -79,6 +79,12 @@ def extract_reasoning(completion) -> str | None:
 
 
 class OpenAICompatProvider:
+    """Chat-completions adapter for any OpenAI-compatible gateway.
+
+    Tool-call support varies across these endpoints far more than the shared
+    schema suggests, so responses are normalized defensively rather than
+    trusted to match the first-party shape.
+    """
     def __init__(
         self,
         model: str,

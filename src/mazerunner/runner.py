@@ -162,8 +162,8 @@ def shard(units: list[AttemptUnit], index: int, count: int) -> list[AttemptUnit]
 def completed_keys(attempts_path: Path) -> set[tuple]:
     """(provider, task_id, trial) already *answered*, for --resume.
 
-    Transport failures are deliberately not counted: §3 requeues them once, so
-    a resumed shard replays exactly those units. The merge prefers the
+    Transport failures are deliberately not counted as answered: the retry
+    policy requeues them once, so a resumed shard replays exactly those units. The merge prefers the
     evaluated row over the recorded failure, so nothing is double-counted.
     """
     keys: set[tuple] = set()
@@ -233,6 +233,22 @@ def run_smoke(
     order_seed: int | None = None,
     image_spec: "ImageSpec | None" = None,
 ) -> int:
+    """Execute a live run and write its attempts, config snapshot, and summary.
+
+    A provider whose env key is unset is skipped with a message rather than
+    failing the run — a partial leg is recoverable, an aborted one wastes the
+    calls already paid for.
+
+    Work is planned first and only then sharded, so `shard_index`/`shard_count`
+    split one deterministic unit list across machines instead of each machine
+    inventing its own. `order_seed` fixes the interleaving so a rerun issues
+    calls in the same order.
+
+    `resume` skips units already *answered* in the shard's attempts file;
+    transport failures are not counted as answered, so they replay. `dry_run`
+    prints the plan and spends nothing — the cheap way to confirm a leg is
+    what you meant before it bills.
+    """
     config = json.loads(config_path.read_text())
     trial_count = trials if trials is not None else config.get("trials", 1)
 

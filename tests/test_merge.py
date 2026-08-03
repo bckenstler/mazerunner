@@ -128,7 +128,7 @@ def test_per_leg_accounting(tmp_path):
 
 
 def test_efficiency_canary_tasks_are_surfaced(tmp_path):
-    """§3 quarantines canary tasks; the merge must name them, not bury them."""
+    """Canary tasks are quarantined, not dropped; the merge must name them."""
     rows = [_row(maze="suspect", success=True, canary=True), _row(maze="fine", success=True)]
     path = _write(tmp_path / "s0" / "attempts.jsonl", rows)
 
@@ -148,7 +148,7 @@ def test_missing_units_finds_gaps(tmp_path):
 
 
 def test_transport_failures_count_as_missing(tmp_path):
-    """A recorded failure is still work owed — §3 requeues it once."""
+    """A recorded failure is still work owed — the retry policy requeues it."""
     rows = [_row(provider="a", maze="t1", trial=0, error="429")]
     merged = _write(tmp_path / "merged" / "attempts.jsonl", rows)
 

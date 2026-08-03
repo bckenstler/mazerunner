@@ -120,7 +120,8 @@ def test_completed_keys_on_missing_file(tmp_path):
 
 
 def test_transport_failures_are_replayed_on_resume(tmp_path):
-    """§3 requeues failures once; counting them as done would strand them."""
+    """The retry policy requeues failures once; counting them as done would
+    strand them."""
     path = tmp_path / "attempts.jsonl"
     path.write_text(
         json.dumps({"provider": "a", "maze": "t0", "trial": 0, "error": "transport failure: 429"})

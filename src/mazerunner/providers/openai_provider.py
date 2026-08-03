@@ -49,6 +49,8 @@ def parse_response(response) -> tuple[dict | None, str | None]:
 
 
 class OpenAIProvider:
+    """OpenAI Responses API with a forced function call. Reasoning-effort is
+    passed through per config, which is what the effort sweep varies."""
     name = NAME
     env_key = ENV_KEY
 

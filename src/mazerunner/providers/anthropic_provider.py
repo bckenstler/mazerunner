@@ -28,6 +28,8 @@ def parse_response(response) -> tuple[dict | None, str | None]:
 
 
 class AnthropicProvider:
+    """Anthropic Messages API. The tool is forced by name, so the model cannot
+    answer in prose; a turn that returns no tool call is a failed attempt."""
     name = NAME
     env_key = ENV_KEY
 

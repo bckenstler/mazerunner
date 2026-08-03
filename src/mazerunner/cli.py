@@ -1,4 +1,11 @@
-"""mazerunner CLI: generate | validate | run | dataset | archive."""
+"""The mazerunner command line.
+
+Every subcommand is a thin `cmd_*` wrapper: parse arguments, call into the
+library, print a human summary, return an exit code. Imports are deliberately
+inside each command so that `mazerunner validate` — the offline gate — never
+pays for the provider SDKs, and a missing optional dependency cannot break an
+unrelated subcommand.
+"""
 
 from __future__ import annotations
 
@@ -10,6 +17,7 @@ from pathlib import Path
 
 
 def cmd_generate(args: argparse.Namespace) -> int:
+    """Rebuild every task artifact in the smoke set from its seed."""
     from .build import build_all
 
     manifest = build_all(Path(args.mazes_dir))
@@ -23,6 +31,9 @@ def cmd_generate(args: argparse.Namespace) -> int:
 
 
 def cmd_validate(args: argparse.Namespace) -> int:
+    """The offline gate: rebuild determinism, fail-closed checks, reference
+    scoring, then the test suite. Makes no API calls, so it is safe (and
+    expected) to run before spending money on a live run."""
     from .build import validate_all
 
     print("validating: rebuild determinism, fail-closed checks, reference scoring")
@@ -43,6 +54,7 @@ def cmd_validate(args: argparse.Namespace) -> int:
 
 
 def cmd_dataset(args: argparse.Namespace) -> int:
+    """build | verify | stats | sheet over the versioned dataset."""
     from pathlib import Path
 
     from . import dataset as ds
@@ -79,10 +91,13 @@ def cmd_dataset(args: argparse.Namespace) -> int:
 
 
 def _built_splits(out_dir) -> list[str]:
+    """Split names already present on disk under `out_dir`."""
     return sorted(p.parent.name for p in out_dir.glob("*/index.jsonl"))
 
 
 def cmd_serve(args: argparse.Namespace) -> int:
+    """Serve docs/ locally so the trace viewer runs exactly as it does on
+    Pages — same static files, no build step."""
     import functools
     import http.server
 
@@ -104,6 +119,8 @@ def cmd_serve(args: argparse.Namespace) -> int:
 
 
 def cmd_failuremodes(args: argparse.Namespace) -> int:
+    """Classify why each failed attempt failed, printing the mode histogram
+    and trace-quality split. Taxonomy: results/failure-modes.md."""
     from .analysis.failuremodes import classify_run
 
     summary = classify_run(Path(args.attempts), Path(args.dataset), Path(args.out) if args.out else None)
@@ -118,6 +135,9 @@ def cmd_failuremodes(args: argparse.Namespace) -> int:
 
 
 def cmd_feedback(args: argparse.Namespace) -> int:
+    """Run closed-loop retry episodes: show a failed attempt its own path with
+    the collision marked, then let it try again. Scored on a separate
+    leaderboard — these are multi-turn and not comparable to the main run."""
     import os
 
     from .evalset import read_task_list
@@ -167,6 +187,8 @@ def cmd_feedback(args: argparse.Namespace) -> int:
 
 
 def cmd_styleswap(args: argparse.Namespace) -> int:
+    """Build same-topology, different-style variants of a task set, so style
+    can be varied with the maze held fixed."""
     from .evalset import read_task_list
     from .styleswap import build_style_swap_set
 
@@ -183,6 +205,9 @@ def cmd_styleswap(args: argparse.Namespace) -> int:
 
 
 def cmd_merge(args: argparse.Namespace) -> int:
+    """Consolidate sharded runs into one result set, reporting duplicates,
+    conflicts, and units still owed. Accepts a glob so a run split across
+    machines merges in one call."""
     from .evalset import read_task_list
     from .merge import merge_runs, missing_units, write_missing_task_list
 
@@ -236,6 +261,8 @@ def cmd_merge(args: argparse.Namespace) -> int:
 
 
 def cmd_evalset(args: argparse.Namespace) -> int:
+    """build | verify a frozen stratified task subset. The selection manifest
+    is written alongside the list so a subset can be audited, not just used."""
     from .evalset import SelectionSpec, build_eval_set, verify_eval_set
 
     out_path = Path(args.out)
@@ -279,6 +306,8 @@ def cmd_evalset(args: argparse.Namespace) -> int:
 
 
 def cmd_archive(args: argparse.Namespace) -> int:
+    """inventory | store | verify run artifacts with checksums. Nothing ships
+    without its trace, so archiving is part of the run, not cleanup."""
     from . import archive as arch
 
     results_root = Path(args.results_dir)
@@ -334,6 +363,8 @@ def cmd_archive(args: argparse.Namespace) -> int:
 
 
 def cmd_run(args: argparse.Namespace) -> int:
+    """The live run: spends money. Resolves the task list, image source, and
+    provider set, then hands off to run_smoke."""
     from .evalset import read_task_list
     from .imagesrc import spec_from_args
     from .runner import run_smoke
@@ -372,15 +403,19 @@ def cmd_run(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
+    """Parse arguments and dispatch. Each subcommand sets `func` to its
+    `cmd_*` handler; the process exit code is that handler's return."""
     parser = argparse.ArgumentParser(prog="mazerunner")
     parser.add_argument("--mazes-dir", default="mazes")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    # --- offline: build and check artifacts, no API calls ---
     sub.add_parser("generate", help="rebuild all task artifacts")
 
     validate = sub.add_parser("validate", help="offline validation; no API calls")
     validate.add_argument("--skip-tests", action="store_true")
 
+    # --- live: these spend money ---
     run = sub.add_parser("run", help="live provider smoke run (needs API keys)")
     run.add_argument("--config", default="configs/providers.example.json")
     run.add_argument("--providers", default=None, help="comma-separated subset")
@@ -417,6 +452,7 @@ def main() -> None:
         help="ablation: disclose the image's pixel dimensions in the prompt",
     )
 
+    # --- dataset and task subsets ---
     dataset = sub.add_parser("dataset", help="dataset build/verify/stats/sheet")
     dataset.add_argument("command_ds", choices=["build", "verify", "stats", "sheet"])
     dataset.add_argument("--config", default="dataset.config.json")
@@ -430,6 +466,7 @@ def main() -> None:
     serve.add_argument("--port", type=int, default=8639)
     serve.add_argument("--dir", default="docs")
 
+    # --- post-run: analysis, consolidation, archival ---
     fm = sub.add_parser("failuremodes", help="classify why each failed attempt failed")
     fm.add_argument("--attempts", default="results/main/merged/attempts.jsonl")
     fm.add_argument("--dataset", default="datasets/v1/dev")
