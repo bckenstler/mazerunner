@@ -360,6 +360,55 @@ def fig_fingerprints():
     save(fig, "09-fingerprints.png")
 
 
+def fig_regression():
+    """Forest plot of the difficulty regression: which task features predict
+    failure, per model. Computed live from the merged run with the same seed
+    and resample count as the published table — not hand-typed."""
+    import json as _json
+    from mazerunner.analysis.load import load_index
+    from mazerunner.analysis.difficulty import logistic_with_cluster_ci
+
+    rows = [r for r in load_attempts([ROOT / "results/main/merged/attempts.jsonl"],
+                                     ROOT / "datasets/v1/dev") if not r.get("error")]
+    index = load_index(ROOT / "datasets/v1/dev")
+    tasks = {tid: _json.loads((ROOT / meta["dir"] / "task.json").read_text())
+             for tid, meta in index.items()}
+
+    groups = [
+        ("All models pooled", rows, WHITE),
+        ("GPT-5.6 Sol · xhigh", [r for r in rows if r["provider"] == "gpt-xhigh"], CYAN),
+        ("Gemini 3.6 Flash", [r for r in rows if r["provider"] == "gemini"], AMBER),
+    ]
+    FEATS = [("normalized_length", "route length"), ("turns", "turns"),
+             ("route_branches", "branches"), ("min_clearance_px", "corridor width")]
+
+    fig, ax = plt.subplots(figsize=(8.6, 5.0))
+    offsets = {0: 0.26, 1: 0.0, 2: -0.26}
+    for gi, (gname, grows, colr) in enumerate(groups):
+        fit = logistic_with_cluster_ci(grows, tasks, resamples=300)
+        for fi, (key, _label) in enumerate(FEATS):
+            c = fit["coefficients"][key]
+            y = fi + offsets[gi]
+            lo, hi = c["ci"]
+            significant = not (lo < 0 < hi)
+            ax.plot([lo, hi], [y, y], color=colr, lw=2, alpha=0.85)
+            ax.scatter([c["beta"]], [y], s=70, color=colr if significant else BG,
+                       edgecolor=colr, linewidth=1.6, zorder=3)
+    ax.axvline(0, color=DIM, lw=1, ls="--", alpha=0.7)
+    ax.set_yticks(range(len(FEATS)), [label for _k, label in FEATS])
+    ax.invert_yaxis()
+    ax.set_xlabel("effect on success (log-odds per standard deviation)")
+    ax.text(0.015, 0.97, "filled = interval excludes zero",
+            transform=ax.transAxes, color=DIM, fontsize=8, ha="left", va="top")
+    handles = [plt.Line2D([], [], color=c, marker="o", lw=2, label=n)
+               for n, _r, c in groups]
+    ax.legend(handles=handles, fontsize=8, frameon=False, labelcolor=DIM,
+              loc="lower left")
+    _frame(ax, "What makes a maze hard depends on the model",
+           "harder with more turns and branches; GPT is bound only by corridor width")
+    save(fig, "12-regression.png")
+
+
 def main():
     print("figures ->", FIG)
     rows = load_attempts([ROOT / "results/main/merged/attempts.jsonl"], ROOT / "datasets/v1/dev")
@@ -372,6 +421,7 @@ def main():
     fig_feedback()
     fig_variance()
     fig_dimensions()
+    fig_regression()
     fig_fingerprints()
 
 
