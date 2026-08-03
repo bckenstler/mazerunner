@@ -6,6 +6,15 @@
 uv sync
 uv run pytest -q          # 255 tests, fully offline
 uv run mazerunner validate --skip-tests
+uv run ruff check .                          # lint + docstring presence
+uv run python scripts/check_docstrings.py    # long functions, dead doc refs
+```
+
+The repo carries a `.git-blame-ignore-revs` listing comment-only commits.
+Point git at it once so `git blame` skips them:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
 ```
 
 ## Ground rules
@@ -53,6 +62,11 @@ editing code:
   is worse than none — it dilutes the docstrings that carry real invariants.
 - Ceiling: ~8 lines per function docstring. Longer explanations belong in the
   module docstring or `docs/USAGE.md`.
+- CI enforces only what a linter can judge without taste: module, class, and
+  package docstrings must exist (`ruff`), long functions must be documented,
+  and every repo path a docstring cites must resolve
+  (`scripts/check_docstrings.py`). Nothing requires a docstring on a short
+  function — that call is yours.
 - Tests: long assertion-style names (`test_completed_keys_survives_a_truncated_
   final_line`) substitute for docstrings. A test docstring is reserved for the
   fact you can't derive from the name — why the test exists, what real mistake

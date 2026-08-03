@@ -13,6 +13,12 @@ from dataclasses import dataclass, field
 
 @dataclass
 class ProviderResponse:
+    """One provider turn, normalized across vendor dialects.
+
+    `raw` keeps the provider's own serialized response so a run can be audited
+    against what the API actually returned — nothing ships without its trace.
+    """
+
     tool_arguments: dict | None = None
     error: str | None = None  # set when no valid submit_drag_path call came back
     latency_s: float = 0.0

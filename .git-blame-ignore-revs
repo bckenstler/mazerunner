@@ -1,0 +1,13 @@
+# Commits that only add or reword comments. Skipping them keeps `git blame`
+# pointing at the change that actually wrote each line.
+#
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+# GitHub honors this file automatically.
+
+# Documentation sweep, 2026-08 — comment-only, verified by AST equivalence.
+ad09fc5eba488845b3e047b0446470059386ce0d
+fbc18bc8e3060fac22bc0c0218ece7ecae353c37
+4d7bd3ac103547130a395093b96ebf162575f4ca
+1b11132da1f4e0ba654fb2a85a516e88a59998e2
+3065a5d512dd5d7d06a2307b9f73bef0e8e12c23

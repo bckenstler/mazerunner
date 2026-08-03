@@ -36,6 +36,7 @@ mazerunner = "mazerunner.cli:main"
 dev = [
     "matplotlib>=3.11.1",
     "pytest>=8.3",
+    "ruff>=0.9",
 ]
 
 [build-system]
@@ -47,3 +48,25 @@ packages = ["src/mazerunner"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 140
+
+[tool.ruff.lint]
+# Docstring rules are deliberately narrow. D100/D101/D104 pin the presence of
+# module, class, and package docstrings; the rest are formatting only.
+# D102/D103 (method/function) are NOT enabled on purpose: deciding which
+# functions deserve prose is the house style (see CONTRIBUTING), and a linter
+# that demands one everywhere would force noise onto two-line helpers. The
+# rule that actually matters — long functions must be documented — is enforced
+# by scripts/check_docstrings.py, which ruff cannot express.
+# D205/D209/D403 are excluded for the same reason: the style writes two-line
+# summaries and opens with lowercase noun phrases ("provider -> task -> [v]."),
+# both of which those rules would reformat into something less readable.
+select = ["D100", "D101", "D104", "D200", "D210", "D212", "D419"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D100"]

@@ -95,6 +95,7 @@ def wordmark(d, y=H - 42):
 
 
 def title_frames(n=75):
+    """Opening titles: the wordmark assembles under a scan sweep."""
     frames = []
     for i in range(n):
         img, d = base_frame()
@@ -151,6 +152,13 @@ def walk(points, frac):
 
 
 def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34):
+    """One attempt replayed: draw the path, stamp the verdict, and on a
+    failure zoom into the collision and linger there.
+
+    The zoom magnifies a rendered stage rather than re-deriving the overlay at
+    a new scale, which is what keeps the path pinned to the pixels it was
+    drawn against — the marker-drift bug came from doing it the other way.
+    """
     provider, task_id, trial, family, archetype, tier, success, points_norm, collision, caption = rec
     task = tasks[task_id]
     src = Image.open(Path(task["_dir"]) / task["image_file"]).convert("RGB")
@@ -291,6 +299,7 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34
 
 
 def leaderboard_frames(rank, n=170):
+    """The standings, rows fading in from the top."""
     frames = []
     for i in range(n):
         img, d = base_frame()
@@ -461,6 +470,7 @@ def end_frames(n=60):
 
 
 def main():
+    """Render every frame of the reel to results/promo-frames."""
     rows = [json.loads(l) for l in (ROOT / "results/main/merged/attempts.jsonl").read_text().splitlines() if l.strip()]
     index = {json.loads(l)["task_id"]: json.loads(l)
              for l in (ROOT / "datasets/v1/dev/index.jsonl").read_text().splitlines() if l.strip()}

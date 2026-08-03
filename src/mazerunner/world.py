@@ -245,6 +245,13 @@ def check_edge_separation(world: World) -> None:
 
 @dataclass
 class WorldValidation:
+    """What validation measured, once a world has passed every check.
+
+    Carries the shrunk acceptance radii and both route lengths — the graph
+    route and the mask-certified geodesic — which is what `save_task` writes
+    as the task's reference.
+    """
+
     reference_points_px: list[Point]
     reference_length_px: float
     reference_steps: int

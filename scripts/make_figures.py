@@ -75,6 +75,7 @@ def save(fig, name):
 # ---------------------------------------------------------------- leaderboard
 
 def fig_leaderboard(rows):
+    """pass@1 bars with task-clustered CIs, pass@8 as the ghost bar behind."""
     means = task_means(rows)
     succ = collections.defaultdict(lambda: collections.defaultdict(list))
     for r in scored(rows):
@@ -112,6 +113,11 @@ def fig_leaderboard(rows):
 # ------------------------------------------------------------------ difficulty
 
 def fig_tiers(rows):
+    """Pass rate across measured difficulty tiers, one line per model.
+
+    Hard-tier values crowd near zero, so end labels are pushed apart just
+    enough to stay legible while still reading against their own curve.
+    """
     tiers = ["easy", "medium", "hard"]
     per = collections.defaultdict(lambda: collections.defaultdict(list))
     for r in scored(rows):
@@ -198,6 +204,8 @@ def fig_tolerance():
 # --------------------------------------------------------------- failure modes
 
 def fig_failure_modes():
+    """Stacked share of each model's failures by mode, from the classifier's
+    per-attempt verdicts. Legend labels are plain-terms, not taxonomy keys."""
     per = collections.defaultdict(collections.Counter)
     for line in (ROOT / "results/failure-modes.jsonl").read_text().splitlines():
         if line.strip():

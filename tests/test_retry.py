@@ -11,12 +11,16 @@ from mazerunner import runner
 
 
 class FakeResponse:
+    """Minimal stand-in for an SDK response carrying a status and headers."""
+
     def __init__(self, status_code=None, headers=None):
         self.status_code = status_code
         self.headers = headers or {}
 
 
 class FakeSDKError(Exception):
+    """An SDK exception shaped like the ones retry classification reads."""
+
     def __init__(self, message, status_code=None, headers=None):
         super().__init__(message)
         self.status_code = status_code
