@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import ast
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -40,24 +41,38 @@ def statements(node: ast.AST) -> int:
     return sum(isinstance(n, ast.stmt) for n in ast.walk(node))
 
 
+def tracked_names() -> tuple[set[str], set[str]]:
+    """(tracked repo-relative paths, their basenames).
+
+    Resolution goes through git rather than the filesystem so the gate gives
+    the same answer in a fresh CI checkout as it does in a working tree full
+    of untracked run outputs — the first version of this check passed locally
+    and failed in CI for exactly that reason.
+    """
+    out = subprocess.run(
+        ["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True
+    ).stdout.split()
+    return set(out), {Path(p).name for p in out}
+
+
+TRACKED, TRACKED_NAMES = tracked_names()
+
+
 def resolves(cited: str, from_dir: Path) -> bool:
-    """Whether a cited path names a real file.
+    """Whether a cited path names a tracked file.
 
     Docstrings cite siblings by bare name (`io.py`) as readily as they cite
-    from the repo root (`results/failure-modes.md`), so a citation counts as
-    resolved if it exists at the root, beside the citing file, or anywhere in
-    the tree under that name. Loose by design: the target is dead references
-    like smoke.config.json, not a strict path grammar.
+    from the repo root (`results/failure-modes.md`), so a citation resolves if
+    it is tracked at that path, beside the citing file, or under that basename
+    anywhere. Loose by design: the target is dead references like
+    smoke.config.json, not a strict path grammar.
     """
-    if (ROOT / cited).exists() or (from_dir / cited).exists():
+    rel = (from_dir / cited).resolve()
+    if cited in TRACKED:
         return True
-    name = Path(cited).name
-    return any(
-        p.name == name
-        for sub in ("src", "scripts", "tests", "docs", "results", "configs", "evals")
-        for p in (ROOT / sub).rglob(name)
-        if "__pycache__" not in p.parts
-    )
+    if rel.is_relative_to(ROOT) and str(rel.relative_to(ROOT)) in TRACKED:
+        return True
+    return Path(cited).name in TRACKED_NAMES
 
 
 def check_file(path: Path) -> list[str]:
@@ -82,7 +97,10 @@ def check_file(path: Path) -> list[str]:
             if not doc:
                 continue
             for cited in PATH_RE.findall(doc):
-                if cited in IGNORE_PATHS or "*" in cited:
+                # Match the basename too: run outputs are cited both bare and
+                # under a placeholder directory ("out_dir/attempts.jsonl"), and
+                # neither exists in a fresh checkout.
+                if cited in IGNORE_PATHS or Path(cited).name in IGNORE_PATHS or "*" in cited:
                     continue
                 if not resolves(cited, path.parent):
                     problems.append(f"{rel}: docstring cites {cited}, which does not exist")
