@@ -91,8 +91,8 @@ uv run mazerunner run
 ```
 
 Options: `--providers a,b`, `--mazes x,y`, `--trials N`,
-`--config smoke.config.json` (models/params are config, not benchmark
-semantics — edit [smoke.config.json](smoke.config.json)). Providers whose env
+`--config configs/providers.example.json` (models/params are config, not
+benchmark semantics — edit the config file). Providers whose env
 key is missing are skipped with a message. Transport errors retry with
 backoff; a returned-but-invalid path is never retried (one-shot planning, not
 best-of-N).
