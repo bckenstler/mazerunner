@@ -126,14 +126,14 @@ def fig_tiers(rows):
                 color=CYAN if p == "gpt-xhigh" else (WHITE if p == "openai" else DIM),
                 alpha=1.0 if lead else 0.75)
         finals[p] = vals[-1]
-    # Hard-tier values crowd near zero; spread the labels into non-overlapping
-    # slots (>=4.5pp apart) while keeping their order.
+    # Hard-tier values crowd near zero; keep each label anchored at its curve
+    # endpoint and only push up by the minimum needed to stay legible.
     order_by_val = sorted(ORDER, key=lambda p: finals[p])
     slot = None
     slots = {}
     for p in order_by_val:
         y = finals[p]
-        slot = y if slot is None else max(y, slot + 4.5)
+        slot = y if slot is None else max(y, slot + 2.6)
         slots[p] = slot
     for p in ORDER:
         ax.text(2.04, slots[p], NAMES[p], color=CYAN if p == "gpt-xhigh" else DIM,
@@ -349,8 +349,6 @@ def fig_fingerprints():
                 va="center", ha=ha)
     ax.text(2, 0.66, "measures the image:\nmessy decimals, lands on the badge",
             color=CYAN, fontsize=8.5)
-    ax.text(50, 13, "estimates from a coarse sketch:\nround numbers, ~25px of slop",
-            color=RED, fontsize=8.5, va="top")
     ax.set_xlabel("share of coordinates that are round numbers (exact 0.01 grid)")
     ax.set_ylabel("how far the path starts from\nthe start badge (median px, log)")
     ax.set_yscale("log")

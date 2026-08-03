@@ -117,7 +117,17 @@ Adjacent ranks separate on paired tests except **Kimi K3 vs Claude Opus 5**
 (+4.2pp, CI spans zero, p=0.25) — those two are tied on pass@1, though McNemar
 separates them on any-of-8 reliability (p=0.017).
 
-Difficulty is monotone for every model across measured tiers, which is the
+Difficulty tiers are **measured from the built task, never declared by the
+sampler**: each task's score combines the geodesic route length (normalized by
+the canvas diagonal), the number of ≥30° turns along that route, and the
+junction count on the retained route — `score = length + turns/12 +
+branches/10` (branches capped at 15). Score below 1.6 is *easy*, below 3.0
+*medium*, and everything above *hard*; the bands were calibrated on the smoke
+set before the dataset was built. The sampler aims for a tier by choosing
+generation parameters, but the recorded tier is what the finished maze
+actually measures.
+
+Difficulty is monotone for every model across these tiers, which is the
 validity check the tiers exist for.
 
 ![Tiers](results/figures/02-tiers.png)
