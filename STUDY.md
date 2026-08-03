@@ -225,6 +225,14 @@ standardized, with task-clustered bootstrap CIs:
 
 ![Regression](results/figures/12-regression.png)
 
+The same relationship as raw pass rates, tasks binned into feature quintiles —
+unadjusted, so correlated features bleed into each other, but the shapes are
+readable: GPT's curve climbs steadily with corridor width and barely reacts to
+turns until the hardest quintile, while Gemini collapses as turns rise and is
+flat in width.
+
+![Response](results/figures/13-response.png)
+
 | Feature | All models | GPT @ xhigh | Gemini |
 |---|---|---|---|
 | normalized length | +0.18 | −0.19 | +0.62 |

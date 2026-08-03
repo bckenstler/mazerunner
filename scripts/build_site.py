@@ -31,6 +31,7 @@ FIGURES = [
     ("04-tolerance.png", "Re-scored at pointer radii 1–8px: the ranking never inverts."),
     ("05-failure-modes.png", "4,140 failures classified from trace + geometry: every model fails its own way."),
     ("12-regression.png", "Turns and branches make mazes hard — except for GPT, which is bound only by corridor width."),
+    ("13-response.png", "The same story as raw pass rates: GPT climbs with corridor width; Gemini collapses with turns."),
     ("06-resolution.png", "Kimi doubles on pixels alone — its effort ladder was flat."),
     ("07-feedback.png", "Seeing its own mistake beats a blind retry for no model."),
     ("10-dimensions.png", "Disclosing the canvas size helps some models exactly as much as it hurts others."),

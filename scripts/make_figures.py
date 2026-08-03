@@ -409,6 +409,86 @@ def fig_regression():
     save(fig, "12-regression.png")
 
 
+
+def fig_response():
+    """Predictor-response curves: raw pass rate vs each task feature, tasks
+    binned into quintiles. The unadjusted companion to the forest plot -
+    shape and levels, no log-odds."""
+    import json as _json
+    from mazerunner.analysis.load import load_index
+
+    rows = [r for r in load_attempts([ROOT / "results/main/merged/attempts.jsonl"],
+                                     ROOT / "datasets/v1/dev") if not r.get("error")]
+    index = load_index(ROOT / "datasets/v1/dev")
+    clearance = {}
+    for tid, meta in index.items():
+        task = _json.loads((ROOT / meta["dir"] / "task.json").read_text())
+        clearance[tid] = task["reference"].get("min_clearance_px")
+
+    feats = {
+        "route length (normalized)": lambda m, tid: m["normalized_length"],
+        "turns": lambda m, tid: m["turns"],
+        "route branches": lambda m, tid: m["route_branches"],
+        "corridor width (min clearance, px)": lambda m, tid: clearance[tid],
+    }
+    groups = [("All models", None, "#A8B2C4"),
+              ("GPT-5.6 Sol · xhigh", "gpt-xhigh", CYAN),
+              ("Gemini 3.6 Flash", "gemini", AMBER)]
+
+    # per-group task-level pass rates
+    per = {}
+    for gname, prov, _c in groups:
+        acc = collections.defaultdict(list)
+        for r in rows:
+            if prov and r["provider"] != prov:
+                continue
+            acc[r["maze"]].append(bool((r.get("evaluation") or {}).get("success")))
+        per[gname] = {tid: sum(v) / len(v) for tid, v in acc.items()}
+
+    fig, axes = plt.subplots(2, 2, figsize=(9.6, 6.4), sharey=True)
+    for ax, (fname, fget) in zip(axes.flat, feats.items()):
+        values = {tid: fget(index[tid]["measures"], tid) for tid in index
+                  if index[tid]["measures"] and fget(index[tid]["measures"], tid) is not None}
+        ordered = sorted(values, key=values.get)
+        bins = np.array_split(ordered, 5)
+        # Ordinal bin positions: several features are heavily skewed, and a
+        # value-scaled axis would draw one long segment across empty range.
+        ticks = []
+        for chunk in bins:
+            med = float(np.median([values[tid] for tid in chunk]))
+            ticks.append(f"{med:.1f}" if med < 20 else f"{med:.0f}")
+        for gname, _prov, colr in groups:
+            xs, ys = [], []
+            for bi, chunk in enumerate(bins):
+                tids = [tid for tid in chunk if tid in per[gname]]
+                if not tids:
+                    continue
+                xs.append(bi)
+                ys.append(100 * sum(per[gname][tid] for tid in tids) / len(tids))
+            lead = gname != "All models"
+            ax.plot(xs, ys, marker="o", ms=4.5, lw=2.2 if lead else 1.6, color=colr,
+                    alpha=1.0 if lead else 0.8)
+        ax.set_xticks(range(5), ticks)
+        ax.set_xlabel("quintile median", fontsize=8, color=DIM)
+        for side in ("top", "right"):
+            ax.spines[side].set_visible(False)
+        ax.grid(True, alpha=0.3, linewidth=0.5)
+        ax.set_axisbelow(True)
+        ax.set_title(fname, fontsize=10, color="#C8D2E0", loc="left", fontweight="normal")
+        ax.set_ylim(0, 100)
+    axes[0][0].set_ylabel("pass@1  (%)")
+    axes[1][0].set_ylabel("pass@1  (%)")
+    handles = [plt.Line2D([], [], color=c, marker="o", lw=2, label=n) for n, _p, c in groups]
+    fig.legend(handles=handles, fontsize=8.5, frameon=False, labelcolor=DIM,
+               loc="lower center", ncol=3, bbox_to_anchor=(0.5, -0.015))
+    fig.suptitle("Pass rate against each task feature", x=0.02, y=1.0,
+                 ha="left", fontsize=13, fontweight="bold", color=WHITE)
+    fig.text(0.02, 0.955, "tasks binned into quintiles · unadjusted — features correlate, "
+             "see the regression for controlled effects", color=DIM, fontsize=9)
+    fig.tight_layout(rect=(0, 0.03, 1, 0.94))
+    save(fig, "13-response.png")
+
+
 def main():
     print("figures ->", FIG)
     rows = load_attempts([ROOT / "results/main/merged/attempts.jsonl"], ROOT / "datasets/v1/dev")
@@ -422,6 +502,7 @@ def main():
     fig_variance()
     fig_dimensions()
     fig_regression()
+    fig_response()
     fig_fingerprints()
 
 

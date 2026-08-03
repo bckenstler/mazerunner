@@ -24,6 +24,10 @@
     "caption": "Turns and branches make mazes hard \u2014 except for GPT, which is bound only by corridor width."
   },
   {
+    "file": "13-response.png",
+    "caption": "The same story as raw pass rates: GPT climbs with corridor width; Gemini collapses with turns."
+  },
+  {
     "file": "06-resolution.png",
     "caption": "Kimi doubles on pixels alone \u2014 its effort ladder was flat."
   },
