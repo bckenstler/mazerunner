@@ -21,12 +21,21 @@ SAMPLE_SPACING_PX = 0.75
 # The efficiency denominator is the mask-certified geometric optimum, so a
 # legally shorter submission should be impossible; the small margin covers the
 # string-pulling approximation in geodesic.py. A raw efficiency above this
-# signals a mask more permissive than certification believed (hardening fix 2).
+# signals a mask more permissive than certification believed — the
+# permissive-mask canary in the hardening checks (docs/USAGE.md).
 EFFICIENCY_CANARY_THRESHOLD = 1.02
 
 
 @dataclass
 class Evaluation:
+    """One submission's verdict, and the `evaluation` record in attempts.jsonl.
+
+    The three success gates are stored separately rather than collapsed into
+    `success` alone, because failure-mode classification needs to tell "never
+    left the start" from "drove through a wall"; the taxonomy in
+    results/failure-modes.md is built on that separation.
+    """
+
     success: bool = False
     schema_valid: bool = False
     schema_error: str | None = None
@@ -44,6 +53,9 @@ class Evaluation:
     warnings: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
+        """The serialized record. Rounding is deliberate, not cosmetic:
+        fixing pixel values at 2dp and efficiency at 4dp keeps a re-score
+        byte-comparable against the stored run across platforms."""
         return {
             "success": self.success,
             "schema_valid": self.schema_valid,
@@ -74,6 +86,8 @@ def disk_offsets(radius: int) -> np.ndarray:
 
 
 def to_pixels(point: tuple[float, float], width: int, height: int) -> tuple[float, float]:
+    """Normalized [0,1] coordinate to pixel space. The model's coordinates are
+    normalized; everything inside the scorer is pixels."""
     return (point[0] * (width - 1), point[1] * (height - 1))
 
 
@@ -104,7 +118,13 @@ def check_path_collision(
     pixel_points: list[tuple[float, float]],
     pointer_radius: int,
 ) -> tuple[bool, dict | None]:
-    """Return (collision_free, first_collision_info)."""
+    """Return (collision_free, first_collision_info).
+
+    Checks the swept disk at the first point and then along every segment, so
+    a path whose waypoints are all legal but whose straight line between two
+    of them crosses a wall still fails. Reporting the *first* collision rather
+    than a count is what makes the replay's ⊗ marker meaningful.
+    """
     offsets = disk_offsets(pointer_radius)
     if not _disk_clear(mask, pixel_points[0], offsets):
         return False, {"segment_index": 0, "x_px": pixel_points[0][0], "y_px": pixel_points[0][1]}
@@ -148,6 +168,25 @@ def evaluate(
     reference_length_px: float,
     compute_clearance: bool = True,
 ) -> Evaluation:
+    """Score one submitted path. The benchmark's scoring core, frozen for v1.
+
+    Success is the conjunction of three independent gates — starts in the
+    start badge, ends in the goal badge, and never collides — each recorded
+    separately so a failure can be attributed rather than just counted.
+
+    A submission that fails schema validation returns immediately with every
+    gate false: a malformed path is a *failure*, not an error. There is no
+    partial credit and no retry.
+
+    Efficiency is computed only on success. `efficiency` is capped at 1.0 for
+    reporting while `efficiency_raw` is left uncapped, which is what lets the
+    canary above 1.02 fire — a legal path shorter than the certified optimum
+    means the mask is more permissive than certification believed.
+
+    `compute_clearance=False` skips a full distance transform per call; the
+    tolerance sweep re-scores thousands of stored submissions and never reads
+    the clearance.
+    """
     ev = Evaluation(reference_length_px=reference_length_px)
 
     points, error = validate_submission(arguments)

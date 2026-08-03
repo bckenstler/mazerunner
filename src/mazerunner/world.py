@@ -2,7 +2,9 @@
 
 A World is the single navigable structure from which everything else derives:
 the hidden mask, the styled render, the adjacency graph, the certified
-reference route, and the evaluator artifacts (the doc's section 20 invariant).
+reference route, and the evaluator artifacts. Nothing downstream may invent
+geometry the World does not contain — that single-source rule is what makes
+the render and the scored mask impossible to disagree.
 """
 
 from __future__ import annotations
@@ -22,12 +24,14 @@ DEFAULT_POINTER_RADIUS = 3
 DEFAULT_ENDPOINT_RADIUS = 28.0
 MIN_ENDPOINT_RADIUS = 12.0
 # Extra pixels of certified clearance beyond the pointer radius along the
-# reference route (hardening fix 6).
+# reference route.
 CLEARANCE_MARGIN = 0.5
 
 
 @dataclass
 class Edge:
+    """One corridor between two nodes: its centerline and painted width."""
+
     a: int
     b: int
     geometry: list[Point]  # pixel-space polyline from node a to node b
@@ -41,6 +45,22 @@ OpenPrim = tuple
 
 @dataclass
 class World:
+    """A generated maze before it becomes files.
+
+    All coordinates here are **pixel space**. Normalization to [0,1] happens
+    only at the io.py boundary, where tasks are written — a value read off a
+    World is never the value a model sees.
+
+    The acceptance radii are defaults, not final: `validate_world` shrinks them
+    until each endpoint is unambiguous, and the saved task carries the shrunk
+    value. Reading `start_radius_px` off a fresh World tells you nothing about
+    what was scored.
+
+    `open_mask(world)` is a snapshot. Mutating a World after its mask has been
+    rasterized desynchronizes the mask from the render and silently breaks the
+    mask-as-stencil guarantee the whole fairness argument rests on.
+    """
+
     id: str
     type: str
     style: str
@@ -109,7 +129,8 @@ def open_mask(world: World) -> np.ndarray:
     """Binary traversability mask rasterized without antialiasing.
 
     The renderer uses this exact array as its corridor stencil, so the visibly
-    open region always equals the scored region (hardening fix 1).
+    open region always equals the scored region — the mask-as-stencil check in
+    the hardening list (docs/USAGE.md).
     """
     img = Image.new("L", (world.width, world.height), 0)
     draw = ImageDraw.Draw(img)
@@ -142,7 +163,12 @@ def _disambiguated_radius(
     mask: np.ndarray, center: Point, default_radius: float
 ) -> float:
     """Largest acceptance radius whose in-disk mask pixels all connect locally
-    to the endpoint center (hardening fix 3)."""
+    to the endpoint center.
+
+    A badge sitting near a corridor it does not belong to would otherwise
+    accept a path that never entered the right one; shrinking until only
+    locally-connected pixels remain is what keeps "reached the goal"
+    unambiguous."""
     h, w = mask.shape
     r = int(math.ceil(default_radius))
     cx, cy = int(round(center[0])), int(round(center[1]))
@@ -241,7 +267,8 @@ def validate_world(world: World, mask: np.ndarray) -> WorldValidation:
     if world.path_nodes[0] != world.start_node or world.path_nodes[-1] != world.goal_node:
         raise ValueError(f"{world.id}: retained path does not join start to goal")
 
-    # Edge validity + weighted-optimality certification (hardening fix 4).
+    # Edge validity + weighted-optimality certification: the retained route
+    # must be a true shortest path by edge length, not merely by step count.
     ref_len = solver_mod.certify_route(adj, world.path_nodes)
 
     if world.check_edge_separation:
@@ -254,7 +281,8 @@ def validate_world(world: World, mask: np.ndarray) -> WorldValidation:
     if not collision_free:
         raise ValueError(f"{world.id}: reference route fails the scorer at {first}")
 
-    # Min corridor clearance along the route (hardening fix 6).
+    # Min corridor clearance along the route: a corridor the pointer barely
+    # fits through is not a fair task.
     clearance = min_clearance(mask, ref_pts)
     if clearance < world.pointer_radius_px + CLEARANCE_MARGIN:
         raise ValueError(
@@ -276,7 +304,7 @@ def validate_world(world: World, mask: np.ndarray) -> WorldValidation:
             f"route {ref_len:.1f}px — mask and graph disagree"
         )
 
-    # Endpoint disambiguation (hardening fix 3): shrink acceptance radii until
+    # Endpoint disambiguation: shrink acceptance radii until
     # unambiguous, and fail closed if they collapse below the minimum.
     start_r = _disambiguated_radius(mask, world.start_px, world.start_radius_px)
     goal_r = _disambiguated_radius(mask, world.goal_px, world.goal_radius_px)

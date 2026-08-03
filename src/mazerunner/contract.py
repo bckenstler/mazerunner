@@ -84,7 +84,12 @@ PROMPT_TEXT = prompt_text()
 def validate_submission(arguments: object) -> tuple[list[tuple[float, float]] | None, str | None]:
     """Validate raw tool arguments against the contract.
 
-    Returns (points, None) on success or (None, reason) on rejection.
+    Returns (points, None) on success or (None, reason) on rejection. The
+    reason is recorded verbatim in the attempt as `schema_error`, so it has to
+    name the offending point rather than just the rule.
+
+    Booleans are rejected explicitly: `isinstance(True, int)` is true in
+    Python, so a submitted `true` would otherwise validate as the coordinate 1.
     """
     if not isinstance(arguments, dict):
         return None, "arguments must be an object"

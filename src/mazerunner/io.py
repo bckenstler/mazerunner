@@ -2,7 +2,7 @@
 
 Masks are the scoring source of truth: their hash is computed over the raw
 binary array (shape + packed bits) and verified byte-identically on every
-validate (hardening fix 5). Styled renders may drift across platforms; masks
+validate. Styled renders may drift across platforms; masks
 must not.
 """
 
@@ -20,6 +20,8 @@ from .world import World, WorldValidation
 
 
 def mask_sha256(mask: np.ndarray) -> str:
+    """Hash of the raw binary array, not the PNG. PNG encoders differ across
+    platforms; the array is what gets scored, so the array is what is pinned."""
     h = hashlib.sha256()
     h.update(f"{mask.shape[0]}x{mask.shape[1]};".encode())
     h.update(np.packbits(mask).tobytes())
@@ -31,10 +33,12 @@ def file_sha256(path: Path) -> str:
 
 
 def _norm(point: Point, width: int, height: int) -> dict:
+    """Pixel point to the normalized [0,1] coordinate space models submit in."""
     return {"x": round(point[0] / (width - 1), 4), "y": round(point[1] / (height - 1), 4)}
 
 
 def _downsample(points: list[Point], max_points: int = 200) -> list[Point]:
+    """Thin a polyline to at most `max_points`, keeping both endpoints."""
     if len(points) <= max_points:
         return points
     step = (len(points) - 1) / (max_points - 1)
@@ -49,6 +53,20 @@ def save_task(
     validation: WorldValidation,
     style_record: dict | None = None,
 ) -> dict:
+    """Write one task's four files and return the task record.
+
+    `task.json` is the public artifact: geometry, radii, and the reference
+    route. `ground-truth.json` holds the node/edge graph and is **never** shown
+    to a model — it exists for analysis and regeneration only.
+
+    `mask.png` is the scoring truth. `input.png` is the same geometry dressed
+    in a style and may differ in a pixel across platforms; the mask may not.
+
+    Coordinates are normalized and rounded to 4dp, matching the space models
+    answer in. `reference.optimal_path` is downsampled to 200 points for
+    display and regression use — scoring uses `optimal_length_px_geometric`,
+    never this polyline, so consumers must not measure efficiency from it.
+    """
     task_dir.mkdir(parents=True, exist_ok=True)
     image.save(task_dir / "input.png")
     Image.fromarray(mask.astype(np.uint8) * 255, mode="L").save(task_dir / "mask.png")
@@ -105,11 +123,14 @@ def save_task(
 
 
 def load_task(task_dir: Path) -> tuple[dict, np.ndarray]:
+    """(task record, boolean mask) for one task directory."""
     task = json.loads((task_dir / "task.json").read_text())
     mask = np.asarray(Image.open(task_dir / task["mask_file"]).convert("L")) > 127
     return task, mask
 
 
 def reference_points_px(task: dict) -> list[Point]:
+    """The stored reference route back in pixel space, for overlays and route
+    progress. Display geometry — see the downsampling note in `save_task`."""
     w, h = task["width"], task["height"]
     return [(p["x"] * (w - 1), p["y"] * (h - 1)) for p in task["reference"]["optimal_path"]]

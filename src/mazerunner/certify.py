@@ -32,6 +32,9 @@ from scipy import ndimage
 
 @dataclass
 class Thresholds:
+    """Tuned constants for the four checks, serialized with every task so a
+    later reader can tell which certification a task actually passed."""
+
     boundary_similar_tau: float = 32.0  # RGB distance considered "corridor-like"
     boundary_max_similar_fraction: float = 0.03
     extension_band_px: int = 18  # how far outside the mask we hunt for fakes
@@ -44,6 +47,10 @@ class Thresholds:
 
 @dataclass
 class Certification:
+    """One render's verdict, stored in the task's provenance. `failures` names
+    every check that tripped, not just the first, so a rejected style sample
+    can be diagnosed without re-running it."""
+
     ok: bool
     failures: list[str] = field(default_factory=list)
     metrics: dict = field(default_factory=dict)
@@ -90,6 +97,17 @@ def certify_render(
     style_record: dict,
     thresholds: Thresholds = Thresholds(),
 ) -> Certification:
+    """Run the four fairness checks against the final pixels.
+
+    Construction already guarantees the mask is the render's stencil; these
+    checks catch what construction cannot — a style whose sampled colors make
+    the walls invisible, extend the apparent corridor, or dress the corridor
+    in something that reads as a wall.
+
+    Reports every failure rather than stopping at the first, and never
+    modifies the render: a failing sample is resampled by `certified_render`,
+    never repaired.
+    """
     arr = np.asarray(image.convert("RGB"))
     palette = corridor_palette(style_record)
     dist = _distance_to_palette(arr, palette)

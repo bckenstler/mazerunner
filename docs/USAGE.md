@@ -39,6 +39,8 @@ derives from it):
 - Masks are binary, antialiasing-free, and byte-identical across rebuilds
   (SHA-256 verified against `mazes/manifest.json` on every validate).
 - Reference clearance ≥ pointer radius + 0.5px along the whole route.
+- The retained route is certified Dijkstra-optimal by *pixel length*, not step
+  count, so a route with few long hops can never pass as the shortest one.
 
 ## Validate before spending money
 

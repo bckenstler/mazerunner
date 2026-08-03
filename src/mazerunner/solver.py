@@ -2,8 +2,9 @@
 
 Adjacency maps node id -> list of (neighbor id, pixel-length weight). All
 retained routes are certified with pixel-weighted Dijkstra so that the stored
-reference length is a geometric optimum over the graph's exact edge geometry
-(hardening fix 4), not just a step count.
+reference length is a geometric optimum over the graph's exact edge geometry,
+not just a step count. A step-count optimum would let a route with few long
+hops certify as "shortest" while a visibly shorter one existed.
 """
 
 from __future__ import annotations
@@ -35,6 +36,7 @@ def bfs_path(adj: Adjacency, start: int, goal: int) -> list[int] | None:
 
 
 def dijkstra(adj: Adjacency, start: int) -> tuple[dict[int, float], dict[int, int]]:
+    """Pixel-weighted shortest distances and predecessors from `start`."""
     dist: dict[int, float] = {start: 0.0}
     prev: dict[int, int] = {}
     pq: list[tuple[float, int]] = [(0.0, start)]
@@ -52,6 +54,7 @@ def dijkstra(adj: Adjacency, start: int) -> tuple[dict[int, float], dict[int, in
 
 
 def dijkstra_path(adj: Adjacency, start: int, goal: int) -> tuple[list[int] | None, float]:
+    """(path, pixel length), or (None, inf) when the goal is unreachable."""
     dist, prev = dijkstra(adj, start)
     if goal not in dist:
         return None, float("inf")
@@ -68,6 +71,8 @@ def farthest_node(adj: Adjacency, start: int) -> int:
 
 
 def route_length(adj: Adjacency, path: list[int]) -> float:
+    """Pixel length of a node path. Raises if any consecutive pair is not an
+    edge, so an invented shortcut can never be measured as a real route."""
     total = 0.0
     for a, b in zip(path, path[1:]):
         weights = [w for nbr, w in adj[a] if nbr == b]
@@ -93,6 +98,7 @@ def certify_route(adj: Adjacency, path: list[int]) -> float:
 
 
 def connected(adj: Adjacency) -> bool:
+    """Whether every node is reachable. An empty graph is not connected."""
     if not adj:
         return False
     start = next(iter(adj))
