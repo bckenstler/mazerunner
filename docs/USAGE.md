@@ -32,7 +32,7 @@ derives from it):
 - Mask ⊇ render by construction (mask is the render stencil) + test.
 - Non-adjacent corridors must keep ≥ (w₁+w₂)/2 + 4px separation, so the mask
   can never contain shortcuts the graph doesn't model.
-- `efficiency_raw` > 1.05 raises a loud warning (mask more permissive than
+- `efficiency_raw` > 1.02 raises a loud warning (mask more permissive than
   graph).
 - Endpoint acceptance radii shrink automatically until unambiguous; fail if
   below 12px.
@@ -128,7 +128,7 @@ normalization against mocked SDK payloads.
 ## Repository map
 
 ```
-smoke.config.json          providers, model IDs, trials
+configs/                   provider configs (env-key indirection only)
 src/mazerunner/
   contract.py              tool schema + prompt + submission validation
   geometry.py  solver.py   densification; BFS + weighted Dijkstra certification
@@ -140,7 +140,7 @@ src/mazerunner/
   generators/              8 topology families
   providers/               openai (Responses), anthropic (Messages), gemini adapters
 mazes/                     generated tasks + contact/reference sheets + manifest
-tests/                     33 offline tests
+tests/                     255 offline tests
 results/                   per-run outputs
 ```
 

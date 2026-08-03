@@ -1,6 +1,6 @@
 [project]
 name = "mazerunner"
-version = "0.1.0"
+version = "1.0.0"
 description = "A continuous-control maze benchmark for multimodal models: one drag path, swept-disk scoring, certified-fair renders"
 readme = "README.md"
 license = { text = "MIT" }
