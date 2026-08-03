@@ -10,6 +10,23 @@ traversability. Every params dict must include:
 - "corridor_fill": [r, g, b] — the corridor's base color, used by the
   fairness certifier to hunt for corridor-colored fakes outside the mask;
 - "outline_color": [r, g, b] and "outline_px": int.
+
+Every archetype paints in the same order, and the order is load-bearing:
+
+1. fill the background;
+2. background decor, composited through `~mask`;
+3. `paint_outline` — the wall band around the corridor;
+4. `arr[mask] = corridor_fill` — the corridor itself;
+5. in-corridor decor, confined to `mask`.
+
+Filling the corridor before drawing the outline would let the wall band eat
+into the corridor: the render would still certify (the mask is unchanged) but
+the visible corridor would be narrower than the scored one, which is precisely
+the unfairness certification exists to prevent.
+
+Any decor color that reads as traversable must be declared in
+"corridor_extra", or the certifier will count it as a wall crossing the
+corridor and reject the sample.
 """
 
 from __future__ import annotations
@@ -74,6 +91,8 @@ def grid_lines(arr, spacing: int, color) -> None:
 
 
 def checker(arr, cell: int, color_a, color_b, where) -> None:
+    """Two-tone checkerboard, painted only where `where` is true — pass the
+    mask (or its inverse) to keep the pattern on one side of the wall."""
     h, w = arr.shape[:2]
     yy, xx = np.mgrid[0:h, 0:w]
     parity = ((xx // cell) + (yy // cell)) % 2 == 0
@@ -105,6 +124,8 @@ def composite_layer(arr: np.ndarray, layer: Image.Image, region: np.ndarray) -> 
 
 
 def layer_for(arr) -> tuple[Image.Image, ImageDraw.ImageDraw]:
+    """A transparent RGBA scratch layer matching `arr`, for props that need
+    real drawing (ellipses, strokes) before being composited through a mask."""
     h, w = arr.shape[:2]
     layer = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     return layer, ImageDraw.Draw(layer)
@@ -128,6 +149,12 @@ def wall_band(mask: np.ndarray, depth: int) -> np.ndarray:
 
 
 def pebbles(arr, rng, mask, depth: int, shades, outline, density: float = 1 / 90) -> None:
+    """Scatter pebbles through the wall band `depth` pixels deep.
+
+    `density` is a fraction of band pixels, not a count, so a style keeps its
+    look across canvas sizes. Pebbles composite through `~mask`, so no prop can
+    narrow the corridor.
+    """
     band = wall_band(mask, depth)
     layer, draw = layer_for(arr)
     ys, xs = np.nonzero(band)
@@ -171,15 +198,29 @@ def edge_stones(arr, world, mask, fill_color, rim_color, spacing: float = 13.0, 
 
 
 class Archetype:
+    """The style plugin interface. Subclass, set `name`, implement sample+paint.
+
+    `supports` narrows the state representations a style claims to handle;
+    a style that assumes designed corridors should drop "RASTER".
+    """
+
     name: str = ""
     supports = frozenset({"GRAPH", "RASTER"})
 
     def sample(self, rng: np.random.Generator) -> dict:
+        """Resolve every random style decision into a JSON-serializable params
+        dict. Deterministic given `rng`, and stored with the task — a render
+        that cannot be reproduced from its params is not reproducible."""
         raise NotImplementedError
 
     def paint(self, arr: np.ndarray, world, mask: np.ndarray, params: dict, rng: np.random.Generator) -> None:
+        """Paint the render in place, in the order given in the module
+        docstring. Must never change what is traversable: the mask is the
+        stencil, not a suggestion."""
         raise NotImplementedError
 
     def paint_outline(self, arr, mask, params) -> None:
+        """The wall band hugging the corridor. Call before filling the
+        corridor, or the band will eat into it."""
         outline = ndimage.binary_dilation(mask, iterations=int(params["outline_px"])) & ~mask
         arr[outline] = as_tuple(params["outline_color"])

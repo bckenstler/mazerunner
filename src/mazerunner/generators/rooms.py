@@ -15,6 +15,12 @@ CORRIDOR = 18.0
 
 
 def build(seed: int = 7, overrides: dict | None = None) -> World:
+    """Jittered room grid joined by a minimum spanning tree plus one loop.
+
+    Honors corridor/extra_edges. Open rooms punctuate narrow corridors, so the
+    pointer has slack in some places and almost none in others — clearance
+    varies within a single route.
+    """
     o = {"corridor": CORRIDOR, "extra_edges": 1, **(overrides or {})}
     rng = random.Random(seed)
     dx = (WIDTH - 2 * MARGIN) / (COLS - 1)

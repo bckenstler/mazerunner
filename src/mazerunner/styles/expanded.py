@@ -24,6 +24,8 @@ def _outer_band(mask, inner: int, outer: int) -> np.ndarray:
 
 
 class CircuitBoard(Archetype):
+    """PCB: copper traces as corridor on solder-mask ground."""
+
     name = "circuit-board"
 
     def sample(self, rng):
@@ -55,6 +57,8 @@ class CircuitBoard(Archetype):
 
 
 class HedgeGarden(Archetype):
+    """Formal hedge maze: gravel paths between clipped hedge walls."""
+
     name = "hedge-garden"
 
     def sample(self, rng):
@@ -79,6 +83,12 @@ class HedgeGarden(Archetype):
 
 
 class MetroMap(Archetype):
+    """Transit diagram: colored lines as the corridor run.
+
+    corridor_extra_from covers the whole sampled line palette, since any line
+    color a rider would read as track has to count as corridor.
+    """
+
     name = "metro-map"
 
     def sample(self, rng):
@@ -116,6 +126,8 @@ class MetroMap(Archetype):
 
 
 class IceGlacier(Archetype):
+    """Glacial ice: pale blue corridor between crevassed walls."""
+
     name = "ice-glacier"
 
     def sample(self, rng):
@@ -149,6 +161,8 @@ class IceGlacier(Archetype):
 
 
 class TreasureMap(Archetype):
+    """Pirate chart: dashed trail across aged paper."""
+
     name = "treasure-map"
 
     def sample(self, rng):
@@ -184,6 +198,12 @@ class TreasureMap(Archetype):
 
 
 class PaperCutout(Archetype):
+    """Layered paper craft: the corridor cut out of a colored card.
+
+    The drop shadow is painted only where `shadow & ~mask`, so the illusion of
+    depth never reaches into the corridor it is cast from.
+    """
+
     name = "paper-cutout"
 
     def sample(self, rng):
@@ -208,6 +228,8 @@ class PaperCutout(Archetype):
 
 
 class Volcanic(Archetype):
+    """Basalt and magma: dark stone with glowing fissures."""
+
     name = "volcanic"
 
     def sample(self, rng):
@@ -231,6 +253,8 @@ class Volcanic(Archetype):
 
 
 class CandyPastel(Archetype):
+    """Soft confectionery palette, high-key and low-contrast."""
+
     name = "candy-pastel"
 
     def sample(self, rng):
@@ -254,6 +278,8 @@ class CandyPastel(Archetype):
 
 
 class MosaicTile(Archetype):
+    """Tessellated tilework, corridor as the grouted floor."""
+
     name = "mosaic-tile"
 
     def sample(self, rng):
@@ -276,6 +302,12 @@ class MosaicTile(Archetype):
 
 
 class PencilSketch(Archetype):
+    """Graphite on paper: hatched walls, bare paper corridor.
+
+    The corridor is the untouched paper, so this style has the least color
+    separation of any in the set — the outline does all the work.
+    """
+
     name = "pencil-sketch"
 
     def sample(self, rng):
@@ -300,6 +332,8 @@ class PencilSketch(Archetype):
 
 
 class DesertCanyon(Archetype):
+    """Sandstone canyon: sand floor between layered rock walls."""
+
     name = "desert-canyon"
 
     def sample(self, rng):
@@ -324,6 +358,8 @@ class DesertCanyon(Archetype):
 
 
 class BiolabVessels(Archetype):
+    """Microscopy plate: membrane channels on a stained field."""
+
     name = "biolab-vessels"
 
     def sample(self, rng):

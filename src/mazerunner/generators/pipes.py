@@ -15,6 +15,12 @@ LOOPS = 4
 
 
 def build(seed: int = 3, overrides: dict | None = None) -> World:
+    """Sparse orthogonal network with loops on a coarse grid.
+
+    Honors cols/rows/corridor/loops. The coarsest grid of any family (6x5 by
+    default) with loops carved in, so routes are few, long, and strictly
+    axis-aligned — turn count rather than curvature is what makes one hard.
+    """
     o = {"cols": COLS, "rows": ROWS, "corridor": CORRIDOR, "loops": LOOPS, **(overrides or {})}
     cols, rows = o["cols"], o["rows"]
     rng = random.Random(seed)

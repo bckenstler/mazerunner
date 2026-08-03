@@ -23,5 +23,8 @@ CLASSIC_FOR_FAMILY = {
 
 
 def register(archetypes) -> None:
+    """Add archetypes to the registry, replacing any of the same name. New
+    styles must pass certification on every family they claim to support —
+    see tests/test_certify.py."""
     for archetype in archetypes:
         ARCHETYPES[archetype.name] = archetype

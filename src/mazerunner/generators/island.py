@@ -19,6 +19,12 @@ CORRIDOR = 16.0
 
 
 def build(seed: int = 29, overrides: dict | None = None) -> World:
+    """Scattered islands joined by a minimum spanning tree of routes, plus loops.
+
+    Honors islands/corridor/extra_edges/min_dist. Large empty regions separate
+    the islands, so most of the canvas is not traversable — the figure-ground
+    read has to be right before routing even starts.
+    """
     o = {"islands": ISLANDS, "corridor": CORRIDOR, "extra_edges": 2, "min_dist": 128, **(overrides or {})}
     rng = random.Random(seed)
     points = scatter_points(rng, o["islands"], WIDTH, HEIGHT, margin=95, min_dist=o["min_dist"])

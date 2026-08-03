@@ -33,6 +33,12 @@ def curved(a: tuple[float, float], b: tuple[float, float], rng: random.Random, m
 
 
 def build(seed: int = 5, overrides: dict | None = None) -> World:
+    """Scattered nodes, Delaunay candidate edges, curved Bezier corridors.
+
+    Honors nodes/corridor/loops/min_dist. Nothing is axis-aligned, so a path
+    cannot be approximated by horizontal and vertical runs; the drawing has to
+    follow real curvature.
+    """
     # The sampler picks (nodes, min_dist, corridor) as a coherent tuple —
     # dense layouts need narrower corridors to satisfy edge separation.
     o = {"nodes": NODES, "corridor": CORRIDOR, "loops": 1, "min_dist": 92, **(overrides or {})}

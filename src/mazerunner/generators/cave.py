@@ -35,6 +35,13 @@ def cellular_field(rng: random.Random, open_probability: float = OPEN_PROBABILIT
 
 
 def build(seed: int = 45, overrides: dict | None = None) -> World:
+    """Cellular-automata cave: its largest open component, on a 4-neighbor grid.
+
+    Honors open_probability. The only RASTER family — adjacency comes from cell
+    geometry rather than a designed graph, so there is no tidy node structure to
+    reason over and corridor edges are irregular. `check_edge_separation` is off
+    for exactly this reason: here touching corridors *are* the connectivity.
+    """
     o = {"open_probability": OPEN_PROBABILITY, **(overrides or {})}
     rng = random.Random(seed)
     field = cellular_field(rng, o["open_probability"])

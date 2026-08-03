@@ -37,6 +37,12 @@ def grid_layout(cols: int = COLS, rows: int = ROWS):
 
 
 def build(seed: int = 11, overrides: dict | None = None) -> World:
+    """Randomized DFS spanning tree on a rectangular grid.
+
+    Honors cols/rows/corridor. The plain grid maze: exactly one route between
+    any two cells, so a model that reasons about connectivity correctly cannot
+    be defeated by ambiguity — only by drawing.
+    """
     o = {"cols": COLS, "rows": ROWS, "corridor": CORRIDOR, **(overrides or {})}
     rng = random.Random(seed)
     nodes, candidates, neighbors = grid_layout(o["cols"], o["rows"])

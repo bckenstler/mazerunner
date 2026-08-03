@@ -18,6 +18,12 @@ CENTER_PAD = 30.0
 
 
 def build(seed: int = 17, overrides: dict | None = None) -> World:
+    """Polar cells carved by DFS — arcs within rings, spokes between them.
+
+    Honors rings/corridor/loops. Concentric geometry yields few but long
+    routes, and every arc is a continuous curve, so route length here is
+    dominated by arcs rather than turn count.
+    """
     o = {"rings": len(RING_RADII), "corridor": CORRIDOR, "loops": 1, **(overrides or {})}
     ring_radii = RING_RADII[: o["rings"]]
     ring_sectors = RING_SECTORS[: o["rings"]]

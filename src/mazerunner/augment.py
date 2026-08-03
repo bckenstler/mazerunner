@@ -30,6 +30,9 @@ WIDTH_JITTER = (0.9, 1.12)
 
 
 def sample_augmentation(rng: np.random.Generator, family: str) -> dict:
+    """Draw one transform. Free rotation is offered only to families whose
+    corridors are already curved — rotating an axis-aligned maze by a few
+    degrees would make every wall a staircase after rasterization."""
     return {
         "flip": bool(rng.integers(2)),
         "quarter_turns": int(rng.integers(4)),
@@ -42,6 +45,7 @@ def sample_augmentation(rng: np.random.Generator, family: str) -> dict:
 
 
 def _transform_factory(params: dict, src_w: float, src_h: float):
+    """Compose flip, quarter turns, and free rotation into one point map."""
     flip = params["flip"]
     quarters = params["quarter_turns"] % 4
     theta = math.radians(params["rotation_deg"])
@@ -64,6 +68,14 @@ def _transform_factory(params: dict, src_w: float, src_h: float):
 
 
 def apply_augmentation(world: World, params: dict) -> World:
+    """A transformed copy of `world`. The original is never mutated.
+
+    Every point is pushed through one shared transform and collected as it
+    goes, so the fit-to-canvas step sees the true extent of the result and no
+    part of the geometry can be scaled by a different factor than the rest.
+    Corridor widths scale independently via `width_scale`, which is what makes
+    clearance a sampled difficulty knob rather than a fixed property.
+    """
     out = copy.deepcopy(world)
     transform = _transform_factory(params, world.width, world.height)
 

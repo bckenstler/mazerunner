@@ -16,6 +16,8 @@ from .base import Archetype, as_tuple
 
 
 class Notebook(Archetype):
+    """Ruled notebook paper: the corridor is the bare page, walls are ink."""
+
     name = "notebook"
 
     def sample(self, rng):
@@ -38,6 +40,12 @@ class Notebook(Archetype):
 
 
 class DungeonPebble(Archetype):
+    """Dark stone dungeon: speckled floor, pebbles scattered in the wall band.
+
+    The floor speckle is declared in corridor_extra so certification reads it
+    as corridor rather than a wall crossing it.
+    """
+
     name = "dungeon-pebble"
 
     def sample(self, rng):
@@ -66,6 +74,12 @@ class DungeonPebble(Archetype):
 
 
 class BlueprintRooms(Archetype):
+    """Architectural blueprint: light corridor on a gridded blue ground.
+
+    Room labels composite through `mask`, so text can never sit on a wall and
+    suggest open space where there is none.
+    """
+
     name = "blueprint-rooms"
 
     def sample(self, rng):
@@ -99,6 +113,8 @@ class BlueprintRooms(Archetype):
 
 
 class ForestPath(Archetype):
+    """Woodland trail: dirt path through dense canopy."""
+
     name = "forest-path"
 
     def sample(self, rng):
@@ -126,6 +142,8 @@ class ForestPath(Archetype):
 
 
 class GlowCavern(Archetype):
+    """Luminous cave: glowing floor against near-black rock."""
+
     name = "glow-cavern"
 
     def sample(self, rng):
@@ -162,6 +180,8 @@ class GlowCavern(Archetype):
 
 
 class ParchmentChart(Archetype):
+    """Aged parchment chart, corridor as the drawn route."""
+
     name = "parchment-chart"
 
     def sample(self, rng):
@@ -187,6 +207,12 @@ class ParchmentChart(Archetype):
 
 
 class WatercolorArchipelago(Archetype):
+    """Watercolor islands: sand corridors in a washed sea.
+
+    Two sand shades are declared in corridor_extra; without both, the wash
+    variation reads as walls inside the corridor.
+    """
+
     name = "watercolor-archipelago"
 
     def sample(self, rng):
@@ -219,6 +245,13 @@ class WatercolorArchipelago(Archetype):
 
 
 class NeonPipes(Archetype):
+    """Neon industrial pipework, corridor as the lit pipe run.
+
+    Uses corridor_extra_from so the whole sampled palette of pipe bodies and
+    cores counts as corridor — the brightest style in the set, and the one
+    most able to look traversable where it is not.
+    """
+
     name = "neon-pipes"
 
     def sample(self, rng):

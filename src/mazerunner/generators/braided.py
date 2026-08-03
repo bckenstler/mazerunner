@@ -12,6 +12,12 @@ LOOPS = 12
 
 
 def build(seed: int = 23, overrides: dict | None = None) -> World:
+    """DFS spanning tree on a grid, then loops carved back in.
+
+    Honors cols/rows/corridor/loops. The loops are the point: with cycles
+    present, wall-following no longer terminates at the goal, so a route has
+    to be chosen rather than fallen into.
+    """
     o = {"cols": 8, "rows": 7, "corridor": CORRIDOR, "loops": LOOPS, **(overrides or {})}
     rng = random.Random(seed)
     nodes, candidates, neighbors = grid_layout(o["cols"], o["rows"])
