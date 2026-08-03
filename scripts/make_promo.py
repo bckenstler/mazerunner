@@ -161,6 +161,11 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34
 
     pts = [(p["x"] * (task["width"] - 1) * scale + ox, p["y"] * (task["height"] - 1) * scale + oy)
            for p in points_norm]
+    # Draw time grows with the square root of path length: long routes get
+    # visibly more frames without the clip dragging (a 4x longer path draws
+    # over 2x the frames, so it still moves faster — just watchably so).
+    path_len = sum(math.dist(pts[i], pts[i + 1]) for i in range(len(pts) - 1))
+    n_draw = max(n_draw, min(96, round(1.6 * math.sqrt(path_len))))
     col = None
     if collision:
         col = (collision["x_px"] * scale + ox, collision["y_px"] * scale + oy)
@@ -294,7 +299,7 @@ def leaderboard_frames(rank, n=170):
              WHITE, anchor="ma")
         text(d, (W / 2, 176), "100 MAZES · 8 ATTEMPTS EACH · 5,600 TRIES", F_META, DIM, anchor="ma")
         text(d, (100, 244), "MODEL", F_LBH, DIM)
-        text(d, (712, 244), "PASS@1", F_LBH, DIM, anchor="ra")
+        text(d, (740, 244), "PASS@1", F_LBH, DIM, anchor="ra")
         text(d, (980, 244), "PASS@8", F_LBH, DIM, anchor="ra")
         d.line([(100, 274), (980, 274)], fill=(38, 46, 62), width=2)
 
@@ -310,7 +315,7 @@ def leaderboard_frames(rank, n=170):
             d.rectangle([100, y + 44, 100 + bar_w, y + 52], fill=CYAN if lead else (30, 90, 108))
             text(d, (100, y), f"{r + 1}", F_LB, AMBER if lead else DIM)
             text(d, (150, y), name, F_LB, tuple(int(c * a) for c in col))
-            text(d, (712, y), f"{p1:.1f}%", F_LB, tuple(int(c * a) for c in (CYAN if lead else col)), anchor="ra")
+            text(d, (740, y), f"{p1:.1f}%", F_LB, tuple(int(c * a) for c in (CYAN if lead else col)), anchor="ra")
             text(d, (980, y), f"{p8:.0f}%", F_LB, tuple(int(c * a) for c in (DIM if not lead else WHITE)), anchor="ra")
 
         if t > 0.72:
@@ -324,8 +329,9 @@ def leaderboard_frames(rank, n=170):
 
 def feedback_frames(n=140):
     """Punchline 1: closed-loop feedback made every model worse."""
-    rows = [("GPT-5.6 SOL", -24), ("GEMINI 3.6 FLASH", -16),
-            ("KIMI K3", -6), ("CLAUDE OPUS 5", -5), ("GPT-5.6 SOL · XHIGH", -3)]
+    rows = [("GPT-5.6 SOL · MEDIUM", -24), ("GEMINI 3.6 FLASH · MEDIUM", -16),
+            ("KIMI K3 · HIGH", -6), ("CLAUDE OPUS 5 · HIGH", -5),
+            ("GPT-5.6 SOL · XHIGH", -3)]
     frames = []
     for i in range(n):
         img, d = base_frame()
@@ -343,9 +349,10 @@ def feedback_frames(n=140):
             a = min(1.0, (t - appear) * 8)
             y = 360 + r * 78
             text(d, (110, y), name, F_LB, tuple(int(c * a) for c in (200, 210, 224)))
-            # bar runs leftward from centre: every model is negative
-            bw = int(abs(delta) * 15 * a)
-            d.rectangle([760 - bw, y + 6, 760, y + 34], fill=RED if delta < -10 else (150, 52, 62))
+            # bar runs leftward from the zero line: every model is negative.
+            # Zero line sits past the longest annotated name (ends ~x=562).
+            bw = int(abs(delta) * 12 * a)
+            d.rectangle([820 - bw, y + 6, 820, y + 34], fill=RED if delta < -10 else (150, 52, 62))
             text(d, (980, y), f"{delta:+d}pp", F_LB, tuple(int(c * a) for c in RED), anchor="ra")
 
         if t > 0.68:
