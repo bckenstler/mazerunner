@@ -45,8 +45,12 @@ SECTIONS = [
                 "easy to hard for every model."
             )),
             ("04-tolerance.png", (
-                "Scores were also recomputed with pointer sizes from 1px to "
-                "8px. The ranking is the same at every tolerance."
+                "The pointer is the disk swept along the submitted path, and "
+                "its size sets the scoring tolerance: a larger pointer needs "
+                "more clearance, so corridors are effectively tighter; a "
+                "smaller one is more forgiving of a stroke that hugs a wall. "
+                "All 5,600 submissions were re-scored with pointer sizes from "
+                "1px to 8px. The ranking is the same at every tolerance."
             )),
         ],
     },
@@ -54,13 +58,15 @@ SECTIONS = [
         "title": "Thinking longer helps one model",
         "figures": [
             ("03-effort.png", (
-                "Each model was run at every reasoning-effort setting it "
-                "supports. GPT gains 37 points from low to xhigh and has not "
-                "plateaued. Gemini gains about 12 points from any thinking at "
-                "all, then returns the same score while using 6× more "
-                "reasoning tokens. Claude scores the same at every setting; "
-                "Kimi moves only at its maximum setting, at nine minutes per "
-                "maze."
+                "The four strongest models were run at every reasoning-effort "
+                "setting they support, on a 25-maze subset. GPT gains 37 "
+                "points from low to xhigh and has not plateaued. Gemini gains "
+                "about 12 points from any thinking at all, then returns the "
+                "same score while using 6× more reasoning tokens. Claude "
+                "scores the same at every setting; Kimi moves only at its "
+                "maximum setting, at nine minutes per maze. Muse Spark and "
+                "Inkling were checked at their top setting only and stayed at "
+                "their floor."
             )),
         ],
     },
@@ -98,8 +104,8 @@ SECTIONS = [
         "title": "Isolating perception",
         "figures": [
             ("06-resolution.png", (
-                "The same mazes were re-sent at half and double resolution. At "
-                "2×, Kimi goes from 20% to 42% — the same model whose scores "
+                "A 25-maze subset was re-sent at half and double resolution. "
+                "At 2×, Kimi goes from 20% to 42% — the same model whose scores "
                 "never moved on the effort ladder. Its bottleneck is "
                 "resolution, not reasoning."
             )),
@@ -117,9 +123,9 @@ SECTIONS = [
         "title": "Showing a model its own mistake makes it worse",
         "figures": [
             ("07-feedback.png", (
-                "After a failed attempt, each model was shown its own path "
-                "drawn on the maze with the collision marked, and asked to "
-                "correct it. Every model scores lower after seeing its "
+                "On a 50-maze subset, each model that failed an attempt was "
+                "shown its own path drawn on the maze with the collision "
+                "marked, and asked to correct it. Every model scores lower after seeing its "
                 "mistake than on a fresh blind attempt — up to 24 points "
                 "lower."
             )),
@@ -134,7 +140,7 @@ SECTIONS = [
                 "Gemini loses 8. The default prompt leaves dimensions out."
             )),
             ("08-variance.png", (
-                "The same mazes were re-rendered in five visual styles. "
+                "Twenty mazes were each re-rendered in five visual styles. "
                 "Average scores barely move, but individual mazes swing by up "
                 "to 24 points — style changes which mazes are hard without "
                 "changing how hard the set is."
