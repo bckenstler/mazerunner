@@ -33,85 +33,83 @@ SECTIONS = [
         "title": "The standings",
         "figures": [
             ("01-leaderboard.png", (
-                "The spread runs the whole scale: the best configuration draws "
-                "its way out of 61% of mazes on the first try, the weakest out "
-                "of none in 800 attempts. Eight tries lift everyone — the ghost "
-                "bars — without reordering anyone."
+                "GPT-5.6 Sol at xhigh effort solves 60.6% of mazes on the "
+                "first attempt. Four of the seven models are below 21%, and "
+                "Inkling solved none of its 800 attempts. Giving each model "
+                "eight attempts raises every score but does not change the "
+                "order."
             )),
             ("02-tiers.png", (
-                "Difficulty is measured from each maze's geometry — route "
-                "length, turns, branches — and every model's pass rate falls "
-                "cleanly across the tiers. Hard mazes are hard for everyone, "
-                "just not equally."
+                "Each maze's difficulty tier is computed from its geometry: "
+                "route length, turn count, branch count. Pass rates drop from "
+                "easy to hard for every model."
             )),
             ("04-tolerance.png", (
-                "The ordering is not fragile: re-scored with a pointer anywhere "
-                "from 1px to 8px wide, the ranking never inverts."
+                "Scores were also recomputed with pointer sizes from 1px to "
+                "8px. The ranking is the same at every tolerance."
             )),
         ],
     },
     {
-        "title": "Thinking longer is not a portable knob",
+        "title": "Thinking longer helps one model",
         "figures": [
             ("03-effort.png", (
-                "Every model ran its full reasoning-effort ladder, and the same "
-                "knob produces three different machines: GPT converts test-time "
-                "compute into accuracy (+37 points from low to xhigh, still "
-                "unsaturated), Gemini steps up once and then returns an "
-                "identical score across a 6× spread in reasoning tokens, and "
-                "Claude and Kimi are flat everywhere. Whatever limits the flat "
-                "models, it is not a deliberation budget."
+                "Each model was run at every reasoning-effort setting it "
+                "supports. GPT gains 37 points from low to xhigh and has not "
+                "plateaued. Gemini gains about 12 points from any thinking at "
+                "all, then returns the same score while using 6× more "
+                "reasoning tokens. Claude scores the same at every setting; "
+                "Kimi moves only at its maximum setting, at nine minutes per "
+                "maze."
             )),
         ],
     },
     {
-        "title": "What makes a maze hard depends on who is solving it",
+        "title": "What makes a maze hard depends on the model",
         "figures": [
             ("12-regression.png", (
-                "A regression of pass/fail on maze geometry says turns and "
-                "branches are what sink most models — but not the best one. For "
-                "GPT at xhigh, turns and branches stop mattering entirely and "
-                "the only predictor left is corridor width: it has solved "
-                "routing and is now limited by how precisely it can draw."
+                "A regression of pass/fail on maze geometry: for most models, "
+                "turns and branches are the strongest predictors of failure. "
+                "For GPT at xhigh neither matters — the only significant "
+                "predictor is corridor width. Its remaining errors are drawing "
+                "errors, not routing errors."
             )),
             ("13-response.png", (
-                "The raw pass rates tell the same story without a model on "
-                "top: GPT climbs as corridors widen while Gemini collapses as "
-                "turns accumulate."
+                "The raw pass rates show the same pattern: GPT's rate rises "
+                "with corridor width, and Gemini's falls as turns increase."
             )),
         ],
     },
     {
-        "title": "Every model fails in its own way",
+        "title": "Each model fails differently",
         "figures": [
             ("05-failure-modes.png", (
-                "All 4,140 failed attempts were classified from the reasoning "
-                "trace plus the drawn path — a verdict needs both to agree. The "
-                "signatures are distinct enough to identify a model from its "
-                "failures alone: GPT runs out of corridor width, Gemini and "
-                "Claude drive through walls they described correctly, Kimi "
-                "announces its path is approximate and submits it anyway, and "
-                "Inkling reports positions from a coarse, quantized sketch of "
-                "the scene."
+                "Each of the 4,140 failed attempts was classified using the "
+                "model's reasoning trace and the geometry of its path "
+                "together. GPT drifts out of narrow corridors. Gemini and "
+                "Claude cross walls they had described correctly. Kimi notes "
+                "in its reasoning that its path is approximate and submits it "
+                "anyway. Inkling reports positions that do not match the "
+                "image."
             )),
         ],
     },
     {
-        "title": "Perception, isolated",
+        "title": "Isolating perception",
         "figures": [
             ("06-resolution.png", (
-                "Re-sending identical mazes at 0.5× and 2× resolution doubles "
-                "Kimi (20% → 42%) while its effort ladder was flat — extra "
-                "pixels bought what extra thinking could not. Its constraint is "
-                "perceptual acuity, not planning."
+                "The same mazes were re-sent at half and double resolution. At "
+                "2×, Kimi goes from 20% to 42% — the same model whose scores "
+                "never moved on the effort ladder. Its bottleneck is "
+                "resolution, not reasoning."
             )),
             ("09-fingerprints.png", (
-                "The drawn coordinates themselves carry fingerprints. Models "
-                "that measure the image write messy decimals and start on the "
-                "badge; Inkling snaps 68% of its coordinates to an exact 0.01 "
-                "grid and misses the badge by 25px at the median — estimating "
-                "the scene rather than measuring it, which a continuous drag "
-                "punishes and a grid world would forgive."
+                "The submitted coordinates show how each model reads the "
+                "image. Models that measure write irregular decimals and "
+                "start on the badge. Inkling places 68% of its points on an "
+                "exact 0.01 grid and misses the start badge by a median of "
+                "25px: it is estimating positions rather than reading them "
+                "off the image."
             )),
         ],
     },
@@ -119,29 +117,27 @@ SECTIONS = [
         "title": "Showing a model its own mistake makes it worse",
         "figures": [
             ("07-feedback.png", (
-                "After a failed attempt, each model saw its own path drawn on "
-                "the maze with the exact collision marked, then tried again. No "
-                "model beats a blind retry of the same task; for mid-tier "
-                "models the feedback costs up to 24 points. Closed-loop visual "
-                "correction — look at your stroke, fix your stroke — is a "
-                "capability none of them has yet."
+                "After a failed attempt, each model was shown its own path "
+                "drawn on the maze with the collision marked, and asked to "
+                "correct it. Every model scores lower after seeing its "
+                "mistake than on a fresh blind attempt — up to 24 points "
+                "lower."
             )),
         ],
     },
     {
-        "title": "The image is the interface",
+        "title": "Style and canvas size",
         "figures": [
             ("10-dimensions.png", (
-                "Disclosing the canvas dimensions in the prompt — sparing the "
-                "model from inferring the aspect ratio before it can place a "
-                "coordinate — helps some models almost exactly as much as it "
-                "hurts others, so the dimension-free prompt stays."
+                "Telling the model the image's pixel dimensions changes "
+                "scores in both directions: GPT at medium gains 8 points and "
+                "Gemini loses 8. The default prompt leaves dimensions out."
             )),
             ("08-variance.png", (
-                "Re-rendering identical mazes in five visual styles moves the "
-                "average less than a point while swinging individual mazes by "
-                "24 — style is a per-maze difficulty axis that vanishes in "
-                "aggregate."
+                "The same mazes were re-rendered in five visual styles. "
+                "Average scores barely move, but individual mazes swing by up "
+                "to 24 points — style changes which mazes are hard without "
+                "changing how hard the set is."
             )),
         ],
     },
