@@ -3,8 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>MazeRunner — a continuous-control benchmark for multimodal models</title>
-<meta name="description" content="Can a multimodal model draw its way out of a maze? 1,000 certified-fair mazes, 7 models, full traces.">
+<title>MazeRunner — can a multimodal model draw its way out of a maze?</title>
+<meta name="description" content="Maze benchmarks are usually discrete: grid cells and move tokens. MazeRunner is continuous — the model sees one image and must draw its escape as a single drag path. 7 models, 5,600 attempts, every trace public.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MazeRunner — can a multimodal model draw its way out of a maze?">
+<meta property="og:description" content="Maze benchmarks are usually discrete: grid cells and move tokens. MazeRunner is continuous — the model sees one image and must draw its escape as a single drag path. 7 models, 5,600 attempts, every trace public.">
+<meta property="og:url" content="https://bckenstler.github.io/mazerunner/">
+<meta property="og:image" content="https://bckenstler.github.io/mazerunner/assets/01-leaderboard.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
 <style>
 :root {
@@ -54,12 +60,11 @@ td.num { text-align:right; }
 .ci { color:var(--dim); font-size:11px; }
 
 .finding { margin:46px 0; }
-.finding h3 { font-size:17px; margin-bottom:10px; }
+.finding h3 { font-size:17px; margin-bottom:14px; }
 .finding h3::before { content:"— "; color:var(--cyan); }
-.finding .intro { color:#A8B4C4; font-size:13.5px; max-width:78ch; margin-bottom:8px; }
-.fig { margin:22px 0; }
+.fig { margin:0 0 30px; }
+.fig .lead { color:#A8B4C4; font-size:13.5px; max-width:78ch; margin-bottom:10px; }
 .fig img { width:100%; border:1px solid var(--grid); border-radius:6px; }
-.fig p { color:var(--dim); font-size:12.5px; margin-top:8px; }
 
 pre { background:var(--panel); border:1px solid var(--grid); border-radius:6px;
   padding:16px; overflow-x:auto; font-size:12.5px; }
@@ -86,10 +91,11 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
 <div class="wrap">
 <section>
   <h2>The task</h2>
-  <p class="sub">One image. One continuous drag from the cyan badge to the amber one.
-  Scored by sweeping a 3px pointer along the submitted path against the exact
-  mask that stenciled the render — the picture can never disagree with the
-  physics.</p>
+  <p class="sub">One image, one continuous drag from the cyan badge to the amber
+  one. Most maze benchmarks are discrete — the model steps between grid cells
+  or emits move tokens. Here it has to <em>draw</em> its route as a stream of
+  coordinates, and the stroke either threads the corridor or it doesn't. A
+  person does this without thinking.</p>
   <video id="promo" controls muted playsinline loop preload="metadata" src="assets/mazerunner-promo.mp4"></video>
   <script>
   (() => {
@@ -157,11 +163,11 @@ uv run mazerunner run --config configs/providers.example.json \
   for (const s of sections) {
     const sec = document.createElement("div");
     sec.className = "finding";
-    sec.innerHTML = `<h3>${s.title}</h3><p class="intro">${s.intro}</p>`;
+    sec.innerHTML = `<h3>${s.title}</h3>`;
     for (const f of s.figures) {
       const div = document.createElement("div");
       div.className = "fig";
-      div.innerHTML = `<img loading="lazy" src="assets/${f.file}" alt="${s.title}"><p>${f.caption}</p>`;
+      div.innerHTML = `<p class="lead">${f.text}</p><img loading="lazy" src="assets/${f.file}" alt="${s.title}">`;
       sec.appendChild(div);
     }
     box.appendChild(sec);
