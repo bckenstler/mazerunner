@@ -8,7 +8,7 @@ single tool call. Scoring sweeps a 3-pixel pointer disk along the submitted
 polyline against the same mask that stenciled the image. There is no grid, no
 move vocabulary, no partial credit for a plan that reads well.
 
-The task is deliberately trivial for a person and turns out to be hard for
+The task is deliberately simple to state and turns out to be hard for
 every model tested. The best configuration solves 61% of mazes on a single
 attempt; four of seven models sit below 21%.
 
@@ -417,7 +417,7 @@ things are and tracing a corridor between them are different abilities.
 ## 9. What this says
 
 **The field is not saturated.** The best configuration fails 39% of single
-attempts and 48% of hard-tier mazes on a task a person does without thinking.
+attempts and 48% of hard-tier mazes.
 
 **Reasoning effort is not a portable unit.** The same knob scales one model,
 steps once for another, and does nothing for two more. Comparing "high effort"

@@ -9,8 +9,7 @@ the exact mask that stenciled the render. No grid, no move tokens, no partial
 credit for a plan that reads well: the drag either stays in the corridor or it
 doesn't.
 
-A person does this without thinking. The best model configuration tested
-fails 39% of the time.
+The best model configuration tested fails 39% of the time.
 
 📊 **[Full study](STUDY.md)** · 🔬 **[Trace viewer / replayer](docs/viewer/)** ·
 🎬 [promo clip](mazerunner-promo.mp4) · 📦 traces in

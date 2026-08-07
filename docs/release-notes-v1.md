@@ -2,8 +2,7 @@
 
 **Can a multimodal model draw its way out of a maze?** One image, one
 continuous drag path, swept-disk scoring against the exact mask that stenciled
-the render. A person does this without thinking; the best configuration tested
-fails 39% of the time.
+the render. The best configuration tested fails 39% of the time.
 
 **In this release**
 
