@@ -21,7 +21,7 @@
     "figures": [
       {
         "file": "03-effort.png",
-        "text": "The four strongest models were run at every reasoning-effort setting they support, on a 25-maze subset. GPT gains 37 points from low to xhigh and has not plateaued. Gemini gains about 12 points from any thinking at all, then returns the same score while using 6\u00d7 more reasoning tokens. Claude scores the same at every setting; Kimi moves only at its maximum setting, at nine minutes per maze. Muse Spark and Inkling were checked at their top setting only and stayed at their floor."
+        "text": "Every model was swept on a 25-maze subset: full effort ladders for the four strongest, declared-versus-top checks for the two at the floor. GPT gains 37 points from low to xhigh and has not plateaued. Gemini gains about 12 points from any thinking at all, then returns the same score while using 6\u00d7 more reasoning tokens. Claude scores the same at every setting; Kimi moves only at its maximum setting, at nine minutes per maze. Muse Spark and Inkling stay at the floor even at top effort."
       }
     ]
   },

@@ -159,6 +159,9 @@ def fig_effort():
         ("Gemini 3.6 Flash", ["low", "medium", "high"], [32, 32, 32], "#A8B2C4", 1.8),
         ("Claude Opus 5", ["low", "medium", "high", "xhigh"], [8, 7, 13, 12], "#768094", 1.8),
         ("Kimi K3", ["low", "high", "max"], [16, 16, 28], "#4B5568", 1.8),
+        # Floor checks: declared setting vs top of ladder, same 25x3 design.
+        ("Muse Spark 1.1", ["medium", "xhigh"], [4, 6.7], "#3E4757", 1.5),
+        ("Inkling", ["medium", "xhigh"], [0, 0], "#39424F", 1.5),
     ]
     ticks = ["low", "medium", "high", "xhigh/max"]
     fig, ax = plt.subplots(figsize=(8.4, 4.6))
@@ -170,7 +173,7 @@ def fig_effort():
     ax.set_xticks(range(4), ticks)
     ax.set_ylabel("pass@1  (%)")
     ax.set_xlim(-0.1, 4.4)
-    ax.set_ylim(0, 80)
+    ax.set_ylim(-3, 80)
     _frame(ax, "Only GPT converts test-time compute into accuracy",
            "25-task sweep × 3 trials per level")
     save(fig, "03-effort.png")
