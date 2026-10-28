@@ -2,10 +2,15 @@
 
 from __future__ import annotations
 
+import math
 import random
 
 from .. import solver as solver_mod
+from ..geometry import densify_polyline
 from ..world import World, adjacency
+
+WARP_WAVES = 4
+WARP_SAMPLE_SPACING = 4.0
 
 
 def dfs_spanning_tree(
@@ -134,3 +139,42 @@ def retain_route(world: World) -> None:
     if path is None:
         raise ValueError(f"{world.id}: goal unreachable from start")
     world.path_nodes = path
+
+
+def warp_world(world: World, seed: int, amplitude: float, wavelength: float) -> None:
+    """Bend a maze through a smooth random displacement field, in place.
+
+    Topology is untouched; only geometry moves. Straight corridors become
+    curves, so a grid maze keeps its structure but loses the axis-aligned
+    regularity that makes it easy to read. The field is a sum of a few plane
+    waves with wavelengths well above corridor spacing, so neighboring
+    corridors bend together; where shear still pushes two corridors too
+    close, validation rejects the world and the sampler resamples.
+
+    Edges are densified before displacement so a two-point segment becomes a
+    curve rather than a moved straight line. The field draws from its own
+    stream derived from `seed`, so a warped build never shifts the random
+    sequence the unwarped generator consumes.
+    """
+    rng = random.Random(f"warp:{seed}")
+    waves = []
+    for _ in range(WARP_WAVES):
+        k = 2 * math.pi / (wavelength * rng.uniform(1.0, 1.5))
+        theta = rng.uniform(0, 2 * math.pi)
+        push = rng.uniform(0, 2 * math.pi)
+        waves.append((k * math.cos(theta), k * math.sin(theta), rng.uniform(0, 2 * math.pi),
+                      math.cos(push), math.sin(push)))
+    gain = amplitude / math.sqrt(WARP_WAVES)
+
+    def displace(p: tuple[float, float]) -> tuple[float, float]:
+        x, y = p
+        dx = dy = 0.0
+        for kx, ky, phase, ux, uy in waves:
+            s = math.sin(kx * x + ky * y + phase)
+            dx += ux * s
+            dy += uy * s
+        return x + gain * dx, y + gain * dy
+
+    world.nodes = {n: displace(p) for n, p in world.nodes.items()}
+    for edge in world.edges:
+        edge.geometry = [displace(p) for p in densify_polyline(edge.geometry, WARP_SAMPLE_SPACING)]

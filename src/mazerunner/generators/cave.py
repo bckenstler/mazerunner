@@ -18,9 +18,14 @@ SMOOTHING_STEPS = 5
 MIN_COMPONENT_CELLS = 250
 
 
-def cellular_field(rng: random.Random, open_probability: float = OPEN_PROBABILITY) -> np.ndarray:
+def cellular_field(
+    rng: random.Random,
+    open_probability: float = OPEN_PROBABILITY,
+    cols: int = COLS,
+    rows: int = ROWS,
+) -> np.ndarray:
     field = np.array(
-        [[rng.random() < open_probability for _ in range(COLS)] for _ in range(ROWS)]
+        [[rng.random() < open_probability for _ in range(cols)] for _ in range(rows)]
     )
     field[0, :] = field[-1, :] = False
     field[:, 0] = field[:, -1] = False
@@ -37,33 +42,47 @@ def cellular_field(rng: random.Random, open_probability: float = OPEN_PROBABILIT
 def build(seed: int = 45, overrides: dict | None = None) -> World:
     """Cellular-automata cave: its largest open component, on a 4-neighbor grid.
 
-    Honors open_probability. The only RASTER family — adjacency comes from cell
+    Honors open_probability/cell. The only RASTER family — adjacency comes from cell
     geometry rather than a designed graph, so there is no tidy node structure to
     reason over and corridor edges are irregular. `check_edge_separation` is off
     for exactly this reason: here touching corridors *are* the connectivity.
+
+    A smaller `cell` gives the automaton more cells on the same canvas, so the
+    cave grows finer, more winding passages; the minimum component size scales
+    with cell area so the same fraction of the canvas must stay connected.
+
+    `seamless` makes neighboring cell rects share their boundary pixel. The v1
+    rects stop one pixel short, which is invisible at scale 1 but opens
+    one-pixel seams once augmentation scales the cave up to fit the canvas;
+    the renderer stencils the mask, so the seams show as dashed lines that
+    block the pointer. Off by default so v1 tasks rebuild byte-identically.
     """
-    o = {"open_probability": OPEN_PROBABILITY, **(overrides or {})}
+    o = {"open_probability": OPEN_PROBABILITY, "cell": CELL, "seamless": False, **(overrides or {})}
+    cell = o["cell"]
+    inset = 0 if o["seamless"] else 1
+    cols, rows = WIDTH // cell, HEIGHT // cell
+    min_cells = MIN_COMPONENT_CELLS * (CELL / cell) ** 2
     rng = random.Random(seed)
-    field = cellular_field(rng, o["open_probability"])
+    field = cellular_field(rng, o["open_probability"], cols, rows)
     labels, count = ndimage.label(field, structure=np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]]))
     if count == 0:
         raise ValueError("cave: no open cells")
     sizes = ndimage.sum_labels(np.ones_like(labels), labels, index=range(1, count + 1))
     largest = int(np.argmax(sizes)) + 1
-    if sizes[largest - 1] < MIN_COMPONENT_CELLS:
+    if sizes[largest - 1] < min_cells:
         raise ValueError(f"cave: largest component {int(sizes[largest - 1])} cells is too small")
     open_cells = labels == largest
 
     nodes: dict[int, tuple[float, float]] = {}
     cell_ids: dict[tuple[int, int], int] = {}
     rects = []
-    for r in range(ROWS):
-        for c in range(COLS):
+    for r in range(rows):
+        for c in range(cols):
             if open_cells[r, c]:
                 n = len(nodes)
                 cell_ids[(r, c)] = n
-                nodes[n] = (c * CELL + CELL / 2, r * CELL + CELL / 2)
-                rects.append(("rect", c * CELL, r * CELL, (c + 1) * CELL - 1, (r + 1) * CELL - 1))
+                nodes[n] = (c * cell + cell / 2, r * cell + cell / 2)
+                rects.append(("rect", c * cell, r * cell, (c + 1) * cell - inset, (r + 1) * cell - inset))
 
     edges = []
     for (r, c), n in cell_ids.items():

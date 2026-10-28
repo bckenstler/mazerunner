@@ -11,6 +11,7 @@ from .common import (
     pick_far_endpoints,
     retain_route,
     scatter_points,
+    warp_world,
 )
 
 WIDTH, HEIGHT = 800, 740
@@ -58,6 +59,8 @@ def build(seed: int = 29, overrides: dict | None = None) -> World:
         start_node=0,
         goal_node=0,
     )
+    if o.get("warp"):
+        warp_world(world, seed, *o["warp"])
     world.start_node, world.goal_node = pick_far_endpoints(world, rng, o.get("endpoint_quantile", 1.0))
     retain_route(world)
     return world

@@ -17,23 +17,27 @@ CORRIDOR = 18.0
 def build(seed: int = 7, overrides: dict | None = None) -> World:
     """Jittered room grid joined by a minimum spanning tree plus one loop.
 
-    Honors corridor/extra_edges. Open rooms punctuate narrow corridors, so the
-    pointer has slack in some places and almost none in others — clearance
-    varies within a single route.
+    Honors corridor/extra_edges/cols/rows/room_scale. Open rooms punctuate
+    narrow corridors, so the pointer has slack in some places and almost none
+    in others — clearance varies within a single route. A denser room grid
+    needs smaller rooms to keep walls between them, which is what room_scale
+    shrinks (room size and placement jitter together).
     """
-    o = {"corridor": CORRIDOR, "extra_edges": 1, **(overrides or {})}
+    o = {"corridor": CORRIDOR, "extra_edges": 1, "cols": COLS, "rows": ROWS, "room_scale": 1.0,
+         **(overrides or {})}
+    cols, rows, s = o["cols"], o["rows"], o["room_scale"]
     rng = random.Random(seed)
-    dx = (WIDTH - 2 * MARGIN) / (COLS - 1)
-    dy = (HEIGHT - 2 * MARGIN) / (ROWS - 1)
+    dx = (WIDTH - 2 * MARGIN) / (cols - 1)
+    dy = (HEIGHT - 2 * MARGIN) / (rows - 1)
     nodes: dict[int, tuple[float, float]] = {}
     rects: dict[int, tuple[float, float, float, float]] = {}
-    for r in range(ROWS):
-        for c in range(COLS):
-            n = r * COLS + c
-            x = MARGIN + c * dx + rng.uniform(-24, 24)
-            y = MARGIN + r * dy + rng.uniform(-24, 24)
-            half_w = rng.uniform(38, 55)
-            half_h = rng.uniform(34, 50)
+    for r in range(rows):
+        for c in range(cols):
+            n = r * cols + c
+            x = MARGIN + c * dx + rng.uniform(-24 * s, 24 * s)
+            y = MARGIN + r * dy + rng.uniform(-24 * s, 24 * s)
+            half_w = rng.uniform(38 * s, 55 * s)
+            half_h = rng.uniform(34 * s, 50 * s)
             nodes[n] = (x, y)
             rects[n] = (x - half_w, y - half_h, x + half_w, y + half_h)
 
