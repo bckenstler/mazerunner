@@ -61,8 +61,8 @@ def build(seed: int = 3, overrides: dict | None = None) -> World:
         start_node=0,
         goal_node=0,
     )
+    world.start_node, world.goal_node = pick_far_endpoints(world, rng, o.get("endpoint_quantile", 1.0))
     if o.get("warp"):
         warp_world(world, seed, *o["warp"])
-    world.start_node, world.goal_node = pick_far_endpoints(world, rng, o.get("endpoint_quantile", 1.0))
     retain_route(world)
     return world

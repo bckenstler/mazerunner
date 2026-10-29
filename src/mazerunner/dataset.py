@@ -128,6 +128,123 @@ def _slot_seeds(master_seed: int, seed_base: int, slot: int, attempt: int) -> di
     }
 
 
+def make_world(family: str, topo_seed: int, overrides: dict, augmentation: dict):
+    """A family build plus its augmentation: the one path that both building
+    and rebuilding from provenance take, so the two can never disagree.
+
+    `fill_pinholes` in the overrides is a mask setting rather than a family
+    knob, so it is applied to the world here instead of inside each family.
+    """
+    world = FAMILIES[family].build(topo_seed, overrides)
+    world.fill_pinholes = bool(overrides.get("fill_pinholes", False))
+    return apply_augmentation(world, augmentation)
+
+
+class _Rejected(Exception):
+    """One attempt failed a fail-closed stage; carries what to log."""
+
+    def __init__(self, stage: str, detail: str):
+        super().__init__(detail)
+        self.stage, self.detail = stage, detail
+
+
+def _draw(seeds: dict, space: list[dict], band: tuple[float, float], archetype_options: list[str]):
+    """The sampler stream's choices for one attempt: overrides and archetype."""
+    sampler_rng = np.random.default_rng(seeds["sampler_seed"])
+    overrides = dict(space[int(sampler_rng.integers(len(space)))])
+    q_lo, q_hi = band
+    overrides["endpoint_quantile"] = float(np.round(sampler_rng.uniform(q_lo, q_hi), 3))
+    archetype_name = archetype_options[int(sampler_rng.integers(len(archetype_options)))]
+    return overrides, archetype_name
+
+
+def _attempt(family: str, seeds: dict, overrides: dict, archetype_name: str,
+             want_tier: str | None = None) -> dict:
+    """Generate, validate, measure, and certify one attempt in memory.
+
+    Raises _Rejected at the first failing stage. `want_tier` rejects a
+    mismatched measured tier before the (expensive) render.
+    """
+    aug_params = sample_augmentation(np.random.default_rng(seeds["augmentation_seed"]), family)
+    try:
+        world = make_world(family, seeds["topo_seed"], overrides, aug_params)
+    except ValueError as exc:
+        raise _Rejected("generation", str(exc)) from None
+    mask = open_mask(world)
+    try:
+        validation = validate_world(world, mask)
+    except ValueError as exc:
+        raise _Rejected("validation", str(exc)) from None
+    measures = measure_task(world, validation)
+    if want_tier is not None and measures["tier"] != want_tier:
+        raise _Rejected("tier", f"targeted {want_tier}, measured {measures['tier']}")
+    semantic_hash = graph_hash(world)
+    try:
+        image, style_record, certification, _style_rej = certified_render(
+            world, mask, ARCHETYPES[archetype_name], seeds["style_seed"]
+        )
+    except ValueError as exc:
+        raise _Rejected("style_certification", str(exc)) from None
+    return {
+        "world": world, "mask": mask, "validation": validation, "measures": measures,
+        "graph_hash": semantic_hash, "image": image, "style_record": style_record,
+        "certification": certification, "augmentation": aug_params,
+        "overrides": overrides, "archetype": archetype_name,
+    }
+
+
+def _save(built: dict, task_id: str, out_dir: str, split: str, provenance: dict) -> tuple[Path, dict]:
+    """Write a built attempt as a task dir; completes `provenance` in place
+    with the measured fields and stores it in task.json."""
+    task_dir = Path(out_dir) / split / task_id
+    task = save_task(task_dir, built["world"], built["mask"], built["image"],
+                     built["validation"], built["style_record"])
+    overlay = render_overlay(built["image"], built["validation"].geodesic_points_px, success=True)
+    overlay.save(task_dir / "reference-overlay.png")
+    provenance.update({
+        "difficulty_overrides": built["overrides"],
+        "augmentation": built["augmentation"],
+        "measures": built["measures"],
+        "graph_hash": built["graph_hash"],
+        "mask_sha256": mask_sha256(built["mask"]),
+        "certification": {
+            "metrics": built["certification"].metrics,
+            "thresholds": built["certification"].thresholds,
+        },
+    })
+    return task_dir, task
+
+
+def _seed_record(split: str, slot: int, attempt: int, master_seed: int, seed_base: int, seeds: dict) -> dict:
+    return {
+        "dataset_split": split,
+        "slot": slot,
+        "attempt": attempt,
+        "master_seed": master_seed,
+        "seed_base": seed_base,
+        "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+        **seeds,
+    }
+
+
+def _index_row(task_id: str, task_dir: Path, family: str, built: dict, tier: str,
+               tier_target: str, tier_relaxed: bool, attempts_used: int, rejections: int) -> dict:
+    return {
+        "task_id": task_id,
+        "dir": str(task_dir),
+        "family": family,
+        "archetype": built["archetype"],
+        "tier": tier,
+        "tier_target": tier_target,
+        "tier_relaxed": tier_relaxed,
+        "graph_hash": built["graph_hash"],
+        "mask_sha256": mask_sha256(built["mask"]),
+        "measures": built["measures"],
+        "attempts_used": attempts_used,
+        "rejections": rejections,
+    }
+
+
 def build_slot(
     master_seed: int,
     seed_base: int,
@@ -152,93 +269,34 @@ def build_slot(
     ]
     for relax_tier in (False, True):
         for attempt, seeds in attempts:
-            sampler_rng = np.random.default_rng(seeds["sampler_seed"])
-
-            options = DIFFICULTY_SPACES[family][tier]
-            overrides = dict(options[int(sampler_rng.integers(len(options)))])
-            q_lo, q_hi = QUANTILE_BANDS[tier]
-            overrides["endpoint_quantile"] = float(np.round(sampler_rng.uniform(q_lo, q_hi), 3))
-            archetype_name = archetype_options[int(sampler_rng.integers(len(archetype_options)))]
-
-            def reject(stage: str, detail: str) -> None:
-                rejections.append(
-                    {"attempt": attempt, "relaxed": relax_tier, "stage": stage,
-                     "detail": detail[:300], "seeds": seeds}
-                )
-
-            try:
-                world = FAMILIES[family].build(seeds["topo_seed"], overrides)
-            except ValueError as exc:
-                reject("generation", str(exc))
-                continue
-            aug_params = sample_augmentation(
-                np.random.default_rng(seeds["augmentation_seed"]), family
+            overrides, archetype_name = _draw(
+                seeds, DIFFICULTY_SPACES[family][tier], QUANTILE_BANDS[tier], archetype_options
             )
-            world = apply_augmentation(world, aug_params)
-            mask = open_mask(world)
             try:
-                validation = validate_world(world, mask)
-            except ValueError as exc:
-                reject("validation", str(exc))
-                continue
-            measures = measure_task(world, validation)
-            if measures["tier"] != tier and not relax_tier:
-                reject("tier", f"targeted {tier}, measured {measures['tier']}")
-                continue
-            semantic_hash = graph_hash(world)
-            try:
-                image, style_record, certification, _style_rej = certified_render(
-                    world, mask, ARCHETYPES[archetype_name], seeds["style_seed"]
+                built = _attempt(family, seeds, overrides, archetype_name,
+                                 want_tier=None if relax_tier else tier)
+            except _Rejected as rej:
+                rejections.append(
+                    {"attempt": attempt, "relaxed": relax_tier, "stage": rej.stage,
+                     "detail": rej.detail[:300], "seeds": seeds}
                 )
-            except ValueError as exc:
-                reject("style_certification", str(exc))
                 continue
 
+            measures = built["measures"]
             task_id = f"{family}-{measures['tier']}-s{slot:04d}"
-            task_dir = Path(out_dir) / split / task_id
-            task = save_task(task_dir, world, mask, image, validation, style_record)
-            overlay = render_overlay(image, validation.geodesic_points_px, success=True)
-            overlay.save(task_dir / "reference-overlay.png")
-
             provenance = {
-                "dataset_split": split,
-                "slot": slot,
-                "attempt": attempt,
-                "master_seed": master_seed,
-                "seed_base": seed_base,
-                "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
-                **seeds,
+                **_seed_record(split, slot, attempt, master_seed, seed_base, seeds),
                 "family": family,
                 "tier_target": tier,
                 "tier_relaxed": relax_tier,
-                "difficulty_overrides": overrides,
-                "augmentation": aug_params,
-                "measures": measures,
-                "graph_hash": semantic_hash,
-                "mask_sha256": mask_sha256(mask),
-                "certification": {
-                    "metrics": certification.metrics,
-                    "thresholds": certification.thresholds,
-                },
-                "rejections": rejections,
-                "environment": _environment_record(),
             }
+            task_dir, task = _save(built, task_id, out_dir, split, provenance)
+            provenance["rejections"] = rejections
+            provenance["environment"] = _environment_record()
             task["provenance"] = provenance
             (task_dir / "task.json").write_text(json.dumps(task, indent=2))
-            return {
-                "task_id": task_id,
-                "dir": str(task_dir),
-                "family": family,
-                "archetype": archetype_name,
-                "tier": measures["tier"],
-                "tier_target": tier,
-                "tier_relaxed": relax_tier,
-                "graph_hash": semantic_hash,
-                "mask_sha256": provenance["mask_sha256"],
-                "measures": measures,
-                "attempts_used": attempt - attempt_offset + 1,
-                "rejections": len(rejections),
-            }
+            return _index_row(task_id, task_dir, family, built, measures["tier"], tier,
+                              relax_tier, attempt - attempt_offset + 1, len(rejections))
     return {
         "error": f"slot {slot} ({family}/{tier}): no attempt passed in {MAX_ATTEMPTS_PER_SLOT}",
         "rejections": rejections,
@@ -463,8 +521,7 @@ def rebuild_from_provenance(prov: dict):
     the original; only the style is left to choose. This is what lets the
     style-swap ablation vary rendering while holding the maze itself fixed.
     """
-    world = FAMILIES[prov["family"]].build(prov["topo_seed"], prov["difficulty_overrides"])
-    world = apply_augmentation(world, prov["augmentation"])
+    world = make_world(prov["family"], prov["topo_seed"], prov["difficulty_overrides"], prov["augmentation"])
     return world, open_mask(world)
 
 

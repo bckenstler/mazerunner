@@ -97,3 +97,27 @@ def arc_points(
         a = a0 + sweep * (k / n)
         pts.append((center[0] + radius * math.cos(a), center[1] + radius * math.sin(a)))
     return pts
+
+
+def simplify_polyline(points: list[Point], epsilon: float) -> list[Point]:
+    """Ramer-Douglas-Peucker: drop every vertex within `epsilon` px of the
+    chord that replaces it, keeping both endpoints."""
+    if len(points) < 3:
+        return list(points)
+    keep = [False] * len(points)
+    keep[0] = keep[-1] = True
+    stack = [(0, len(points) - 1)]
+    while stack:
+        a, b = stack.pop()
+        (x1, y1), (x2, y2) = points[a], points[b]
+        chord = math.hypot(x2 - x1, y2 - y1) or 1e-9
+        worst, index = -1.0, None
+        for i in range(a + 1, b):
+            x0, y0 = points[i]
+            d = abs((x2 - x1) * (y1 - y0) - (x1 - x0) * (y2 - y1)) / chord
+            if d > worst:
+                worst, index = d, i
+        if index is not None and worst > epsilon:
+            keep[index] = True
+            stack += [(a, index), (index, b)]
+    return [p for p, k in zip(points, keep) if k]

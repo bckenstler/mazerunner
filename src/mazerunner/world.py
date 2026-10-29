@@ -86,6 +86,10 @@ class World:
     # non-adjacent corridors separated so the mask never contains shortcuts
     # the graph does not model.
     check_edge_separation: bool = True
+    # Fill enclosed wall specks of at most PINHOLE_MAX_PX pixels when
+    # rasterizing (see open_mask). Off by default so v1 masks stay
+    # byte-identical.
+    fill_pinholes: bool = False
 
     @property
     def start_px(self) -> Point:
@@ -156,7 +160,36 @@ def open_mask(world: World) -> np.ndarray:
             draw.rectangle([x0, y0, x1, y1], fill=255)
         else:
             raise ValueError(f"unknown open primitive {prim[0]!r}")
-    return np.asarray(img) > 127
+    mask = np.asarray(img) > 127
+    if world.fill_pinholes:
+        mask = fill_pinholes(mask)
+    return mask
+
+
+# Largest enclosed wall component treated as a rasterization speck. Measured
+# on the v2 ladder: specks are 1-6 px (dots and short diagonal slivers), the
+# smallest real wall is 116 px.
+PINHOLE_MAX_PX = 12
+
+
+def fill_pinholes(mask: np.ndarray) -> np.ndarray:
+    """Open any wall component of at most PINHOLE_MAX_PX pixels that does not
+    touch the canvas border.
+
+    Where several corridor strokes meet at a join, integer rasterization can
+    leave an isolated closed pixel inside open space. It renders as a dot in
+    the corridor and blocks any path passing within the pointer radius of it,
+    a wall that is not part of the maze.
+    """
+    labels, count = ndimage.label(~mask)
+    if count == 0:
+        return mask
+    sizes = ndimage.sum_labels(np.ones_like(labels), labels, index=range(1, count + 1))
+    border = np.unique(np.concatenate([labels[0], labels[-1], labels[:, 0], labels[:, -1]]))
+    specks = [i + 1 for i, s in enumerate(sizes) if s <= PINHOLE_MAX_PX and i + 1 not in border]
+    if not specks:
+        return mask
+    return mask | np.isin(labels, specks)
 
 
 def _disambiguated_radius(

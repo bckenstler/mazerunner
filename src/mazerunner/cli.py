@@ -60,6 +60,13 @@ def cmd_dataset(args: argparse.Namespace) -> int:
     from . import dataset as ds
 
     out_dir = Path(json.loads(Path(args.config).read_text())["out_dir"]) if args.command_ds != "build" else None
+    if args.command_ds == "build" and "levels" in json.loads(Path(args.config).read_text()):
+        from .ladder import build_ladder
+
+        manifest = build_ladder(Path(args.config), workers=args.workers)
+        for split, summary in manifest["summaries"].items():
+            print(f"{split}: {summary['size']} tasks, {summary['total_rejections']} rejections, levels={summary['tiers']}")
+        return 0
     if args.command_ds == "build":
         manifest = ds.build_all(
             Path(args.config),

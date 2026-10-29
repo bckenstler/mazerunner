@@ -155,6 +155,11 @@ def warp_world(world: World, seed: int, amplitude: float, wavelength: float) -> 
     curve rather than a moved straight line. The field draws from its own
     stream derived from `seed`, so a warped build never shifts the random
     sequence the unwarped generator consumes.
+
+    Generators call this after picking endpoints and before retaining the
+    route, so a warped maze and its unwarped twin (same seed) share topology,
+    start, and goal; only the drawn geometry differs. The route is solved on
+    the warped lengths, so the stored reference is still a true shortest path.
     """
     rng = random.Random(f"warp:{seed}")
     waves = []

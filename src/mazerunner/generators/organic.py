@@ -35,9 +35,15 @@ def curved(a: tuple[float, float], b: tuple[float, float], rng: random.Random, m
 def build(seed: int = 5, overrides: dict | None = None) -> World:
     """Scattered nodes, Delaunay candidate edges, curved Bezier corridors.
 
-    Honors nodes/corridor/loops/min_dist. Nothing is axis-aligned, so a path
-    cannot be approximated by horizontal and vertical runs; the drawing has to
-    follow real curvature.
+    Honors nodes/corridor/loops/min_dist/max_edge. Nothing is axis-aligned, so
+    a path cannot be approximated by horizontal and vertical runs; the drawing
+    has to follow real curvature.
+
+    `max_edge` caps candidate corridor length. The default suits v1 spacing;
+    at much tighter spacing a long Delaunay edge almost always skims past an
+    unrelated corridor and fails edge separation (measured at 100 nodes,
+    min_dist 42: 0/80 seeds build at 210, 64/80 at 100), so dense layouts
+    pass a cap near 2.4x min_dist instead of loosening the separation check.
     """
     # The sampler picks (nodes, min_dist, corridor) as a coherent tuple —
     # dense layouts need narrower corridors to satisfy edge separation.
@@ -46,7 +52,7 @@ def build(seed: int = 5, overrides: dict | None = None) -> World:
     min_dist = o["min_dist"]
     points = scatter_points(rng, o["nodes"], WIDTH, HEIGHT, margin=85, min_dist=min_dist)
     nodes = dict(enumerate(points))
-    candidates = delaunay_candidates(points, max_length=210)
+    candidates = delaunay_candidates(points, max_length=o.get("max_edge", 210))
     neighbors: dict[int, list[int]] = {n: [] for n in nodes}
     for a, b in candidates:
         neighbors[a].append(b)
