@@ -1,0 +1,387 @@
+{
+  "config": {
+    "version": "v2",
+    "master_seed": 20260726,
+    "out_dir": "datasets/v2",
+    "split": "test",
+    "seed_base": 3000000,
+    "per_cell": 4,
+    "endpoint_band": [
+      0.9,
+      1.0
+    ],
+    "mask": {
+      "fill_pinholes": true
+    },
+    "dedup_against": [
+      "datasets/v1"
+    ],
+    "archetypes": [
+      "notebook",
+      "dungeon-pebble",
+      "blueprint-rooms",
+      "forest-path",
+      "glow-cavern",
+      "parchment-chart",
+      "watercolor-archipelago",
+      "neon-pipes",
+      "circuit-board",
+      "hedge-garden",
+      "treasure-map",
+      "candy-pastel",
+      "pencil-sketch",
+      "desert-canyon"
+    ],
+    "levels": {
+      "rectilinear": {
+        "L1": {
+          "cols": 7,
+          "rows": 6,
+          "corridor": 26
+        },
+        "L2": {
+          "cols": 10,
+          "rows": 9,
+          "corridor": 20
+        },
+        "L3": {
+          "cols": 16,
+          "rows": 14,
+          "corridor": 16
+        },
+        "L4": {
+          "cols": 22,
+          "rows": 20,
+          "corridor": 12
+        }
+      },
+      "braided": {
+        "L1": {
+          "cols": 7,
+          "rows": 6,
+          "corridor": 26,
+          "loops": 9
+        },
+        "L2": {
+          "cols": 10,
+          "rows": 9,
+          "corridor": 20,
+          "loops": 18
+        },
+        "L3": {
+          "cols": 14,
+          "rows": 12,
+          "corridor": 16,
+          "loops": 30
+        },
+        "L4": {
+          "cols": 18,
+          "rows": 16,
+          "corridor": 13,
+          "loops": 50
+        }
+      },
+      "pipes": {
+        "L1": {
+          "cols": 6,
+          "rows": 5,
+          "corridor": 18,
+          "loops": 4
+        },
+        "L2": {
+          "cols": 8,
+          "rows": 6,
+          "corridor": 15,
+          "loops": 7
+        },
+        "L3": {
+          "cols": 11,
+          "rows": 9,
+          "corridor": 14,
+          "loops": 12
+        },
+        "L4": {
+          "cols": 14,
+          "rows": 12,
+          "corridor": 12,
+          "loops": 18
+        }
+      },
+      "island": {
+        "L1": {
+          "islands": 16,
+          "corridor": 16,
+          "min_dist": 128,
+          "extra_edges": 2
+        },
+        "L2": {
+          "islands": 20,
+          "corridor": 14,
+          "min_dist": 108,
+          "extra_edges": 3
+        },
+        "L3": {
+          "islands": 30,
+          "corridor": 12,
+          "min_dist": 85,
+          "extra_edges": 4
+        },
+        "L4": {
+          "islands": 40,
+          "corridor": 11,
+          "min_dist": 72,
+          "extra_edges": 5
+        }
+      },
+      "rooms": {
+        "L1": {
+          "corridor": 18,
+          "extra_edges": 1
+        },
+        "L2": {
+          "cols": 5,
+          "rows": 3,
+          "room_scale": 0.85,
+          "corridor": 16,
+          "extra_edges": 1
+        },
+        "L3": {
+          "cols": 5,
+          "rows": 4,
+          "room_scale": 0.75,
+          "corridor": 14,
+          "extra_edges": 2
+        },
+        "L4": {
+          "cols": 6,
+          "rows": 5,
+          "room_scale": 0.6,
+          "corridor": 12,
+          "extra_edges": 2
+        }
+      },
+      "organic": {
+        "L1": {
+          "nodes": 30,
+          "corridor": 22,
+          "min_dist": 92,
+          "loops": 1
+        },
+        "L2": {
+          "nodes": 44,
+          "corridor": 13,
+          "min_dist": 62,
+          "loops": 2
+        },
+        "L3": {
+          "nodes": 70,
+          "corridor": 12,
+          "min_dist": 50,
+          "loops": 3
+        },
+        "L4": {
+          "nodes": 100,
+          "corridor": 11,
+          "min_dist": 42,
+          "loops": 4,
+          "max_edge": 100
+        }
+      },
+      "radial": {
+        "L1": {
+          "rings": 4,
+          "corridor": 24,
+          "loops": 1
+        },
+        "L2": {
+          "rings": 5,
+          "corridor": 22,
+          "loops": 2
+        },
+        "L3": {
+          "rings": 6,
+          "ring_radii": [
+            70,
+            122,
+            174,
+            226,
+            278,
+            330
+          ],
+          "ring_sectors": [
+            8,
+            10,
+            12,
+            16,
+            18,
+            22
+          ],
+          "corridor": 20,
+          "loops": 2
+        },
+        "L4": {
+          "rings": 7,
+          "ring_radii": [
+            60,
+            105,
+            150,
+            195,
+            240,
+            285,
+            330
+          ],
+          "ring_sectors": [
+            8,
+            10,
+            12,
+            16,
+            18,
+            22,
+            24
+          ],
+          "corridor": 18,
+          "loops": 2
+        }
+      },
+      "cave": {
+        "L1": {
+          "cell": 20,
+          "open_probability": 0.62,
+          "seamless": true
+        },
+        "L2": {
+          "cell": 17,
+          "open_probability": 0.6,
+          "seamless": true
+        },
+        "L3": {
+          "cell": 14,
+          "open_probability": 0.6,
+          "seamless": true
+        },
+        "L4": {
+          "cell": 12,
+          "open_probability": 0.6,
+          "seamless": true
+        }
+      }
+    },
+    "warp": {
+      "rectilinear": {
+        "L1": [
+          30,
+          400
+        ],
+        "L2": [
+          21,
+          285
+        ],
+        "L3": [
+          13,
+          180
+        ],
+        "L4": [
+          9.5,
+          126
+        ]
+      },
+      "braided": {
+        "L1": [
+          30,
+          420
+        ],
+        "L2": [
+          21,
+          295
+        ],
+        "L3": [
+          15,
+          210
+        ],
+        "L4": [
+          12,
+          160
+        ]
+      },
+      "pipes": {
+        "L1": [
+          35,
+          470
+        ],
+        "L2": [
+          26,
+          350
+        ],
+        "L3": [
+          19,
+          260
+        ],
+        "L4": [
+          14.5,
+          195
+        ]
+      },
+      "island": {
+        "L1": [
+          27,
+          385
+        ],
+        "L2": [
+          24.5,
+          345
+        ],
+        "L3": [
+          20,
+          280
+        ],
+        "L4": [
+          17,
+          240
+        ]
+      }
+    }
+  },
+  "environment": {
+    "python": "3.13.3",
+    "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+    "packages": {
+      "numpy": "2.5.1",
+      "pillow": "12.3.0",
+      "scipy": "1.18.0"
+    }
+  },
+  "summaries": {
+    "test": {
+      "split": "test",
+      "size": 192,
+      "total_rejections": 25,
+      "tiers": {
+        "L1": 32,
+        "L1w": 16,
+        "L2": 32,
+        "L2w": 16,
+        "L3": 32,
+        "L3w": 16,
+        "L4": 32,
+        "L4w": 16
+      },
+      "archetypes": {
+        "circuit-board": 10,
+        "parchment-chart": 16,
+        "neon-pipes": 15,
+        "desert-canyon": 6,
+        "hedge-garden": 14,
+        "dungeon-pebble": 19,
+        "watercolor-archipelago": 21,
+        "candy-pastel": 10,
+        "forest-path": 16,
+        "notebook": 14,
+        "pencil-sketch": 14,
+        "treasure-map": 12,
+        "glow-cavern": 9,
+        "blueprint-rooms": 16
+      }
+    }
+  },
+  "total_semantic_hashes": 1128
+}

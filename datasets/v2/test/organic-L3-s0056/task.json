@@ -1,0 +1,569 @@
+{
+  "id": "organic",
+  "type": "Organic",
+  "style": "Enchanted forest",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1467412463,
+  "generator": "Curved graph embedding",
+  "style_record": {
+    "archetype": "blueprint-rooms",
+    "style_seed": 1438825633,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        15,
+        57,
+        83
+      ],
+      "grid": null,
+      "grid_spacing": 40,
+      "corridor_fill": [
+        232,
+        238,
+        245
+      ],
+      "dash": [
+        109,
+        142,
+        168
+      ],
+      "label": [
+        43,
+        66,
+        94
+      ],
+      "outline_color": [
+        148,
+        177,
+        212
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.549,
+    "y": 0.2698
+  },
+  "goal": {
+    "x": 0.3815,
+    "y": 0.6503
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 36,
+    "optimal_length_px": 3048.59,
+    "optimal_length_px_geometric": 2724.93,
+    "corner_cut_headroom_px": 323.66,
+    "min_clearance_px": 5.0,
+    "optimal_path": [
+      {
+        "x": 0.5494,
+        "y": 0.2693
+      },
+      {
+        "x": 0.5807,
+        "y": 0.2558
+      },
+      {
+        "x": 0.597,
+        "y": 0.2517
+      },
+      {
+        "x": 0.6233,
+        "y": 0.2409
+      },
+      {
+        "x": 0.6258,
+        "y": 0.2382
+      },
+      {
+        "x": 0.632,
+        "y": 0.2057
+      },
+      {
+        "x": 0.6333,
+        "y": 0.134
+      },
+      {
+        "x": 0.6283,
+        "y": 0.1286
+      },
+      {
+        "x": 0.6233,
+        "y": 0.1272
+      },
+      {
+        "x": 0.5782,
+        "y": 0.1556
+      },
+      {
+        "x": 0.5594,
+        "y": 0.1759
+      },
+      {
+        "x": 0.4518,
+        "y": 0.1908
+      },
+      {
+        "x": 0.4468,
+        "y": 0.1827
+      },
+      {
+        "x": 0.4768,
+        "y": 0.134
+      },
+      {
+        "x": 0.4731,
+        "y": 0.1299
+      },
+      {
+        "x": 0.433,
+        "y": 0.111
+      },
+      {
+        "x": 0.4018,
+        "y": 0.1015
+      },
+      {
+        "x": 0.3855,
+        "y": 0.0988
+      },
+      {
+        "x": 0.3617,
+        "y": 0.1137
+      },
+      {
+        "x": 0.3242,
+        "y": 0.1556
+      },
+      {
+        "x": 0.3016,
+        "y": 0.1908
+      },
+      {
+        "x": 0.2916,
+        "y": 0.2152
+      },
+      {
+        "x": 0.2879,
+        "y": 0.23
+      },
+      {
+        "x": 0.2854,
+        "y": 0.2503
+      },
+      {
+        "x": 0.3479,
+        "y": 0.3356
+      },
+      {
+        "x": 0.3542,
+        "y": 0.3396
+      },
+      {
+        "x": 0.3617,
+        "y": 0.3329
+      },
+      {
+        "x": 0.373,
+        "y": 0.3018
+      },
+      {
+        "x": 0.3867,
+        "y": 0.2788
+      },
+      {
+        "x": 0.3905,
+        "y": 0.2774
+      },
+      {
+        "x": 0.4518,
+        "y": 0.2855
+      },
+      {
+        "x": 0.4556,
+        "y": 0.2896
+      },
+      {
+        "x": 0.4568,
+        "y": 0.2936
+      },
+      {
+        "x": 0.3605,
+        "y": 0.4249
+      },
+      {
+        "x": 0.3592,
+        "y": 0.429
+      },
+      {
+        "x": 0.3667,
+        "y": 0.4344
+      },
+      {
+        "x": 0.4606,
+        "y": 0.406
+      },
+      {
+        "x": 0.4643,
+        "y": 0.41
+      },
+      {
+        "x": 0.4656,
+        "y": 0.4154
+      },
+      {
+        "x": 0.4706,
+        "y": 0.5129
+      },
+      {
+        "x": 0.4756,
+        "y": 0.5183
+      },
+      {
+        "x": 0.4806,
+        "y": 0.5196
+      },
+      {
+        "x": 0.5444,
+        "y": 0.5183
+      },
+      {
+        "x": 0.5569,
+        "y": 0.525
+      },
+      {
+        "x": 0.5582,
+        "y": 0.5304
+      },
+      {
+        "x": 0.5444,
+        "y": 0.5697
+      },
+      {
+        "x": 0.5019,
+        "y": 0.6428
+      },
+      {
+        "x": 0.4906,
+        "y": 0.6955
+      },
+      {
+        "x": 0.4831,
+        "y": 0.7564
+      },
+      {
+        "x": 0.4906,
+        "y": 0.7618
+      },
+      {
+        "x": 0.5632,
+        "y": 0.6982
+      },
+      {
+        "x": 0.5832,
+        "y": 0.6847
+      },
+      {
+        "x": 0.5895,
+        "y": 0.6915
+      },
+      {
+        "x": 0.5995,
+        "y": 0.7118
+      },
+      {
+        "x": 0.6095,
+        "y": 0.7551
+      },
+      {
+        "x": 0.6195,
+        "y": 0.77
+      },
+      {
+        "x": 0.6245,
+        "y": 0.7727
+      },
+      {
+        "x": 0.6383,
+        "y": 0.774
+      },
+      {
+        "x": 0.6996,
+        "y": 0.7727
+      },
+      {
+        "x": 0.7096,
+        "y": 0.7686
+      },
+      {
+        "x": 0.761,
+        "y": 0.7848
+      },
+      {
+        "x": 0.7997,
+        "y": 0.82
+      },
+      {
+        "x": 0.8473,
+        "y": 0.8552
+      },
+      {
+        "x": 0.8511,
+        "y": 0.862
+      },
+      {
+        "x": 0.831,
+        "y": 0.8823
+      },
+      {
+        "x": 0.801,
+        "y": 0.9026
+      },
+      {
+        "x": 0.7572,
+        "y": 0.9215
+      },
+      {
+        "x": 0.7272,
+        "y": 0.9269
+      },
+      {
+        "x": 0.7146,
+        "y": 0.9269
+      },
+      {
+        "x": 0.7109,
+        "y": 0.9229
+      },
+      {
+        "x": 0.6884,
+        "y": 0.8633
+      },
+      {
+        "x": 0.6821,
+        "y": 0.8593
+      },
+      {
+        "x": 0.6258,
+        "y": 0.8687
+      },
+      {
+        "x": 0.5795,
+        "y": 0.8945
+      },
+      {
+        "x": 0.4856,
+        "y": 0.8945
+      },
+      {
+        "x": 0.4305,
+        "y": 0.8322
+      },
+      {
+        "x": 0.3767,
+        "y": 0.7767
+      },
+      {
+        "x": 0.3254,
+        "y": 0.7348
+      },
+      {
+        "x": 0.3041,
+        "y": 0.7226
+      },
+      {
+        "x": 0.2991,
+        "y": 0.7307
+      },
+      {
+        "x": 0.3116,
+        "y": 0.8417
+      },
+      {
+        "x": 0.3116,
+        "y": 0.8457
+      },
+      {
+        "x": 0.3079,
+        "y": 0.8498
+      },
+      {
+        "x": 0.3041,
+        "y": 0.8512
+      },
+      {
+        "x": 0.1927,
+        "y": 0.8309
+      },
+      {
+        "x": 0.1602,
+        "y": 0.8187
+      },
+      {
+        "x": 0.1564,
+        "y": 0.8119
+      },
+      {
+        "x": 0.1865,
+        "y": 0.7727
+      },
+      {
+        "x": 0.1977,
+        "y": 0.7564
+      },
+      {
+        "x": 0.2028,
+        "y": 0.7456
+      },
+      {
+        "x": 0.224,
+        "y": 0.6752
+      },
+      {
+        "x": 0.2528,
+        "y": 0.6455
+      },
+      {
+        "x": 0.2703,
+        "y": 0.6333
+      },
+      {
+        "x": 0.2991,
+        "y": 0.6198
+      },
+      {
+        "x": 0.3217,
+        "y": 0.6238
+      },
+      {
+        "x": 0.3379,
+        "y": 0.6333
+      },
+      {
+        "x": 0.3529,
+        "y": 0.6401
+      },
+      {
+        "x": 0.3692,
+        "y": 0.6441
+      },
+      {
+        "x": 0.3817,
+        "y": 0.6509
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 56,
+    "attempt": 2,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1467412463,
+    "style_seed": 1438825633,
+    "augmentation_seed": 461100111,
+    "sampler_seed": 725908176,
+    "family": "organic",
+    "tier_target": "L3",
+    "tier_relaxed": false,
+    "level": "L3",
+    "warped": false,
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "nodes": 70,
+      "corridor": 12,
+      "min_dist": 50,
+      "loops": 3,
+      "endpoint_quantile": 1.0
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 7.58,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.961
+    },
+    "measures": {
+      "geodesic_length_px": 2724.93,
+      "normalized_length": 2.5005,
+      "turns": 34,
+      "route_branches": 6,
+      "difficulty_score": 5.9338,
+      "tier": "L3",
+      "measured_tier": "hard"
+    },
+    "graph_hash": "d736f7952aeed8cb85c60fdd852863164acb886ac51d77fede8f3929662ea5fe",
+    "mask_sha256": "3bbab2046e4615b8956d6b16f92d6ad98df453a5ad0998d83c517d8e4b1621e2",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.08906,
+        "start_marker_contrast": 141.81,
+        "goal_marker_contrast": 133.41
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [
+      {
+        "attempt": 0,
+        "variant": "L3",
+        "stage": "validation",
+        "detail": "organic: corridors 0-12 and 13-28 pass 8.6px apart (need 15.4)",
+        "seeds": {
+          "topo_seed": 1967718173,
+          "style_seed": 1599900779,
+          "augmentation_seed": 2112695381,
+          "sampler_seed": 366742764
+        }
+      },
+      {
+        "attempt": 1,
+        "variant": "L3",
+        "stage": "validation",
+        "detail": "organic: corridors 15-22 and 48-51 pass 6.8px apart (need 17.4)",
+        "seeds": {
+          "topo_seed": 635998538,
+          "style_seed": 661352280,
+          "augmentation_seed": 397042410,
+          "sampler_seed": 1067146099
+        }
+      }
+    ],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

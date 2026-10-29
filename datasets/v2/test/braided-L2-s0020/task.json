@@ -1,0 +1,256 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 391789564,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "dungeon-pebble",
+    "style_seed": 1627249314,
+    "marker": {
+      "radius": 13,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        33,
+        32,
+        31
+      ],
+      "corridor_fill": [
+        62,
+        61,
+        57
+      ],
+      "corridor_noise": [
+        54,
+        53,
+        49
+      ],
+      "corridor_extra": [
+        [
+          54,
+          53,
+          49
+        ]
+      ],
+      "pebble_shades": [
+        [
+          125,
+          123,
+          109
+        ],
+        [
+          153,
+          144,
+          132
+        ],
+        [
+          155,
+          150,
+          143
+        ],
+        [
+          129,
+          123,
+          112
+        ]
+      ],
+      "pebble_outline": [
+        21,
+        20,
+        19
+      ],
+      "outline_color": [
+        20,
+        19,
+        17
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.1199,
+    "y": 0.8201
+  },
+  "goal": {
+    "x": 0.4582,
+    "y": 0.0747
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 15,
+    "optimal_length_px": 1229.51,
+    "optimal_length_px_geometric": 1070.42,
+    "corner_cut_headroom_px": 159.09,
+    "min_clearance_px": 11.66,
+    "optimal_path": [
+      {
+        "x": 0.1199,
+        "y": 0.8203
+      },
+      {
+        "x": 0.1283,
+        "y": 0.516
+      },
+      {
+        "x": 0.1314,
+        "y": 0.5122
+      },
+      {
+        "x": 0.1919,
+        "y": 0.4878
+      },
+      {
+        "x": 0.194,
+        "y": 0.4852
+      },
+      {
+        "x": 0.2138,
+        "y": 0.4082
+      },
+      {
+        "x": 0.2158,
+        "y": 0.4056
+      },
+      {
+        "x": 0.3608,
+        "y": 0.3825
+      },
+      {
+        "x": 0.3639,
+        "y": 0.3787
+      },
+      {
+        "x": 0.3827,
+        "y": 0.3017
+      },
+      {
+        "x": 0.3848,
+        "y": 0.2991
+      },
+      {
+        "x": 0.5297,
+        "y": 0.276
+      },
+      {
+        "x": 0.5328,
+        "y": 0.2721
+      },
+      {
+        "x": 0.5516,
+        "y": 0.1951
+      },
+      {
+        "x": 0.5537,
+        "y": 0.1926
+      },
+      {
+        "x": 0.6152,
+        "y": 0.1682
+      },
+      {
+        "x": 0.6173,
+        "y": 0.1656
+      },
+      {
+        "x": 0.6184,
+        "y": 0.0899
+      },
+      {
+        "x": 0.6152,
+        "y": 0.086
+      },
+      {
+        "x": 0.4578,
+        "y": 0.0745
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 20,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 391789564,
+    "style_seed": 1627249314,
+    "augmentation_seed": 1973148134,
+    "sampler_seed": 1099947154,
+    "family": "braided",
+    "tier_target": "L2",
+    "tier_relaxed": false,
+    "level": "L2",
+    "warped": false,
+    "twin": "braided-L2w-s0020",
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cols": 10,
+      "rows": 9,
+      "corridor": 20,
+      "loops": 18,
+      "endpoint_quantile": 0.929
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 1.103
+    },
+    "measures": {
+      "geodesic_length_px": 1070.42,
+      "normalized_length": 0.8654,
+      "turns": 9,
+      "route_branches": 8,
+      "difficulty_score": 2.4154,
+      "tier": "L2",
+      "measured_tier": "medium"
+    },
+    "graph_hash": "5111ed703f9f489c50e823559733aeaad2952d964b2669dc0962fcf2b5fa7a5a",
+    "mask_sha256": "e71cdfd306a238e97a9c662680e8cbc9920a4255e1656dbf628040dc9fbb6fdb",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 107.6,
+        "goal_marker_contrast": 125.51
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

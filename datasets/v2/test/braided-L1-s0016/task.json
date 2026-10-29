@@ -1,0 +1,237 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2091801154,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "blueprint-rooms",
+    "style_seed": 2139721671,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        12,
+        48,
+        74
+      ],
+      "grid": null,
+      "grid_spacing": 41,
+      "corridor_fill": [
+        230,
+        238,
+        242
+      ],
+      "dash": [
+        103,
+        139,
+        175
+      ],
+      "label": [
+        30,
+        57,
+        83
+      ],
+      "outline_color": [
+        121,
+        164,
+        202
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.0797,
+    "y": 0.1467
+  },
+  "goal": {
+    "x": 0.7813,
+    "y": 0.4298
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 11,
+    "optimal_length_px": 1197.29,
+    "optimal_length_px_geometric": 1046.04,
+    "corner_cut_headroom_px": 151.25,
+    "min_clearance_px": 12.65,
+    "optimal_path": [
+      {
+        "x": 0.0798,
+        "y": 0.1464
+      },
+      {
+        "x": 0.0907,
+        "y": 0.2716
+      },
+      {
+        "x": 0.1164,
+        "y": 0.2941
+      },
+      {
+        "x": 0.2016,
+        "y": 0.2991
+      },
+      {
+        "x": 0.2057,
+        "y": 0.3029
+      },
+      {
+        "x": 0.2314,
+        "y": 0.413
+      },
+      {
+        "x": 0.2355,
+        "y": 0.4168
+      },
+      {
+        "x": 0.2409,
+        "y": 0.418
+      },
+      {
+        "x": 0.4817,
+        "y": 0.418
+      },
+      {
+        "x": 0.4858,
+        "y": 0.4143
+      },
+      {
+        "x": 0.4871,
+        "y": 0.4093
+      },
+      {
+        "x": 0.5115,
+        "y": 0.3041
+      },
+      {
+        "x": 0.5196,
+        "y": 0.2991
+      },
+      {
+        "x": 0.6238,
+        "y": 0.2753
+      },
+      {
+        "x": 0.6265,
+        "y": 0.2728
+      },
+      {
+        "x": 0.6522,
+        "y": 0.1627
+      },
+      {
+        "x": 0.6563,
+        "y": 0.1589
+      },
+      {
+        "x": 0.6617,
+        "y": 0.1577
+      },
+      {
+        "x": 0.7632,
+        "y": 0.1577
+      },
+      {
+        "x": 0.7673,
+        "y": 0.1615
+      },
+      {
+        "x": 0.7686,
+        "y": 0.1665
+      },
+      {
+        "x": 0.7808,
+        "y": 0.4293
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 16,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2091801154,
+    "style_seed": 2139721671,
+    "augmentation_seed": 1654819829,
+    "sampler_seed": 315138895,
+    "family": "braided",
+    "tier_target": "L1",
+    "tier_relaxed": false,
+    "level": "L1",
+    "warped": false,
+    "twin": "braided-L1w-s0016",
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cols": 7,
+      "rows": 6,
+      "corridor": 26,
+      "loops": 9,
+      "endpoint_quantile": 0.914
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 2,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.052
+    },
+    "measures": {
+      "geodesic_length_px": 1046.04,
+      "normalized_length": 0.9599,
+      "turns": 14,
+      "route_branches": 8,
+      "difficulty_score": 2.9265,
+      "tier": "L1",
+      "measured_tier": "medium"
+    },
+    "graph_hash": "97df7095330b2b680ce09ae14528859d46068172036f91f99ef265595a403545",
+    "mask_sha256": "cb3051628cb09983fc46441b7503c6d17455389196f4708e4d5cf7460e499da1",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.04644,
+        "start_marker_contrast": 49.01,
+        "goal_marker_contrast": 62.86
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

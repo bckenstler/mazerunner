@@ -1,0 +1,319 @@
+{
+  "id": "pipes",
+  "type": "Pipes",
+  "style": "Neon factory",
+  "state_representation": "GRAPH",
+  "width": 740,
+  "height": 800,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1333751765,
+  "generator": "Orthogonal network",
+  "style_record": {
+    "archetype": "neon-pipes",
+    "style_seed": 2115748331,
+    "marker": {
+      "radius": 13,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        12,
+        13,
+        17
+      ],
+      "grid_spacing": 42,
+      "corridor_fill": [
+        49,
+        49,
+        56
+      ],
+      "pipe_bodies": [
+        [
+          68,
+          153,
+          209
+        ],
+        [
+          64,
+          46,
+          212
+        ],
+        [
+          207,
+          72,
+          165
+        ],
+        [
+          217,
+          79,
+          205
+        ]
+      ],
+      "pipe_cores": [
+        [
+          160,
+          201,
+          244
+        ],
+        [
+          157,
+          141,
+          235
+        ],
+        [
+          253,
+          174,
+          217
+        ],
+        [
+          242,
+          163,
+          247
+        ]
+      ],
+      "joint": [
+        228,
+        231,
+        240
+      ],
+      "corridor_extra_from": [
+        "pipe_bodies",
+        "pipe_cores"
+      ],
+      "outline_color": [
+        31,
+        240,
+        83
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.9258,
+    "y": 0.3234
+  },
+  "goal": {
+    "x": 0.0755,
+    "y": 0.5006
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 16,
+    "optimal_length_px": 2154.46,
+    "optimal_length_px_geometric": 1956.02,
+    "corner_cut_headroom_px": 198.44,
+    "min_clearance_px": 9.85,
+    "optimal_path": [
+      {
+        "x": 0.9256,
+        "y": 0.3229
+      },
+      {
+        "x": 0.9175,
+        "y": 0.1577
+      },
+      {
+        "x": 0.9134,
+        "y": 0.1539
+      },
+      {
+        "x": 0.908,
+        "y": 0.1527
+      },
+      {
+        "x": 0.7686,
+        "y": 0.1527
+      },
+      {
+        "x": 0.7645,
+        "y": 0.1564
+      },
+      {
+        "x": 0.7632,
+        "y": 0.4881
+      },
+      {
+        "x": 0.7673,
+        "y": 0.4919
+      },
+      {
+        "x": 0.7727,
+        "y": 0.4931
+      },
+      {
+        "x": 0.912,
+        "y": 0.5081
+      },
+      {
+        "x": 0.9161,
+        "y": 0.5119
+      },
+      {
+        "x": 0.9175,
+        "y": 0.6646
+      },
+      {
+        "x": 0.9093,
+        "y": 0.6696
+      },
+      {
+        "x": 0.7686,
+        "y": 0.6846
+      },
+      {
+        "x": 0.7645,
+        "y": 0.6884
+      },
+      {
+        "x": 0.747,
+        "y": 0.8423
+      },
+      {
+        "x": 0.7388,
+        "y": 0.8473
+      },
+      {
+        "x": 0.5981,
+        "y": 0.8473
+      },
+      {
+        "x": 0.594,
+        "y": 0.8436
+      },
+      {
+        "x": 0.5778,
+        "y": 0.6896
+      },
+      {
+        "x": 0.5697,
+        "y": 0.6846
+      },
+      {
+        "x": 0.429,
+        "y": 0.6696
+      },
+      {
+        "x": 0.4249,
+        "y": 0.6658
+      },
+      {
+        "x": 0.4073,
+        "y": 0.5131
+      },
+      {
+        "x": 0.4032,
+        "y": 0.5094
+      },
+      {
+        "x": 0.2585,
+        "y": 0.5081
+      },
+      {
+        "x": 0.253,
+        "y": 0.5156
+      },
+      {
+        "x": 0.2368,
+        "y": 0.6646
+      },
+      {
+        "x": 0.2287,
+        "y": 0.6696
+      },
+      {
+        "x": 0.088,
+        "y": 0.6696
+      },
+      {
+        "x": 0.0825,
+        "y": 0.6621
+      },
+      {
+        "x": 0.0758,
+        "y": 0.5006
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 112,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1333751765,
+    "style_seed": 2115748331,
+    "augmentation_seed": 1052573762,
+    "sampler_seed": 1187348074,
+    "family": "pipes",
+    "tier_target": "L1",
+    "tier_relaxed": false,
+    "level": "L1",
+    "warped": false,
+    "twin": "pipes-L1w-s0112",
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cols": 6,
+      "rows": 5,
+      "corridor": 18,
+      "loops": 4,
+      "endpoint_quantile": 0.939
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        740,
+        800
+      ],
+      "width_scale": 1.059
+    },
+    "measures": {
+      "geodesic_length_px": 1956.02,
+      "normalized_length": 1.7949,
+      "turns": 21,
+      "route_branches": 5,
+      "difficulty_score": 4.0449,
+      "tier": "L1",
+      "measured_tier": "hard"
+    },
+    "graph_hash": "f962805d2c1320254e409e66194ab7d1993b9f83f4024e7faabdad868ca34f45",
+    "mask_sha256": "a962928e3b67c9550e45029629f404bf5763c4e5054f3a834ada2db2880b41aa",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 183.71,
+        "goal_marker_contrast": 152.5
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

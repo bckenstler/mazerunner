@@ -1,0 +1,191 @@
+{
+  "id": "cave",
+  "type": "Cave",
+  "style": "Bioluminescent cavern",
+  "state_representation": "RASTER",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 209692195,
+  "generator": "Cellular automata",
+  "style_record": {
+    "archetype": "hedge-garden",
+    "style_seed": 1426105562,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "grass": [
+        60,
+        146,
+        91
+      ],
+      "hedge": [
+        [
+          27,
+          60,
+          38
+        ],
+        [
+          18,
+          69,
+          36
+        ],
+        [
+          11,
+          37,
+          22
+        ]
+      ],
+      "corridor_fill": [
+        217,
+        210,
+        195
+      ],
+      "corridor_extra": [
+        [
+          205,
+          198,
+          183
+        ]
+      ],
+      "outline_color": [
+        9,
+        31,
+        12
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.7737,
+    "y": 0.0772
+  },
+  "goal": {
+    "x": 0.2678,
+    "y": 0.8743
+  },
+  "reference": {
+    "solver": "Grid BFS",
+    "optimal_length_steps": 57,
+    "optimal_length_px": 1106.06,
+    "optimal_length_px_geometric": 819.12,
+    "corner_cut_headroom_px": 286.94,
+    "min_clearance_px": 10.0,
+    "optimal_path": [
+      {
+        "x": 0.7737,
+        "y": 0.077
+      },
+      {
+        "x": 0.708,
+        "y": 0.2401
+      },
+      {
+        "x": 0.707,
+        "y": 0.2888
+      },
+      {
+        "x": 0.537,
+        "y": 0.4365
+      },
+      {
+        "x": 0.5245,
+        "y": 0.5122
+      },
+      {
+        "x": 0.4129,
+        "y": 0.6136
+      },
+      {
+        "x": 0.3952,
+        "y": 0.6354
+      },
+      {
+        "x": 0.268,
+        "y": 0.8742
+      }
+    ],
+    "optimal_path_epsilon_px": 3.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 67,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 209692195,
+    "style_seed": 1426105562,
+    "augmentation_seed": 1757983777,
+    "sampler_seed": 169975872,
+    "family": "cave",
+    "tier_target": "L1",
+    "tier_relaxed": false,
+    "level": "L1",
+    "warped": false,
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cell": 20,
+      "open_probability": 0.62,
+      "seamless": true,
+      "endpoint_quantile": 0.997
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 3,
+      "rotation_deg": 0.0,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 0.911
+    },
+    "measures": {
+      "geodesic_length_px": 819.12,
+      "normalized_length": 0.6622,
+      "turns": 3,
+      "route_branches": 49,
+      "difficulty_score": 2.4122,
+      "tier": "L1",
+      "measured_tier": "medium"
+    },
+    "graph_hash": "242a47717e544f92347afc2a1fbdb0901d3b532ce271a38f49e0266f78a23b60",
+    "mask_sha256": "cd29a347319faaa24ee295ded2fb1185191fb062a3a1bbf6b719003b9bcde71b",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 68.36,
+        "goal_marker_contrast": 53.07
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

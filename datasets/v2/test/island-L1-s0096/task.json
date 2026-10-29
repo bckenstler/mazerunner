@@ -1,0 +1,207 @@
+{
+  "id": "island",
+  "type": "Island path",
+  "style": "Watercolor archipelago",
+  "state_representation": "GRAPH",
+  "width": 960,
+  "height": 780,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 1024298577,
+  "generator": "Spatial island graph",
+  "style_record": {
+    "archetype": "parchment-chart",
+    "style_seed": 310714463,
+    "marker": {
+      "radius": 14,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        14,
+        17,
+        33
+      ],
+      "star": [
+        235,
+        232,
+        244
+      ],
+      "star_faint": [
+        74,
+        64,
+        97
+      ],
+      "corridor_fill": [
+        236,
+        222,
+        197
+      ],
+      "corridor_noise": [
+        224,
+        210,
+        185
+      ],
+      "corridor_extra": [
+        [
+          224,
+          210,
+          185
+        ]
+      ],
+      "outline_color": [
+        41,
+        50,
+        86
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.2663,
+    "y": 0.3853
+  },
+  "goal": {
+    "x": 0.6783,
+    "y": 0.3643
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 5,
+    "optimal_length_px": 731.86,
+    "optimal_length_px_geometric": 698.01,
+    "corner_cut_headroom_px": 33.85,
+    "min_clearance_px": 6.71,
+    "optimal_path": [
+      {
+        "x": 0.2659,
+        "y": 0.3851
+      },
+      {
+        "x": 0.2753,
+        "y": 0.2439
+      },
+      {
+        "x": 0.3055,
+        "y": 0.1926
+      },
+      {
+        "x": 0.3785,
+        "y": 0.1476
+      },
+      {
+        "x": 0.4307,
+        "y": 0.1297
+      },
+      {
+        "x": 0.5089,
+        "y": 0.1207
+      },
+      {
+        "x": 0.6204,
+        "y": 0.1309
+      },
+      {
+        "x": 0.6423,
+        "y": 0.1386
+      },
+      {
+        "x": 0.6767,
+        "y": 0.1617
+      },
+      {
+        "x": 0.6976,
+        "y": 0.2015
+      },
+      {
+        "x": 0.6861,
+        "y": 0.3338
+      },
+      {
+        "x": 0.6788,
+        "y": 0.3646
+      }
+    ],
+    "optimal_path_epsilon_px": 3.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 96,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 1024298577,
+    "style_seed": 310714463,
+    "augmentation_seed": 1068824477,
+    "sampler_seed": 711931470,
+    "family": "island",
+    "tier_target": "L1",
+    "tier_relaxed": false,
+    "level": "L1",
+    "warped": false,
+    "twin": "island-L1w-s0096",
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "islands": 16,
+      "corridor": 16,
+      "min_dist": 128,
+      "extra_edges": 2,
+      "endpoint_quantile": 0.911
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 3,
+      "rotation_deg": 2.51,
+      "canvas": [
+        960,
+        780
+      ],
+      "width_scale": 0.939
+    },
+    "measures": {
+      "geodesic_length_px": 698.01,
+      "normalized_length": 0.5643,
+      "turns": 3,
+      "route_branches": 2,
+      "difficulty_score": 1.0143,
+      "tier": "L1",
+      "measured_tier": "easy"
+    },
+    "graph_hash": "b78f114e0df514858323d713b8c8c3326345d53bbdfa62586eead3e26687a14d",
+    "mask_sha256": "2a6262452010c16b3cd79c97e1d4fa8395c55dd3ba624a93ba0eabba13eb483f",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 75.15,
+        "goal_marker_contrast": 78.21
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

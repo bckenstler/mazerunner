@@ -1,0 +1,215 @@
+{
+  "id": "rooms",
+  "type": "Rooms and corridors",
+  "style": "Architect's plan",
+  "state_representation": "GRAPH",
+  "width": 900,
+  "height": 700,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 463586384,
+  "generator": "Room graph plus MST",
+  "style_record": {
+    "archetype": "treasure-map",
+    "style_seed": 2055864311,
+    "marker": {
+      "radius": 12,
+      "halo": 2
+    },
+    "params": {
+      "bg": [
+        165,
+        146,
+        120
+      ],
+      "stain": [
+        143,
+        124,
+        98
+      ],
+      "corridor_fill": [
+        240,
+        230,
+        205
+      ],
+      "corridor_extra": [
+        [
+          230,
+          220,
+          195
+        ]
+      ],
+      "route_dash": [
+        142,
+        66,
+        79
+      ],
+      "x_mark": [
+        102,
+        31,
+        29
+      ],
+      "outline_color": [
+        74,
+        58,
+        42
+      ],
+      "outline_px": 3
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.1826,
+    "y": 0.8578
+  },
+  "goal": {
+    "x": 0.808,
+    "y": 0.1244
+  },
+  "reference": {
+    "solver": "Dijkstra",
+    "optimal_length_steps": 6,
+    "optimal_length_px": 1123.11,
+    "optimal_length_px_geometric": 925.36,
+    "corner_cut_headroom_px": 197.76,
+    "min_clearance_px": 7.62,
+    "optimal_path": [
+      {
+        "x": 0.1824,
+        "y": 0.8584
+      },
+      {
+        "x": 0.2759,
+        "y": 0.8498
+      },
+      {
+        "x": 0.3215,
+        "y": 0.8298
+      },
+      {
+        "x": 0.3493,
+        "y": 0.794
+      },
+      {
+        "x": 0.3593,
+        "y": 0.5565
+      },
+      {
+        "x": 0.3938,
+        "y": 0.5122
+      },
+      {
+        "x": 0.4449,
+        "y": 0.4907
+      },
+      {
+        "x": 0.4483,
+        "y": 0.4864
+      },
+      {
+        "x": 0.4761,
+        "y": 0.4721
+      },
+      {
+        "x": 0.5061,
+        "y": 0.4235
+      },
+      {
+        "x": 0.5161,
+        "y": 0.2046
+      },
+      {
+        "x": 0.5439,
+        "y": 0.1688
+      },
+      {
+        "x": 0.5918,
+        "y": 0.1459
+      },
+      {
+        "x": 0.8076,
+        "y": 0.1245
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 39,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 463586384,
+    "style_seed": 2055864311,
+    "augmentation_seed": 1364493448,
+    "sampler_seed": 1393318336,
+    "family": "rooms",
+    "tier_target": "L2",
+    "tier_relaxed": false,
+    "level": "L2",
+    "warped": false,
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cols": 5,
+      "rows": 3,
+      "room_scale": 0.85,
+      "corridor": 16,
+      "extra_edges": 1,
+      "endpoint_quantile": 0.93
+    },
+    "augmentation": {
+      "flip": false,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        900,
+        700
+      ],
+      "width_scale": 1.075
+    },
+    "measures": {
+      "geodesic_length_px": 925.36,
+      "normalized_length": 0.8116,
+      "turns": 5,
+      "route_branches": 4,
+      "difficulty_score": 1.6283,
+      "tier": "L2",
+      "measured_tier": "medium"
+    },
+    "graph_hash": "256581a6aa5e3d853e6b649856501e95490336e0cf17c55f625791f375eb670d",
+    "mask_sha256": "6e7b57fc48145369b90023e86c1a1bc8ebf34bb75e6801fd20b6e6a555759635",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.02915,
+        "start_marker_contrast": 89.72,
+        "goal_marker_contrast": 96.99
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}

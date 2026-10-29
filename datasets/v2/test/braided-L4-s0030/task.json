@@ -1,0 +1,322 @@
+{
+  "id": "braided",
+  "type": "Braided",
+  "style": "Dungeon stone",
+  "state_representation": "GRAPH",
+  "width": 800,
+  "height": 740,
+  "image_file": "input.png",
+  "mask_file": "mask.png",
+  "seed": 2005818703,
+  "generator": "DFS plus loop carving",
+  "style_record": {
+    "archetype": "circuit-board",
+    "style_seed": 1763072196,
+    "marker": {
+      "radius": 14,
+      "halo": 3
+    },
+    "params": {
+      "bg": [
+        15,
+        43,
+        17
+      ],
+      "grid_spacing": 28,
+      "corridor_fill": [
+        210,
+        160,
+        87
+      ],
+      "corridor_extra": [
+        [
+          235,
+          185,
+          112
+        ]
+      ],
+      "pad": [
+        232,
+        226,
+        210
+      ],
+      "outline_color": [
+        7,
+        16,
+        9
+      ],
+      "outline_px": 2
+    },
+    "style_rejections": []
+  },
+  "pointer_radius_px": 3,
+  "start_radius_px": 28.0,
+  "goal_radius_px": 28.0,
+  "start": {
+    "x": 0.8842,
+    "y": 0.5292
+  },
+  "goal": {
+    "x": 0.2194,
+    "y": 0.6431
+  },
+  "reference": {
+    "solver": "BFS",
+    "optimal_length_steps": 33,
+    "optimal_length_px": 1365.74,
+    "optimal_length_px_geometric": 1217.68,
+    "corner_cut_headroom_px": 148.06,
+    "min_clearance_px": 6.71,
+    "optimal_path": [
+      {
+        "x": 0.8836,
+        "y": 0.5291
+      },
+      {
+        "x": 0.8798,
+        "y": 0.4804
+      },
+      {
+        "x": 0.8761,
+        "y": 0.4763
+      },
+      {
+        "x": 0.8398,
+        "y": 0.4668
+      },
+      {
+        "x": 0.8373,
+        "y": 0.4641
+      },
+      {
+        "x": 0.836,
+        "y": 0.4235
+      },
+      {
+        "x": 0.8436,
+        "y": 0.4181
+      },
+      {
+        "x": 0.9262,
+        "y": 0.4181
+      },
+      {
+        "x": 0.9299,
+        "y": 0.4222
+      },
+      {
+        "x": 0.9312,
+        "y": 0.5765
+      },
+      {
+        "x": 0.9274,
+        "y": 0.5805
+      },
+      {
+        "x": 0.8411,
+        "y": 0.5819
+      },
+      {
+        "x": 0.8373,
+        "y": 0.5778
+      },
+      {
+        "x": 0.8273,
+        "y": 0.5359
+      },
+      {
+        "x": 0.821,
+        "y": 0.5318
+      },
+      {
+        "x": 0.7885,
+        "y": 0.5237
+      },
+      {
+        "x": 0.7847,
+        "y": 0.5169
+      },
+      {
+        "x": 0.7785,
+        "y": 0.4804
+      },
+      {
+        "x": 0.771,
+        "y": 0.475
+      },
+      {
+        "x": 0.7384,
+        "y": 0.475
+      },
+      {
+        "x": 0.7347,
+        "y": 0.479
+      },
+      {
+        "x": 0.7272,
+        "y": 0.5196
+      },
+      {
+        "x": 0.7234,
+        "y": 0.5237
+      },
+      {
+        "x": 0.7184,
+        "y": 0.525
+      },
+      {
+        "x": 0.4831,
+        "y": 0.5318
+      },
+      {
+        "x": 0.4793,
+        "y": 0.5359
+      },
+      {
+        "x": 0.4693,
+        "y": 0.5778
+      },
+      {
+        "x": 0.4668,
+        "y": 0.5805
+      },
+      {
+        "x": 0.4305,
+        "y": 0.59
+      },
+      {
+        "x": 0.4268,
+        "y": 0.5968
+      },
+      {
+        "x": 0.4268,
+        "y": 0.6333
+      },
+      {
+        "x": 0.4305,
+        "y": 0.6373
+      },
+      {
+        "x": 0.4668,
+        "y": 0.6468
+      },
+      {
+        "x": 0.4706,
+        "y": 0.6549
+      },
+      {
+        "x": 0.4706,
+        "y": 0.747
+      },
+      {
+        "x": 0.4668,
+        "y": 0.751
+      },
+      {
+        "x": 0.4618,
+        "y": 0.7524
+      },
+      {
+        "x": 0.2778,
+        "y": 0.7524
+      },
+      {
+        "x": 0.2741,
+        "y": 0.7483
+      },
+      {
+        "x": 0.2728,
+        "y": 0.7429
+      },
+      {
+        "x": 0.2666,
+        "y": 0.6509
+      },
+      {
+        "x": 0.2591,
+        "y": 0.6455
+      },
+      {
+        "x": 0.219,
+        "y": 0.6428
+      }
+    ],
+    "optimal_path_epsilon_px": 1.0
+  },
+  "provenance": {
+    "dataset_split": "test",
+    "slot": 30,
+    "attempt": 0,
+    "master_seed": 20260726,
+    "seed_base": 3000000,
+    "seed_derivation": "SeedSequence([master_seed, seed_base, slot, attempt]).spawn(4) -> topo, style, augmentation, sampler",
+    "topo_seed": 2005818703,
+    "style_seed": 1763072196,
+    "augmentation_seed": 1441053111,
+    "sampler_seed": 653747275,
+    "family": "braided",
+    "tier_target": "L4",
+    "tier_relaxed": false,
+    "level": "L4",
+    "warped": false,
+    "twin": "braided-L4w-s0030",
+    "difficulty_overrides": {
+      "fill_pinholes": true,
+      "cols": 18,
+      "rows": 16,
+      "corridor": 13,
+      "loops": 50,
+      "endpoint_quantile": 0.911
+    },
+    "augmentation": {
+      "flip": true,
+      "quarter_turns": 0,
+      "rotation_deg": 0.0,
+      "canvas": [
+        800,
+        740
+      ],
+      "width_scale": 0.977
+    },
+    "measures": {
+      "geodesic_length_px": 1217.68,
+      "normalized_length": 1.1174,
+      "turns": 31,
+      "route_branches": 14,
+      "difficulty_score": 5.1007,
+      "tier": "L4",
+      "measured_tier": "hard"
+    },
+    "graph_hash": "7f560f5f151fbb316fb7434833881d061dcec517895c9123588760c87b7cb985",
+    "mask_sha256": "69315067f0e613c3554fb2fd7fd30aa0be6b1eafbd1c29d2a8975065c5422a39",
+    "certification": {
+      "metrics": {
+        "boundary_similar_fraction": 0.0,
+        "largest_fake_corridor_px": 0,
+        "interior_contrast_fraction": 0.0,
+        "start_marker_contrast": 181.18,
+        "goal_marker_contrast": 171.08
+      },
+      "thresholds": {
+        "boundary_similar_tau": 32.0,
+        "boundary_max_similar_fraction": 0.03,
+        "extension_band_px": 18,
+        "extension_min_area_px": 60,
+        "interior_contrast_tau": 110.0,
+        "interior_max_contrast_fraction": 0.15,
+        "marker_min_contrast": 30.0,
+        "marker_exclusion_px": 22
+      }
+    },
+    "rejections": [],
+    "environment": {
+      "python": "3.13.3",
+      "platform": "macOS-26.6.1-arm64-arm-64bit-Mach-O",
+      "packages": {
+        "numpy": "2.5.1",
+        "pillow": "12.3.0",
+        "scipy": "1.18.0"
+      }
+    }
+  }
+}
