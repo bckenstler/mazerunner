@@ -404,6 +404,7 @@ def cmd_run(args: argparse.Namespace) -> int:
         shard_index=shard_index,
         shard_count=shard_count,
         resume=args.resume,
+        resume_max_timeouts=args.resume_max_timeouts,
         order_seed=args.order_seed,
         image_spec=spec_from_args(args.image_variant, args.image_scale, args.image_seed),
     )
@@ -447,6 +448,12 @@ def main() -> None:
     run.add_argument("--run-id", default=None, help="group shards under results/<run-id>/")
     run.add_argument("--shard", default=None, help="run only shard i of N, as i/N")
     run.add_argument("--resume", action="store_true", help="skip attempts already recorded")
+    run.add_argument(
+        "--resume-max-timeouts",
+        type=int,
+        default=None,
+        help="with --resume, do not replay a unit that already timed out this many times (it scores as a fail)",
+    )
     run.add_argument(
         "--order-seed",
         type=int,

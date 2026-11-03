@@ -159,14 +159,20 @@ def shard(units: list[AttemptUnit], index: int, count: int) -> list[AttemptUnit]
     return units[index::count]
 
 
-def completed_keys(attempts_path: Path) -> set[tuple]:
+def completed_keys(attempts_path: Path, max_timeouts: int | None = None) -> set[tuple]:
     """(provider, task_id, trial) already *answered*, for --resume.
 
     Transport failures are deliberately not counted as answered: the retry
     policy requeues them once, so a resumed shard replays exactly those units. The merge prefers the
     evaluated row over the recorded failure, so nothing is double-counted.
+
+    With `max_timeouts`, a unit that has already timed out that many times
+    counts as answered: the model did not respond within the time budget, so
+    it is scored as a fail rather than retried until it happens to finish.
+    Other transport failures (connection errors) still replay.
     """
     keys: set[tuple] = set()
+    timeouts: dict[tuple, int] = {}
     if not attempts_path.exists():
         return keys
     with attempts_path.open() as handle:
@@ -177,9 +183,14 @@ def completed_keys(attempts_path: Path) -> set[tuple]:
                 row = json.loads(line)
             except json.JSONDecodeError:
                 continue
+            key = (row.get("provider"), row.get("maze"), row.get("trial"))
             if row.get("error"):
+                if max_timeouts and "timed out" in row["error"]:
+                    timeouts[key] = timeouts.get(key, 0) + 1
+                    if timeouts[key] >= max_timeouts:
+                        keys.add(key)
                 continue
-            keys.add((row.get("provider"), row.get("maze"), row.get("trial")))
+            keys.add(key)
     return keys
 
 
@@ -232,6 +243,7 @@ def run_smoke(
     resume: bool = False,
     order_seed: int | None = None,
     image_spec: "ImageSpec | None" = None,
+    resume_max_timeouts: int | None = None,
 ) -> int:
     """Execute a live run and write its attempts, config snapshot, and summary.
 
@@ -245,7 +257,8 @@ def run_smoke(
     calls in the same order.
 
     `resume` skips units already *answered* in the shard's attempts file;
-    transport failures are not counted as answered, so they replay. `dry_run`
+    transport failures are not counted as answered, so they replay, except
+    units that already timed out `resume_max_timeouts` times. `dry_run`
     prints the plan and spends nothing — the cheap way to confirm a leg is
     what you meant before it bills.
     """
@@ -295,7 +308,7 @@ def run_smoke(
     overlays_dir.mkdir(parents=True, exist_ok=True)
     attempts_path = run_dir / "attempts.jsonl"
 
-    already = completed_keys(attempts_path) if resume else set()
+    already = completed_keys(attempts_path, resume_max_timeouts) if resume else set()
     if already:
         before = len(units)
         units = [u for u in units if (u.provider, u.task_id, u.trial) not in already]

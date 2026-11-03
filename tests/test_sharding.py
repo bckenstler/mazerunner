@@ -132,6 +132,21 @@ def test_transport_failures_are_replayed_on_resume(tmp_path):
     assert completed_keys(path) == {("a", "t1", 0)}
 
 
+def test_repeated_timeouts_stop_replaying(tmp_path):
+    """A unit that timed out on every real attempt scores as a fail; a
+    connection error never reached the model, so it does not count."""
+    timeout = "transport failure: openai: Request timed out."
+    dropped = "transport failure: openai: Connection error."
+    rows = [("t0", timeout), ("t0", timeout), ("t1", dropped), ("t1", timeout), ("t2", dropped)]
+    path = tmp_path / "attempts.jsonl"
+    path.write_text("".join(
+        json.dumps({"provider": "a", "maze": maze, "trial": 0, "error": error}) + "\n" for maze, error in rows
+    ))
+    assert completed_keys(path) == set()
+    assert completed_keys(path, max_timeouts=2) == {("a", "t0", 0)}
+    assert completed_keys(path, max_timeouts=1) == {("a", "t0", 0), ("a", "t1", 0)}
+
+
 def test_completed_keys_survives_a_truncated_final_line(tmp_path):
     """A crash mid-write must not make the whole leg unresumable."""
     path = tmp_path / "attempts.jsonl"
