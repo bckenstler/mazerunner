@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
+import itertools
 
 import pytest
 
@@ -15,13 +14,19 @@ from mazerunner.evalset import (
     write_task_list,
 )
 
-DEV_INDEX = Path("datasets/v1/dev/index.jsonl")
+FAMILIES = ("rectilinear", "braided", "pipes", "island", "cave", "radial", "organic", "rooms")
+TIERS = ("easy", "medium", "hard")
+ARCHETYPES = tuple(f"style-{i:02d}" for i in range(14))
 
 
 def _dev_rows():
-    if not DEV_INDEX.exists():
-        pytest.skip("v1 dev split not built")
-    return [json.loads(line) for line in DEV_INDEX.read_text().splitlines() if line.strip()]
+    """A synthetic pool with every family x tier x archetype combination, so
+    the selector's constraints are tested independently of any shipped split."""
+    return [
+        {"task_id": f"{family}-{tier}-{archetype}", "family": family, "tier": tier,
+         "archetype": archetype}
+        for family, tier, archetype in itertools.product(FAMILIES, TIERS, ARCHETYPES)
+    ]
 
 
 def _counts(rows, ids, key):
@@ -108,15 +113,3 @@ def test_write_then_read_roundtrip(tmp_path):
     path = tmp_path / "nested" / "list.txt"
     write_task_list(path, ["x", "y"])
     assert read_task_list(path) == ["x", "y"]
-
-
-def test_frozen_eval_set_on_disk_matches_manifest():
-    """The committed list is the one the recorded seed produces."""
-    out = Path("evals/dev-eval-100.txt")
-    if not out.exists():
-        pytest.skip("eval set not built")
-    manifest = json.loads(out.with_suffix(".json").read_text())
-    assert read_task_list(out) == manifest["task_ids"]
-    rows = _dev_rows()
-    ids, _ = select_eval_set(rows, seed=manifest["seed"], spec=SelectionSpec(**manifest["spec"]))
-    assert ids == manifest["task_ids"]

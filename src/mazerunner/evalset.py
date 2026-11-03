@@ -46,8 +46,8 @@ class InfeasibleSelection(RuntimeError):
 def read_task_list(path: Path) -> list[str]:
     """Task ids from a frozen list file.
 
-    Accepts newline-separated (evals/*.txt) or the single comma-separated line
-    used by results/pilot-tasks.txt, so both survive.
+    Accepts one id per line or a single comma-separated line, so a list can
+    be pasted from a command line as easily as written by write_task_list.
     """
     text = Path(path).read_text()
     parts = text.replace(",", "\n").split("\n")
@@ -141,7 +141,7 @@ def build_eval_set(
     """Select, write the frozen id list, and record a reproducibility manifest.
 
     `pool_path` restricts the candidate pool to an existing frozen list, which
-    is how the ablation subsets are nested inside dev-eval-100: every ablation
+    is how ablation subsets nest inside a larger frozen list: every ablation
     attempt is then paired with that task's main-run attempts.
     """
     index = Path(dataset_dir) / "index.jsonl"

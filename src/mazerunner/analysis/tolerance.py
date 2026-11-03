@@ -42,7 +42,18 @@ def rescore(
     }
 
     for row in rows:
-        if row.get("error") or row.get("submission") is None:
+        if row.get("error"):
+            # Missing work stays missing; an attempt the model never answered
+            # twice over is a fail at any tolerance (as on the leaderboard).
+            if (row.get("unanswered_attempts") or 0) >= 2:
+                for radius in radii:
+                    out[radius][row["provider"]][row["maze"]].append(False)
+            continue
+        if row.get("submission") is None:
+            # No usable submission (no tool call, malformed): a fail at every
+            # radius, not an attempt to drop from the denominator.
+            for radius in radii:
+                out[radius][row["provider"]][row["maze"]].append(False)
             continue
         task_dir = row.get("task_dir") or (index or {}).get(row["maze"], {}).get("dir")
         if not task_dir:

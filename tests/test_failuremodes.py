@@ -130,6 +130,15 @@ def test_procedural_template_needs_an_uninformative_trace():
     assert v.primary == "procedural_template"
 
 
+def test_procedural_template_needs_a_path_that_ignores_the_corridors():
+    """A terse summary over a path that stays in the corridor is not 'never
+    looked' — the drawing itself shows the image was read."""
+    legal = [(0.05, 0.05), (0.85, 0.05)]
+    v = classify(_row(legal, collision_free=False, trace="Planning the drag path."),
+                 TASK, _mask())
+    assert v.primary == "clearance_failure"
+
+
 def test_trace_availability_is_recorded():
     """A geometry-only label must never look trace-supported."""
     v = classify(_row([(0.5, 0.3), (0.5, 0.95)], trace=None), TASK, _mask())

@@ -1,36 +1,14 @@
 {
-  "_note": "USD per million tokens. Exact values are from the serving gateway's rate card on 2026-07-30. Routes the proxy does not price are recorded as null rather than guessed; the economics table reports them as unpriced.",
-  "source": "provider gateway rate card, retrieved 2026-07-30",
+  "_note": "USD per million tokens, keyed by public model id (the route prefix a gateway adds is stripped before lookup). Gateway rate card retrieved 2026-11-02; Kimi K3.1 Pro is the OpenRouter list price on the pinned Moonshot host. Models with no published price on the route used are null rather than guessed, and are reported as unpriced.",
+  "source": "provider gateway rate card and OpenRouter, retrieved 2026-11-02",
   "models": {
-    "openai/gpt-5.6-sol": {
-      "input": 5.0,
-      "output": 30.0,
-      "exact": true
-    },
-    "anthropic/claude-opus-5": {
-      "input": 5.0,
-      "output": 25.0,
-      "exact": true
-    },
-    "gemini/gemini-3.6-flash": {
-      "input": 1.25,
-      "output": 10.0,
-      "exact": true
-    },
-    "fireworks_ai/kimi-k3": {
-      "input": null,
-      "output": null,
-      "exact": false
-    },
-    "muse-spark-1.1": {
-      "input": null,
-      "output": null,
-      "exact": false
-    },
-    "thinkingmachines/inkling": {
-      "input": null,
-      "output": null,
-      "exact": false
-    }
+    "gpt-6-astra": {"input": 10.0, "output": 50.0, "exact": true},
+    "gpt-6.1-sol": {"input": 2.0, "output": 10.0, "exact": true},
+    "gpt-6.1-terra": {"input": 1.0, "output": 5.0, "exact": true},
+    "gemini-4-argon": {"input": 2.0, "output": 10.0, "exact": true},
+    "claude-opus-5-5": {"input": 4.0, "output": 20.0, "exact": true},
+    "kimi-k3.1-pro": {"input": 2.0, "output": 10.0, "exact": true},
+    "muse-wonder-1.0": {"input": null, "output": null, "exact": false},
+    "nemotron-3.5-super-vl": {"input": null, "output": null, "exact": false}
   }
 }

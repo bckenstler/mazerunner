@@ -18,7 +18,7 @@ KEEP = (
     "provider", "model", "maze", "trial", "ordinal", "run_id", "shard",
     "prompt_variant", "image_variant", "latency_s", "usage", "submission",
     "evaluation", "derived", "error", "provider_error", "serving_stack",
-    "task_dir", "timestamp",
+    "task_dir", "timestamp", "unanswered_attempts",
 )
 
 

@@ -125,6 +125,47 @@ def cmd_serve(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_board(args: argparse.Namespace) -> int:
+    """Print the v2 leaderboard and the paired effort table from a merged run,
+    optionally writing the full board (per level, per cell, warp pairs) as JSON."""
+    from .analysis.board import UPPER, build_board, paired
+
+    meta = json.loads(Path(args.config).read_text())
+    legs = meta["legs"]
+    upper = frozenset(k for k, v in legs.items() if v.get("upper_only"))
+    board, tasks = build_board(Path(args.attempts or meta["attempts"]), upper)
+
+    def pct(m):
+        return f"{m['score']*100:5.1f} [{m['lo']*100:4.1f}, {m['hi']*100:4.1f}]"
+
+    print(f"{'model':34s} {'score':>19s} {'pass@k':>7s} {'progress':>8s}")
+    main_legs = sorted((k for k in board if k not in upper), key=lambda k: -board[k]["headline"]["score"])
+    for k in main_legs:
+        r = board[k]
+        print(f"{legs.get(k, {}).get('name', k):34s} {pct(r['headline'])} "
+              f"{r['pass_at_k']['score']*100:6.1f}% {r['route_progress']*100:7.1f}%")
+    print("\nmore effort, L3/L4 cells only, paired by task")
+    effort = []
+    for pair in meta["effort_pairs"]:
+        hi, lo = pair["more"], pair["less"]
+        if hi in tasks and lo in tasks:
+            d = paired(tasks[hi], tasks[lo], UPPER)
+            effort.append({"more": hi, "less": lo, "delta": d,
+                           "more_score": board[hi]["upper"], "less_score": board[lo]["upper"]})
+            print(f"{legs[hi]['name']:34s} {pct(board[hi]['upper'])}  vs {legs[lo]['name']:30s} "
+                  f"{board[lo]['upper']['score']*100:5.1f}  delta {d['score']*100:+5.1f} "
+                  f"[{d['lo']*100:+.1f}, {d['hi']*100:+.1f}]")
+    unanswered = sum(r["unanswered"] for r in board.values())
+    missing = sum(r["missing"] for r in board.values())
+    print(f"\n{unanswered} attempts scored as fails after two unanswered tries; {missing} missing")
+    if args.out:
+        out = {"legs": board, "effort": effort, "meta": legs}
+        Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+        Path(args.out).write_text(json.dumps(out, indent=2) + "\n")
+        print(f"board -> {args.out}")
+    return 0
+
+
 def cmd_failuremodes(args: argparse.Namespace) -> int:
     """Classify why each failed attempt failed, printing the mode histogram
     and trace-quality split. Taxonomy: results/failure-modes.md."""
@@ -435,7 +476,7 @@ def main() -> None:
     )
     run.add_argument("--trials", type=int, default=None, help="override config trials")
     run.add_argument("--results-dir", default="results")
-    run.add_argument("--dataset", default=None, help="run against a dataset split dir (e.g. datasets/v1/dev)")
+    run.add_argument("--dataset", default=None, help="run against a dataset split dir (e.g. datasets/v2/test)")
     run.add_argument("--dry-run", action="store_true", help="print planned API call count and exit")
     run.add_argument(
         "--image-variant",
@@ -469,7 +510,7 @@ def main() -> None:
     # --- dataset and task subsets ---
     dataset = sub.add_parser("dataset", help="dataset build/verify/stats/sheet")
     dataset.add_argument("command_ds", choices=["build", "verify", "stats", "sheet"])
-    dataset.add_argument("--config", default="dataset.config.json")
+    dataset.add_argument("--config", default="dataset.v2.config.json")
     dataset.add_argument("--split", default=None, help="comma-separated subset of splits")
     dataset.add_argument("--workers", type=int, default=8)
     dataset.add_argument("--full", action="store_true", help="verify every task, not a sample")
@@ -481,24 +522,29 @@ def main() -> None:
     serve.add_argument("--dir", default="docs")
 
     # --- post-run: analysis, consolidation, archival ---
+    board = sub.add_parser("board", help="v2 leaderboard + effort table from a merged run")
+    board.add_argument("--config", default="configs/board.v2.json")
+    board.add_argument("--attempts", default=None, help="merged attempts.jsonl (default: from the config)")
+    board.add_argument("--out", default=None, help="write the full board as JSON")
+
     fm = sub.add_parser("failuremodes", help="classify why each failed attempt failed")
-    fm.add_argument("--attempts", default="results/main/merged/attempts.jsonl")
-    fm.add_argument("--dataset", default="datasets/v1/dev")
-    fm.add_argument("--out", default="results/failure-modes.jsonl")
+    fm.add_argument("--attempts", default="results/v2/final/attempts.jsonl")
+    fm.add_argument("--dataset", default="datasets/v2/test")
+    fm.add_argument("--out", default="results/analysis/failure-modes.jsonl")
 
     feedback = sub.add_parser("feedback", help="closed-loop retry episodes (separate leaderboard)")
     feedback.add_argument("--config", default="configs/providers.example.json")
     feedback.add_argument("--providers", default=None)
-    feedback.add_argument("--dataset", default="datasets/v1/dev")
-    feedback.add_argument("--tasks", default="evals/ablation-50.txt")
+    feedback.add_argument("--dataset", default="datasets/v2/test")
+    feedback.add_argument("--tasks", required=True, help="file of task ids to run episodes on")
     feedback.add_argument("--results-dir", default="results/abl/feedback")
     feedback.add_argument("--max-attempts", type=int, default=4)
     feedback.add_argument("--shard", default=None, help="run only shard i of N, as i/N")
 
     styleswap = sub.add_parser("styleswap", help="build same-topology/different-style variants")
-    styleswap.add_argument("--dataset", default="datasets/v1/dev")
-    styleswap.add_argument("--tasks", default="evals/styleswap-20.txt")
-    styleswap.add_argument("--out", default="datasets/styleswap-v1")
+    styleswap.add_argument("--dataset", default="datasets/v2/test")
+    styleswap.add_argument("--tasks", required=True, help="file of task ids to restyle")
+    styleswap.add_argument("--out", default="datasets/styleswap-v2")
     styleswap.add_argument("--seed", type=int, default=20260731)
 
     merge = sub.add_parser("merge", help="consolidate sharded runs into one result set")
@@ -513,8 +559,8 @@ def main() -> None:
 
     evalset = sub.add_parser("evalset", help="build/verify a frozen stratified task subset")
     evalset.add_argument("command_es", choices=["build", "verify"])
-    evalset.add_argument("--dataset", default="datasets/v1/dev")
-    evalset.add_argument("--out", default="evals/dev-eval-100.txt")
+    evalset.add_argument("--dataset", default="datasets/v2/test")
+    evalset.add_argument("--out", default="evals/subset.txt")
     evalset.add_argument("--seed", type=int, default=20260730)
     evalset.add_argument("--size", type=int, default=100)
     evalset.add_argument("--archetype-floor", type=int, default=6)
@@ -544,6 +590,7 @@ def main() -> None:
         "styleswap": cmd_styleswap,
         "feedback": cmd_feedback,
         "failuremodes": cmd_failuremodes,
+        "board": cmd_board,
         "serve": cmd_serve,
     }
     sys.exit(handler[args.command](args))

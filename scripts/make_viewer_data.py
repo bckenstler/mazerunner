@@ -25,19 +25,31 @@ sys.path.insert(0, str(ROOT / "src"))
 
 OUT = ROOT / "docs" / "viewer" / "data"
 
-NAMES = {
-    "gpt-xhigh": "GPT-5.6 Sol · xhigh", "openai": "GPT-5.6 Sol · medium",
-    "gemini": "Gemini 3.6 Flash · medium", "kimi": "Kimi K3 · high",
-    "anthropic": "Claude Opus 5 · high", "muse-spark": "Muse Spark 1.1 · medium",
-    "inkling": "Inkling · default",
-}
+# Reasoning traces past this length keep their head and tail: two models write
+# ~35 KB of reasoning per attempt, which would double the Pages payload. The
+# full text of every trace ships in the release assets.
+TRACE_CHARS = 12000
+
+
+def clip_trace(text: str | None) -> str | None:
+    """The head and tail of an over-long trace, with the cut marked."""
+    if not text or len(text) <= TRACE_CHARS:
+        return text
+    half = TRACE_CHARS // 2
+    omitted = len(text) - 2 * half
+    return (f"{text[:half]}\n\n[… {omitted:,} characters omitted here; the full trace is in "
+            f"the release assets …]\n\n{text[-half:]}")
+
+
+META = json.loads((ROOT / "configs/board.v2.json").read_text())
+NAMES = {leg: v["name"] for leg, v in META["legs"].items()}
 
 
 def main() -> int:
     """Emit the viewer's static data tree and assert it fits the Pages budget."""
-    attempts_path = ROOT / "results/main/merged/attempts.jsonl"
-    modes_path = ROOT / "results/failure-modes.jsonl"
-    index_path = ROOT / "datasets/v1/dev/index.jsonl"
+    attempts_path = ROOT / META["attempts"]
+    modes_path = ROOT / "results/analysis/failure-modes.jsonl"
+    index_path = ROOT / META["dataset"] / "index.jsonl"
 
     dataset_index = {
         json.loads(l)["task_id"]: json.loads(l)
@@ -81,7 +93,7 @@ def main() -> int:
                 "submission": r.get("submission"),
                 "evaluation": ev,
                 "derived": d,
-                "reasoning": r.get("reasoning"),
+                "reasoning": clip_trace(r.get("reasoning")),
                 "latency_s": r.get("latency_s"),
                 "usage": {
                     k: v for k, v in (r.get("usage") or {}).items()
@@ -135,10 +147,13 @@ def main() -> int:
                 tasks_seen[maze] = slim
 
     manifest = {
-        "generated_from": "results/main/merged/attempts.jsonl",
+        "generated_from": META["attempts"],
+        # Board order: default-effort configurations first, then the
+        # extra-effort legs that ran only the L3/L4 cells.
         "models": [
-            {"id": p, "name": NAMES.get(p, p)}
-            for p in sorted({s["p"] for s in summaries})
+            {"id": p, "name": NAMES.get(p, p), "upper_only": bool(META["legs"].get(p, {}).get("upper_only"))}
+            for p in sorted({s["p"] for s in summaries},
+                            key=lambda p: list(META["legs"]).index(p) if p in META["legs"] else 99)
         ],
         "tasks": {
             maze: {"family": t["family"], "tier": t["tier"], "archetype": t["archetype"]}

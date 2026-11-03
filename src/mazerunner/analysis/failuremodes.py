@@ -96,7 +96,8 @@ LEXICAL = {
         r"\b(can be|is) approximate\b",
         r"\bgood enough\b",
         r"\bmaybe\b[^.]{0,20}\.\s*(fine|ok|okay)\b",
-        r"\bfine\.\s",
+        # A bare "Fine." was dropped in v2: Kimi K3.1 writes it after checking
+        # each waypoint against the image, which is verification, not its absence.
         r"\bnot (fully |entirely )?sure\b[^.]{0,40}\b(submit|proceed|go with)\b",
         r"\bi'?ll (just )?(commit|go with|trust)\b",
         r"\bapproximate(ly)? (route|path)\b",
@@ -120,7 +121,7 @@ class Verdict:
 
     `evidence` carries the trace quote and the reason, and `measures` the
     geometry that corroborated it, so every verdict in
-    results/failure-modes.jsonl can be audited without re-running the
+    results/analysis/failure-modes.jsonl can be audited without re-running the
     classifier.
     """
 
@@ -265,11 +266,16 @@ def classify(row: dict, task: dict, mask: np.ndarray) -> Verdict:
     # --- candidate tests: each needs lexical AND geometric agreement ---
     candidates: dict[str, dict] = {}
 
+    legal_centreline = g["outside_fraction"] < 0.02
+
     # "Nothing was looked at" requires the trace to be uninformative in *both*
     # senses: no perceptual detail and no diagnostic cue. A trace that says
     # nothing about coordinates but plainly states a confusion is evidence of
-    # that confusion, not of an empty template.
-    if trace is not None and not has_perceptual_content(trace) and not lex and len(trace) < 1200:
+    # that confusion, not of an empty template. And the path has to agree: a
+    # centreline that stays in the corridor the whole way was drawn from the
+    # image, however terse the summary (some providers return one-line ones).
+    if (trace is not None and not has_perceptual_content(trace) and not lex
+            and len(trace) < 1200 and not legal_centreline):
         candidates["procedural_template"] = {
             "why": "trace names no coordinate, colour, or position, and no recognisable cause",
             "trace_chars": len(trace),
@@ -337,7 +343,6 @@ def classify(row: dict, task: dict, mask: np.ndarray) -> Verdict:
 
     # --- geometric fallbacks: what the path did, when the trace does not say why ---
 
-    legal_centreline = g["outside_fraction"] < 0.02
     collided = evaluation.get("collision_free") is False
 
     if legal_centreline and collided:

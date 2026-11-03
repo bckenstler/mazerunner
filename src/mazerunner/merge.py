@@ -19,6 +19,17 @@ from pathlib import Path
 
 ATTEMPT_KEY = ("provider", "maze", "trial")
 
+# Transport failures that still reached the model: it was given the request
+# and did not answer within the time budget (the client timed out, or the
+# gateway reset the long-running request). A connection error never reached
+# it and is not an attempt.
+REAL_ATTEMPT_MARKERS = ("timed out", "reset before headers")
+
+
+def is_real_attempt(error: str | None) -> bool:
+    """True when a transport failure still counts as an attempt by the model."""
+    return bool(error) and any(marker in error for marker in REAL_ATTEMPT_MARKERS)
+
 
 def _key(row: dict) -> tuple:
     return tuple(row.get(field) for field in ATTEMPT_KEY)
@@ -57,6 +68,7 @@ def merge_runs(
     merged_path = out_dir / "attempts.jsonl"
 
     kept: dict[tuple, dict] = {}
+    unanswered: Counter = Counter()  # key -> real attempts that got no answer
     duplicates = 0
     conflicts: list[dict] = []
     malformed = 0
@@ -75,6 +87,8 @@ def merge_runs(
                     continue
                 count += 1
                 key = _key(row)
+                if is_real_attempt(row.get("error")):
+                    unanswered[key] += 1
                 if key in kept:
                     duplicates += 1
                     previous = kept[key]
@@ -107,6 +121,13 @@ def merge_runs(
                 else:
                     kept[key] = row
         sources.append({"path": str(path), "rows": count})
+
+    # A unit left with only a transport failure carries how many times the
+    # model was really asked, so scoring can apply the timeout rule from the
+    # merged file alone (the dedup above discards the earlier failures).
+    for key, row in kept.items():
+        if row.get("error"):
+            row["unanswered_attempts"] = unanswered[key]
 
     ordered = sorted(kept.values(), key=lambda r: (r.get("provider") or "", r.get("maze") or "", r.get("trial") or 0))
     with merged_path.open("w") as out:

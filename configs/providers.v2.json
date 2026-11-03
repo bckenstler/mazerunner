@@ -1,0 +1,183 @@
+{
+  "_readme": [
+    "The exact provider settings of the v2 run (`mazerunner run --config`).",
+    "OpenAI, Gemini and Claude legs went through an OpenAI-compatible LiteLLM",
+    "gateway, so their model ids carry LiteLLM provider prefixes; point",
+    "base_url at your own LiteLLM proxy (default http://localhost:4000/v1).",
+    "Kimi and Nemotron ran on OpenRouter, pinned to one host each. Muse Wonder",
+    "ran through the gateway to the same model; the entry here is the direct",
+    "Meta endpoint. Legs marked timeout 1800 (xhigh, max) get 30 minutes per",
+    "call; the rest use the 600 s default. No secrets belong in this file:",
+    "every key resolves from the environment variable named in env_key."
+  ],
+  "trials": 4,
+  "providers": {
+    "gpt6-astra": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6-astra",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "medium",
+      "tool_choice": "forced"
+    },
+    "gpt6-astra-xhigh": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6-astra",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "xhigh",
+      "tool_choice": "forced",
+      "timeout": 1800
+    },
+    "gpt61-sol": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6.1-sol",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "medium",
+      "tool_choice": "forced"
+    },
+    "gpt61-sol-xhigh": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6.1-sol",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "xhigh",
+      "tool_choice": "forced",
+      "timeout": 1800
+    },
+    "gpt61-terra": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6.1-terra",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "medium",
+      "tool_choice": "forced"
+    },
+    "gpt61-terra-xhigh": {
+      "enabled": true,
+      "type": "openai",
+      "model": "openai/gpt-6.1-terra",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "reasoning_effort": "xhigh",
+      "tool_choice": "forced",
+      "timeout": 1800
+    },
+    "argon": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "gemini/gemini-4-argon",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "max_tokens": 32000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "thinking": {
+          "type": "enabled"
+        }
+      },
+      "schema_sanitize": true
+    },
+    "argon-nothink": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "gemini/gemini-4-argon",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "max_tokens": 32000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "thinking": {
+          "type": "disabled"
+        }
+      },
+      "schema_sanitize": true
+    },
+    "opus55": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "anthropic/claude-opus-5-5",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "max_tokens": 60000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "thinking": {
+          "type": "adaptive",
+          "display": "summarized"
+        }
+      }
+    },
+    "opus55-max": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "anthropic/claude-opus-5-5",
+      "base_url": "http://localhost:4000/v1",
+      "env_key": "LITELLM_API_KEY",
+      "max_tokens": 128000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "thinking": {
+          "type": "adaptive",
+          "display": "summarized"
+        },
+        "output_config": {
+          "effort": "max"
+        }
+      },
+      "timeout": 1800
+    },
+    "muse-wonder": {
+      "enabled": true,
+      "type": "openai",
+      "model": "muse-wonder-1.0",
+      "base_url": "https://api.meta.ai/v1",
+      "env_key": "META_MODEL_API_KEY",
+      "reasoning_effort": "medium",
+      "tool_choice": "auto"
+    },
+    "kimi31": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "moonshotai/kimi-k3.1-pro",
+      "base_url": "https://openrouter.ai/api/v1",
+      "env_key": "OPENROUTER_API_KEY",
+      "max_tokens": 32000,
+      "tool_choice": "auto",
+      "extra_body": {
+        "provider": {
+          "order": [
+            "moonshotai"
+          ],
+          "allow_fallbacks": false
+        },
+        "reasoning": {
+          "effort": "high"
+        }
+      }
+    },
+    "nemotron-vl": {
+      "enabled": true,
+      "type": "openai_compat",
+      "model": "nvidia/nemotron-3.5-super-vl",
+      "base_url": "https://openrouter.ai/api/v1",
+      "env_key": "OPENROUTER_API_KEY",
+      "max_tokens": 65536,
+      "tool_choice": "auto",
+      "extra_body": {
+        "provider": {
+          "order": [
+            "crusoe"
+          ],
+          "allow_fallbacks": false
+        }
+      }
+    }
+  }
+}

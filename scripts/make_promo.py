@@ -19,9 +19,10 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
-from mazerunner.analysis.stats import pass_at_k
+from mazerunner.analysis.board import UPPER, build_board, paired  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
+VIDEO = ROOT / "mazerunner-promo.mp4"
 OUT = ROOT / "results" / "promo-frames"
 W = H = 1080
 FPS = 30
@@ -38,12 +39,8 @@ DIM = (110, 122, 140)
 MONO = "/System/Library/Fonts/Menlo.ttc"
 HELV = "/System/Library/Fonts/HelveticaNeue.ttc"
 
-NAMES = {
-    "gpt-xhigh": "GPT-5.6 SOL · XHIGH", "openai": "GPT-5.6 SOL · MEDIUM",
-    "gemini": "GEMINI 3.6 FLASH · MEDIUM", "kimi": "KIMI K3 · HIGH",
-    "anthropic": "CLAUDE OPUS 5 · HIGH", "muse-spark": "MUSE SPARK 1.1 · MEDIUM",
-    "inkling": "INKLING · DEFAULT",
-}
+META = json.loads((ROOT / "configs/board.v2.json").read_text())
+NAMES = {leg: v["name"].upper() for leg, v in META["legs"].items()}
 
 
 def font(path, size, index=0):
@@ -57,6 +54,7 @@ F_META = font(MONO, 22)
 F_STAMP = font(HELV, 96, 1)
 F_LB = font(MONO, 30)
 F_LBH = font(MONO, 22)
+F_LBN = font(MONO, 26)
 F_MARK = font(MONO, 20)
 
 
@@ -117,7 +115,7 @@ def title_frames(n=75):
         if t > 0.62:
             a = min(1.0, (t - 0.62) * 4)
             c = tuple(int(AMBER[k] * a) for k in range(3))
-            text(d, (W / 2, 636), "1,000 MAZES · 7 MODELS · ONE CONTINUOUS DRAG", F_META, c, anchor="ma")
+            text(d, (W / 2, 636), "192 MAZES · 4 SIZES · 8 MODELS · ONE CONTINUOUS DRAG", F_META, c, anchor="ma")
         # sweep line
         sy = int(t * H * 1.4) - 100
         if 0 < sy < H:
@@ -298,154 +296,135 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34
     return frames
 
 
-def leaderboard_frames(rank, n=170):
+def leaderboard_frames(rank, attempts, n=170):
     """The standings, rows fading in from the top."""
     frames = []
+    best = rank[0][1]
     for i in range(n):
         img, d = base_frame()
         t = i / n
-        text(d, (W / 2, 96), "LEADERBOARD", F_TITLE if False else ImageFont.truetype(HELV, 62, index=1),
+        text(d, (W / 2, 96), "LEADERBOARD", ImageFont.truetype(HELV, 62, index=1),
              WHITE, anchor="ma")
-        text(d, (W / 2, 176), "100 MAZES · 8 ATTEMPTS EACH · 5,600 TRIES", F_META, DIM, anchor="ma")
+        text(d, (W / 2, 176), f"192 MAZES · 4 ATTEMPTS EACH · {attempts:,} TRIES", F_META, DIM, anchor="ma")
         text(d, (100, 244), "MODEL", F_LBH, DIM)
-        text(d, (740, 244), "PASS@1", F_LBH, DIM, anchor="ra")
-        text(d, (980, 244), "PASS@8", F_LBH, DIM, anchor="ra")
+        text(d, (780, 244), "PASS@1", F_LBH, DIM, anchor="ra")
+        text(d, (980, 244), "PASS@4", F_LBH, DIM, anchor="ra")
         d.line([(100, 274), (980, 274)], fill=(38, 46, 62), width=2)
 
-        for r, (name, p1, p8) in enumerate(rank):
+        for r, (name, p1, pk) in enumerate(rank):
             appear = 0.05 + r * 0.055
             if t < appear:
                 continue
             a = min(1.0, (t - appear) * 9)
-            y = 300 + r * 74
+            y = 300 + r * 70
             lead = r == 0
             col = WHITE if lead else (200, 210, 224)
-            bar_w = int(560 * (p1 / 100) * a)
-            d.rectangle([100, y + 44, 100 + bar_w, y + 52], fill=CYAN if lead else (30, 90, 108))
+            bar_w = int(600 * (p1 / 100) * a)
+            d.rectangle([100, y + 42, 100 + bar_w, y + 50], fill=CYAN if lead else (30, 90, 108))
             text(d, (100, y), f"{r + 1}", F_LB, AMBER if lead else DIM)
-            text(d, (150, y), name, F_LB, tuple(int(c * a) for c in col))
-            text(d, (740, y), f"{p1:.1f}%", F_LB, tuple(int(c * a) for c in (CYAN if lead else col)), anchor="ra")
-            text(d, (980, y), f"{p8:.0f}%", F_LB, tuple(int(c * a) for c in (DIM if not lead else WHITE)), anchor="ra")
+            text(d, (150, y + 3), name, F_LBN, tuple(int(c * a) for c in col))
+            text(d, (780, y), f"{p1:.1f}%", F_LB, tuple(int(c * a) for c in (CYAN if lead else col)), anchor="ra")
+            text(d, (980, y), f"{pk:.0f}%", F_LB, tuple(int(c * a) for c in (DIM if not lead else WHITE)), anchor="ra")
 
         if t > 0.72:
             a = min(1.0, (t - 0.72) * 5)
-            text(d, (W / 2, 910), "THE BEST MODEL STILL FAILS 39% OF THE TIME",
+            text(d, (W / 2, 900), f"THE BEST MODEL STILL FAILS {100 - best:.0f}% OF THE TIME",
                  F_SUB, tuple(int(AMBER[k] * a) for k in range(3)), anchor="ma")
         wordmark(d)
         frames.append(img)
     return frames
 
 
-def feedback_frames(n=140):
-    """Punchline 1: closed-loop feedback made every model worse."""
-    rows = [("GPT-5.6 SOL · MEDIUM", -24), ("GEMINI 3.6 FLASH · MEDIUM", -16),
-            ("KIMI K3 · HIGH", -6), ("CLAUDE OPUS 5 · HIGH", -5),
-            ("GPT-5.6 SOL · XHIGH", -3)]
+def warp_frames(straight, warped, n=180):
+    """Punchline 1: the same maze, bent, gets harder the bigger it is."""
+    labels = ["L1", "L2", "L3", "L4"]
+    x0, x1, y0, y1 = 190, 900, 720, 320
     frames = []
     for i in range(n):
         img, d = base_frame()
         t = i / n
         f_h = ImageFont.truetype(HELV, 52, index=1)
-        text(d, (W / 2, 120), "WE SHOWED EACH MODEL", F_SUB, DIM, anchor="ma")
-        d.text((W / 2, 164), "ITS OWN MISTAKE", font=f_h, fill=WHITE, anchor="ma")
-        text(d, (W / 2, 246), "THE FAILED PATH · THE EXACT WALL IT HIT · TRY AGAIN",
+        text(d, (W / 2, 104), "SAME MAZE, BENT", F_SUB, DIM, anchor="ma")
+        d.text((W / 2, 146), "BIGGER IS HARD. BENT IS HARDER.", font=f_h, fill=WHITE, anchor="ma")
+        text(d, (W / 2, 226), "GPT-6 ASTRA · EACH WARPED MAZE VS THE STRAIGHT ONE IT CAME FROM",
              F_META, (78, 90, 106), anchor="ma")
-
-        for r, (name, delta) in enumerate(rows):
-            appear = 0.12 + r * 0.075
-            if t < appear:
-                continue
-            a = min(1.0, (t - appear) * 8)
-            y = 360 + r * 78
-            text(d, (110, y), name, F_LB, tuple(int(c * a) for c in (200, 210, 224)))
-            # bar runs leftward from the zero line: every model is negative.
-            # Zero line sits past the longest annotated name (ends ~x=562).
-            bw = int(abs(delta) * 12 * a)
-            d.rectangle([820 - bw, y + 6, 820, y + 34], fill=RED if delta < -10 else (150, 52, 62))
-            text(d, (980, y), f"{delta:+d}pp", F_LB, tuple(int(c * a) for c in RED), anchor="ra")
-
-        if t > 0.68:
-            a = min(1.0, (t - 0.68) * 5)
-            f_p = ImageFont.truetype(HELV, 46, index=1)
-            d.text((W / 2, 800), "EVERY MODEL GOT WORSE", font=f_p,
-                   fill=tuple(int(RED[k] * a) for k in range(3)), anchor="ma")
-            text(d, (W / 2, 872), "SEEING YOUR OWN ERROR IS WORSE THAN GUESSING AGAIN",
-                 F_META, tuple(int(DIM[k] * a) for k in range(3)), anchor="ma")
-        wordmark(d)
-        frames.append(img)
-    return frames
-
-
-def scaling_frames(n=170):
-    """Punchline 2: only GPT converts test-time compute into accuracy."""
-    series = [
-        ("GPT-5.6 SOL", [36, 56, 63, 73], CYAN),
-        ("GEMINI 3.6 FLASH", [32, 32, 32, None], (168, 178, 196)),
-        ("CLAUDE OPUS 5", [8, 7, 13, 12], (118, 128, 148)),
-    ]
-    labels = ["LOW", "MEDIUM", "HIGH", "XHIGH"]
-    x0, x1, y0, y1 = 190, 940, 700, 300
-    frames = []
-    for i in range(n):
-        img, d = base_frame()
-        t = i / n
-        f_h = ImageFont.truetype(HELV, 52, index=1)
-        d.text((W / 2, 116), "TEST-TIME COMPUTE", font=f_h, fill=WHITE, anchor="ma")
-        text(d, (W / 2, 190), "SAME MODELS · MORE THINKING · DOES IT HELP?",
-             F_META, (78, 90, 106), anchor="ma")
-
-        # axes
         d.line([(x0, y0), (x1, y0)], fill=(46, 56, 74), width=2)
         d.line([(x0, y0), (x0, y1 - 30)], fill=(46, 56, 74), width=2)
         for k, lab in enumerate(labels):
             x = x0 + (x1 - x0) * k / 3
             text(d, (x, y0 + 18), lab, F_LBH, (86, 98, 116), anchor="ma")
-        for pct in (0, 25, 50, 75):
-            y = y0 - (y0 - y1) * pct / 75
+        for pct in (0, 50, 100):
+            y = y0 - (y0 - y1) * pct / 100
             d.line([(x0 - 8, y), (x0, y)], fill=(46, 56, 74), width=2)
             text(d, (x0 - 20, y - 12), f"{pct}", F_LBH, (86, 98, 116), anchor="ra")
-
-        grow = min(1.0, max(0.0, (t - 0.08) * 1.9))
-        for name, values, colr in series:
-            pts = []
-            for k, v in enumerate(values):
-                if v is None:
-                    continue
-                x = x0 + (x1 - x0) * k / 3
-                y = y0 - (y0 - y1) * v / 75
-                pts.append((x, y))
+        grow = min(1.0, max(0.0, (t - 0.06) * 1.8))
+        for values, colr, w in ((straight, (200, 210, 224), 5), (warped, CYAN, 7)):
+            pts = [(x0 + (x1 - x0) * k / 3, y0 - (y0 - y1) * v / 100) for k, v in enumerate(values)]
             shown = walk(pts, grow) if grow < 1 else pts
             if len(shown) >= 2:
-                d.line(shown, fill=colr, width=7 if colr == CYAN else 5, joint="curve")
-            for px, py in shown[:-1] if len(shown) > 1 else []:
-                d.ellipse([px - 7, py - 7, px + 7, py + 7], fill=colr)
-            if shown:
-                hx, hy = shown[-1]
-                d.ellipse([hx - 9, hy - 9, hx + 9, hy + 9], fill=colr)
-            if grow > 0.98:
-                lx, ly = pts[-1]
-                text(d, (lx + 22, ly - 14), f"{values[len([v for v in values if v is not None]) - 1]}%",
-                     F_LB, colr)
-
+                d.line(shown, fill=colr, width=w, joint="curve")
+            for px, py in shown:
+                d.ellipse([px - 8, py - 8, px + 8, py + 8], fill=colr)
+        if grow >= 1:
+            sx, sy = x1, y0 - (y0 - y1) * straight[-1] / 100
+            wx, wy = x1, y0 - (y0 - y1) * warped[-1] / 100
+            text(d, (sx + 22, sy - 14), f"{straight[-1]:.0f}%", F_LB, (200, 210, 224))
+            text(d, (wx + 22, wy - 14), f"{warped[-1]:.0f}%", F_LB, CYAN)
+            a = min(1.0, (t - 0.62) * 5) if t > 0.62 else 0
+            if a:
+                d.line([(x1 - 30, sy + 14), (x1 - 30, wy - 14)], fill=tuple(int(AMBER[k] * a) for k in range(3)), width=4)
         if t > 0.5:
             a = min(1.0, (t - 0.5) * 5)
-            for r, (name, values, colr) in enumerate(series):
-                y = 762 + r * 40
-                d.rectangle([190, y + 8, 226, y + 14],
-                            fill=tuple(int(c * a) for c in colr))
+            for r, (name, colr) in enumerate((("STRAIGHT", (200, 210, 224)), ("WARPED TWIN", CYAN))):
+                y = 790 + r * 40
+                d.rectangle([190, y + 8, 226, y + 14], fill=tuple(int(c * a) for c in colr))
                 text(d, (242, y), name, F_META, tuple(int(c * a) for c in colr))
-                final = [v for v in values if v is not None][-1]
-                text(d, (600, y), f"{final}%", F_META,
-                     tuple(int(c * a) for c in colr), anchor="ra")
-        if t > 0.58:
-            a = min(1.0, (t - 0.58) * 8)
+        if t > 0.66:
+            a = min(1.0, (t - 0.66) * 6)
             f_p = ImageFont.truetype(HELV, 44, index=1)
-            d.text((W / 2, 906), "GPT SCALES.", font=f_p,
+            d.text((W / 2, 910), f"−{straight[-1] - warped[-1]:.0f} POINTS ON THE LARGEST MAZES", font=f_p,
+                   fill=tuple(int(AMBER[k] * a) for k in range(3)), anchor="ma")
+        wordmark(d)
+        frames.append(img)
+    return frames
+
+
+def effort_frames(effort, n=180):
+    """Punchline 2: thinking longer helps GPT and Claude, not Gemini."""
+    frames = []
+    x0, x1 = 420, 960
+    for i in range(n):
+        img, d = base_frame()
+        t = i / n
+        f_h = ImageFont.truetype(HELV, 52, index=1)
+        d.text((W / 2, 116), "THINKING LONGER", font=f_h, fill=WHITE, anchor="ma")
+        text(d, (W / 2, 190), "SAME MAZES · MORE EFFORT · L3 AND L4 ONLY",
+             F_META, (78, 90, 106), anchor="ma")
+        for r, e in enumerate(effort):
+            appear = 0.08 + r * 0.07
+            if t < appear:
+                continue
+            a = min(1.0, (t - appear) * 6)
+            y = 290 + r * 108
+            text(d, (100, y), e["model"].upper(), F_LBH, tuple(int(c * a) for c in (200, 210, 224)))
+            text(d, (100, y + 32), f"{e['less'].upper()} → {e['more'].upper()}", F_MARK,
+                 tuple(int(c * a) for c in DIM))
+            lo = x0 + (x1 - x0) * e["less_score"] / 100
+            hi = x0 + (x1 - x0) * (e["less_score"] + (e["more_score"] - e["less_score"]) * a) / 100
+            d.line([(x0, y + 26), (x1, y + 26)], fill=(28, 34, 48), width=2)
+            sig = e["ci_lo"] > 0
+            d.line([(lo, y + 26), (hi, y + 26)], fill=AMBER if sig else DIM, width=6)
+            d.ellipse([lo - 9, y + 17, lo + 9, y + 35], fill=(140, 151, 170))
+            d.ellipse([hi - 11, y + 15, hi + 11, y + 37], fill=CYAN)
+            if a >= 1:
+                text(d, (max(lo, hi) + 26, y + 10), f"{e['delta']:+.0f}", F_LB, WHITE if sig else DIM)
+        if t > 0.66:
+            a = min(1.0, (t - 0.66) * 6)
+            f_p = ImageFont.truetype(HELV, 42, index=1)
+            d.text((W / 2, 870), "GPT AND CLAUDE GAIN 8–14 POINTS.", font=f_p,
                    fill=tuple(int(CYAN[k] * a) for k in range(3)), anchor="ma")
-            d.text((W / 2, 954), "CLAUDE AND GEMINI DON'T.", font=f_p,
+            d.text((W / 2, 922), "GEMINI'S THINKING ADDS NOTHING.", font=f_p,
                    fill=tuple(int(WHITE[k] * a) for k in range(3)), anchor="ma")
-        text(d, (W - 46, H - 42), "EFFORT SWEEP · 25 TASKS × 3 TRIALS", F_MARK,
-             (58, 68, 84), anchor="ra")
         wordmark(d)
         frames.append(img)
     return frames
@@ -470,35 +449,38 @@ def end_frames(n=60):
 
 
 def main():
-    """Render every frame of the reel to results/promo-frames."""
-    rows = [json.loads(l) for l in (ROOT / "results/main/merged/attempts.jsonl").read_text().splitlines() if l.strip()]
+    """Render every frame of the reel to results/promo-frames, then encode
+    mazerunner-promo.mp4 with ffmpeg."""
+    attempts_path = ROOT / META["attempts"]
+    rows = []
+    with attempts_path.open() as handle:
+        for line in handle:
+            r = json.loads(line)
+            r.pop("raw_response", None)
+            rows.append(r)
     index = {json.loads(l)["task_id"]: json.loads(l)
-             for l in (ROOT / "datasets/v1/dev/index.jsonl").read_text().splitlines() if l.strip()}
+             for l in (ROOT / META["dataset"] / "index.jsonl").read_text().splitlines() if l.strip()}
 
     # Clip selection is driven by the failure-mode classifier, so the reel
-    # shows *named* failures — a model starting in the wrong place, drawing an
-    # arc over a maze, hopping between imagined nodes — rather than a wall of
-    # near-misses that all look alike at a glance.
+    # shows *named* failures — walls read as corridors, hopping between
+    # imagined nodes — rather than a wall of near-misses that all look alike.
     verdicts = {}
-    fm = ROOT / "results/failure-modes.jsonl"
-    if fm.exists():
-        for line in fm.read_text().splitlines():
-            if line.strip():
-                v = json.loads(line)
-                verdicts[(v["provider"], v["maze"], v["trial"])] = v
+    fm = ROOT / "results/analysis/failure-modes.jsonl"
+    for line in fm.read_text().splitlines():
+        if line.strip():
+            v = json.loads(line)
+            verdicts[(v["provider"], v["maze"], v["trial"])] = v
 
     CAPTION = {
         "endpoint_misidentification": "didn't even start on the badge",
         "figure_ground_inversion": "drove straight through the walls",
-        "analytic_parameterisation": "drew an arc and hoped",
         "graph_abstraction": "hopped between imaginary nodes",
         "clearance_failure": "right route — clipped the wall",
         "corridor_departure": "cut the corner through a wall",
-        "satisficing": "said 'approximate is fine'",
-        "almost": "made it the whole way — then clipped a wall",
-        "hard_win": "hardest tier — solved it",
-        "procedural_template": "never looked at the maze",
+        "almost": "made it most of the way — then clipped a wall",
+        "hard_win": "largest size — solved it",
     }
+    main_legs = [k for k, v in META["legs"].items() if not v.get("upper_only")]
 
     def in_frame(row):
         pts = (row.get("submission") or {}).get("points") or []
@@ -508,10 +490,14 @@ def main():
         except (TypeError, ValueError, KeyError):
             return False
 
-    wins = defaultdict(list)
+    def where(meta):
+        level = meta["tier"].replace("w", " · warped")
+        return f"{meta['family']} · {level}"
+
     by_mode = defaultdict(list)
+    outcome = {}
     for r in rows:
-        if r.get("error") or not r.get("submission"):
+        if r.get("error") or not r.get("submission") or r["provider"] not in main_legs:
             continue
         ev = r.get("evaluation") or {}
         meta = index.get(r["maze"])
@@ -520,14 +506,13 @@ def main():
             continue
         rec = (r["provider"], r["maze"], r["trial"], meta["family"], meta["archetype"],
                meta["tier"], bool(ev.get("success")), pts, ev.get("first_collision"))
+        outcome.setdefault((r["provider"], r["maze"]), []).append(rec)
         if ev.get("success"):
-            wins[r["provider"]].append((ev.get("efficiency", 0), rec))
-            # Solving a 50-turn maze is the counterweight to the failure reel:
-            # rank hard-tier wins by how gnarly the maze actually is.
-            if meta["tier"] == "hard" and len(pts) >= 12:
+            # The counterweight to the failure reel: an L4 maze, solved,
+            # ranked by how gnarly the route actually is.
+            if meta["level"] == "L4" and len(pts) >= 12:
                 m = meta.get("measures") or {}
-                by_mode["hard_win"].append(
-                    (m.get("turns", 0) + 2 * m.get("route_branches", 0), rec))
+                by_mode["hard_win"].append((m.get("turns", 0) + 2 * m.get("route_branches", 0), rec))
             continue
         # "Almost there": the route is essentially complete and the pointer
         # leaves the corridor in the final stretch. The most painful failures
@@ -537,23 +522,16 @@ def main():
         died_at = collision.get("segment_index", 0) / max(1, len(pts) - 1)
         if collision and progress > 0.75 and died_at > 0.6:
             by_mode["almost"].append((progress + died_at, rec))
-
         v = verdicts.get((r["provider"], r["maze"], r["trial"]))
-        if not v:
-            continue
-        mode = v["primary"]
-        m = v["measures"]
-        # rank spectacle: how obviously wrong does this look on screen
-        spectacle = (m.get("start_error_px", 0) / 50 if mode == "endpoint_misidentification"
-                     else m.get("outside_fraction", 0))
-        by_mode[mode].append((spectacle, rec))
+        if v:
+            by_mode[v["primary"]].append((v["measures"].get("outside_fraction", 0), rec))
 
     used_tasks, picked = set(), []
 
-    def take_mode(mode, n=1):
+    def take_mode(mode, n=1, providers=None):
         out = []
         for _score, rec in sorted(by_mode.get(mode, []), key=lambda x: -x[0]):
-            if rec[1] in used_tasks:
+            if rec[1] in used_tasks or (providers and rec[0] not in providers):
                 continue
             used_tasks.add(rec[1])
             out.append(rec + (CAPTION.get(mode, mode.replace("_", " ")),))
@@ -561,26 +539,32 @@ def main():
                 break
         return out
 
-    def take_win(provider):
-        for _eff, rec in sorted(wins.get(provider, []), key=lambda x: -x[0]):
-            if rec[1] in used_tasks:
+    def take_warp_pair(provider):
+        """The leader solving a straight L3/L4 maze, then failing its warped
+        twin: the v2 finding in two clips."""
+        for (prov, maze), recs in sorted(outcome.items()):
+            meta = index[maze]
+            if prov != provider or not meta["warped"] or meta["level"] not in ("L3", "L4"):
                 continue
-            used_tasks.add(rec[1])
-            meta = index[rec[1]]
-            return [rec + (f"{meta['family']} · {meta['archetype'].replace('-', ' ')}",)]
+            twin = meta["twin"]
+            fails = [r for r in recs if not r[6] and r[8]]
+            wins = [r for r in outcome.get((prov, twin), []) if r[6]]
+            if fails and wins and maze not in used_tasks and twin not in used_tasks:
+                used_tasks.update({maze, twin})
+                return [wins[0] + (f"{where(index[twin])} — solved",),
+                        fails[0] + (f"same maze, warped — failed",)]
         return []
 
     # One of each thing worth showing, and nothing twice. The reel earns its
     # length from variety, not volume.
-    picked += take_mode("hard_win", 1)                  # a 50-turn maze, solved
-    picked += take_mode("endpoint_misidentification", 1)  # never found the badge
-    picked += take_mode("figure_ground_inversion", 1)     # straight through walls
-    picked += take_win("gemini")
-    picked += take_mode("analytic_parameterisation", 1)   # drew an arc and hoped
-    picked += take_mode("graph_abstraction", 1)           # imaginary nodes
-    picked += take_mode("hard_win", 1)
-    picked += take_mode("clearance_failure", 1)           # subtle clip, needs zoom
-    picked += take_mode("almost", 2)                      # the painful ones
+    picked += take_mode("hard_win", 1, {"gpt6-astra"})
+    picked += take_warp_pair("gpt6-astra")
+    picked += take_mode("figure_ground_inversion", 1)
+    picked += take_mode("graph_abstraction", 1)
+    picked += take_mode("hard_win", 1, {"argon", "gpt61-terra"})
+    picked += take_mode("corridor_departure", 1, {"opus55"})
+    picked += take_mode("clearance_failure", 1, {"gpt61-sol"})
+    picked += take_mode("almost", 2)
     print(f"selected {len(picked)} clips: "
           f"{sum(1 for p in picked if p[6])} wins, {sum(1 for p in picked if not p[6])} fails")
 
@@ -588,25 +572,27 @@ def main():
     for rec in picked:
         tid = rec[1]
         if tid not in tasks:
-            d = Path(index[tid]["dir"])
+            d = ROOT / index[tid]["dir"]
             t = json.loads((d / "task.json").read_text())
             t["_dir"] = str(d)
             tasks[tid] = t
 
-    means = defaultdict(lambda: defaultdict(list))
-    for r in rows:
-        if not r.get("error"):
-            means[r["provider"]][r["maze"]].append(bool((r.get("evaluation") or {}).get("success")))
-    board = []
-    for p, tsk in means.items():
-        per = [sum(v) / len(v) for v in tsk.values()]
-        p1 = 100 * sum(per) / len(per)
-        # Match the published leaderboard: the unbiased pass@k estimator over
-        # tasks that actually have 8 scored attempts.
-        full = [v for v in tsk.values() if len(v) >= 8]
-        p8 = 100 * sum(pass_at_k(len(v), sum(v), 8) for v in full) / len(full)
-        board.append((NAMES.get(p, p), p1, p8))
-    board.sort(key=lambda x: -x[1])
+    upper_only = frozenset(k for k, v in META["legs"].items() if v.get("upper_only"))
+    board, trials = build_board(attempts_path, upper_only)
+    rank = sorted(((NAMES[k], 100 * board[k]["headline"]["score"], 100 * board[k]["pass_at_k"]["score"])
+                   for k in main_legs), key=lambda x: -x[1])
+    attempts = sum(board[k]["attempts"] for k in main_legs)
+    warp = board["gpt6-astra"]["warp"]
+    effort = []
+    for pair in META["effort_pairs"]:
+        hi, lo = pair["more"], pair["less"]
+        delta = paired(trials[hi], trials[lo], UPPER)
+        effort.append({"model": META["legs"][hi]["model"], "more": META["legs"][hi]["effort"],
+                       "less": META["legs"][lo]["effort"],
+                       "less_score": 100 * board[lo]["upper"]["score"],
+                       "more_score": 100 * board[hi]["upper"]["score"],
+                       "delta": 100 * delta["score"], "ci_lo": delta["lo"]})
+    effort.sort(key=lambda e: -e["delta"])
 
     if OUT.exists():
         shutil.rmtree(OUT)
@@ -615,14 +601,19 @@ def main():
     frames = title_frames()
     for rec in picked:
         frames += clip_frames(rec, tasks)
-    frames += leaderboard_frames(board)
-    frames += feedback_frames()
-    frames += scaling_frames()
+    frames += leaderboard_frames(rank, attempts)
+    frames += warp_frames([100 * warp[lv]["straight"] for lv in ("L1", "L2", "L3", "L4")],
+                          [100 * warp[lv]["warped"] for lv in ("L1", "L2", "L3", "L4")])
+    frames += effort_frames(effort)
     frames += end_frames()
 
     for i, f in enumerate(frames):
         f.save(OUT / f"f{i:05d}.png")
     print(f"rendered {len(frames)} frames ({len(frames)/FPS:.1f}s)")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
+                    "-i", str(OUT / "f%05d.png"), "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                    "-crf", "22", "-movflags", "+faststart", str(VIDEO)], check=True)
+    print(f"encoded {VIDEO.name} ({VIDEO.stat().st_size / 1e6:.1f} MB)")
 
 
 if __name__ == "__main__":

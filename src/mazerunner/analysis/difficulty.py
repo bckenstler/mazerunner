@@ -17,9 +17,18 @@ from collections import defaultdict
 import numpy as np
 
 FEATURES = ("normalized_length", "turns", "route_branches", "min_clearance_px")
+# v2 adds warped geometry as a binary covariate: the warped twin keeps its
+# straight task's topology, so this isolates bending from route structure.
+WARP_FEATURE = "warped"
 
 
-def _design(rows: list[dict], tasks: dict[str, dict]) -> tuple[np.ndarray, np.ndarray, list[str]]:
+def _is_warped(task: dict, task_id: str) -> float:
+    return 1.0 if task.get("warped") or "w-s" in task_id else 0.0
+
+
+def _design(
+    rows: list[dict], tasks: dict[str, dict], *, with_warp: bool = False
+) -> tuple[np.ndarray, np.ndarray, list[str]]:
     """(X standardized with intercept, y, task ids)."""
     X, y, groups = [], [], []
     for row in rows:
@@ -32,12 +41,15 @@ def _design(rows: list[dict], tasks: dict[str, dict]) -> tuple[np.ndarray, np.nd
         clearance = task["reference"].get("min_clearance_px")
         if clearance is None:
             continue
-        X.append([
+        features = [
             measures["normalized_length"],
             measures["turns"],
             measures["route_branches"],
             clearance,
-        ])
+        ]
+        if with_warp:
+            features.append(_is_warped(task, row["maze"]))
+        X.append(features)
         y.append(1.0 if (row.get("evaluation") or {}).get("success") else 0.0)
         groups.append(row["maze"])
     X = np.asarray(X, dtype=float)
@@ -69,9 +81,10 @@ def logistic_with_cluster_ci(
     *,
     resamples: int = 400,
     seed: int = 0,
+    with_warp: bool = False,
 ) -> dict:
     """Standardized coefficients with a task-clustered bootstrap CI."""
-    X, y, groups = _design(rows, tasks)
+    X, y, groups = _design(rows, tasks, with_warp=with_warp)
     if len(y) == 0:
         return {"n": 0, "coefficients": {}}
     beta = fit_logistic(X, y)
@@ -92,7 +105,7 @@ def logistic_with_cluster_ci(
             continue
     draws = np.asarray(draws)
 
-    names = ("intercept",) + FEATURES
+    names = ("intercept",) + FEATURES + ((WARP_FEATURE,) if with_warp else ())
     return {
         "n_attempts": int(len(y)),
         "n_tasks": len(task_ids),

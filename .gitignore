@@ -13,7 +13,7 @@ results/*
 !results/*.md
 !results/*.txt
 !results/figures/
-!results/failure-modes.jsonl
+!results/analysis/
 # ...but not the hidden-split build log: it names hidden task ids alongside
 # their topology seeds, and generation is deterministic, so publishing it
 # would let anyone rebuild the held-out mazes.

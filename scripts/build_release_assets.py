@@ -1,23 +1,18 @@
-"""Build the GitHub Release assets: trace tarballs + encrypted hidden split.
+"""Build the GitHub Release assets: the v2 trace tarball and its checksum.
 
 Traces are scrubbed of internal serving-route prefixes before packaging: the
 route a request happened to take through a private gateway is operational
 detail, not science, and the mapping is recorded in the tarball's README so
-nothing is silently altered. The hidden split ships encrypted so later results
-on it are verifiable without exposing the tasks.
+nothing is silently altered.
 
 Usage:
-  uv run python scripts/build_release_assets.py            # tarballs + checksums
-  MAZERUNNER_HIDDEN_KEY=... uv run python ... --hidden     # + encrypted hidden split
+  uv run python scripts/build_release_assets.py            # tarball + checksums
 """
 
 from __future__ import annotations
 
-import argparse
 import hashlib
 import json
-import os
-import subprocess
 import sys
 import tarfile
 import tempfile
@@ -29,11 +24,12 @@ OUT = ROOT / "release-assets"
 # Internal gateway route prefixes -> public model names. Applied to the
 # `model`, `response_model`, and `serving_stack` fields of every row.
 ROUTE_SCRUB = {
-    "fireworks_ai/kimi-k3": "kimi-k3",
-    "fireworks_ai/inkling": "inkling",
-    "openai/gpt-5.6-sol": "gpt-5.6-sol",
-    "anthropic/claude-opus-5": "claude-opus-5",
-    "gemini/gemini-3.6-flash": "gemini-3.6-flash",
+    "openai/gpt-6-astra": "gpt-6-astra",
+    "openai/gpt-6.1-sol": "gpt-6.1-sol",
+    "openai/gpt-6.1-terra": "gpt-6.1-terra",
+    "gemini/gemini-4-argon": "gemini-4-argon",
+    "anthropic/claude-opus-5-5": "claude-opus-5-5",
+    "meta_ai/muse-wonder-1.0": "muse-wonder-1.0",
 }
 SCRUB_FIELDS = ("model", "response_model", "serving_stack")
 FORBIDDEN = ["ml-serving-internal", "Inkling-evals", "meta_ai/", "litellm-proxy"]
@@ -104,84 +100,64 @@ def tar_of(name: str, members: list[tuple[Path, str]], readme: str) -> Path:
     return out
 
 
-README_COMMON = f"""# MazeRunner v1 traces
+README = f"""# MazeRunner v2 traces
 
-One JSON object per attempt: submission points, full evaluation, derived
-metrics, reasoning trace where the provider returned one, raw provider
-payload, usage, latency, and run provenance (run id, shard, ordinal, order
-seed).
+The complete v2 run: 13 configurations of 8 models on the 192-task difficulty
+ladder (datasets/v2/test in the repository), 7,776 attempts.
+
+  attempts.jsonl        one JSON object per attempt: submission points, full
+                        evaluation, derived metrics, reasoning trace where the
+                        provider returned one, raw provider payload, usage,
+                        latency, and run provenance (run id, shard, ordinal,
+                        order seed). The merged set: one row per attempt.
+  merge-manifest.json   how the 80 shard files were merged (duplicates, no
+                        conflicts)
+  board.json            `mazerunner board` output: every score on the site
+  failure-modes.jsonl   per-attempt failure verdicts with their evidence
+  tolerance.json        pass rate per task at pointer radii 1-8px
+  findings.json         the numbers the figures and captions quote
+  providers.v2.json     the exact provider settings of the run
+
+Attempts left with only a transport failure carry `unanswered_attempts`: how
+many times the model was really asked (a client timeout or a gateway reset of
+the long request) without answering. Two or more counts as a fail; fewer is
+missing work (none remain in this set).
 
 Serving-route prefixes from the private gateway used during the study were
 rewritten to public model names in the fields {SCRUB_FIELDS}:
 {json.dumps(ROUTE_SCRUB, indent=2)}
-Nothing else was altered. Scoring fields are byte-for-byte as produced by the
-evaluator.
+and the gateway's hostname in quoted error messages was replaced with
+"<gateway>". Nothing else was altered. Scoring fields are byte-for-byte as
+produced by the evaluator.
 
 License: MIT.
 """
 
 
 def main() -> int:
-    """Build every release tarball and its checksums. --hidden additionally
-    packages the encrypted hidden split; the key is never written here."""
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--hidden", action="store_true", help="also package the encrypted hidden split")
-    args = parser.parse_args()
-
+    """Build the release tarball and its checksums."""
     OUT.mkdir(exist_ok=True)
+    for old in OUT.iterdir():
+        old.unlink()
     staging = Path(tempfile.mkdtemp(prefix="mzr-release-"))
 
-    # main run
-    n = scrub_jsonl(ROOT / "results/main/merged/attempts.jsonl", staging / "main-attempts.jsonl")
-    print(f"main: {n} rows scrubbed")
-    assets = [tar_of(
-        "mazerunner-v1-traces-main.tar.gz",
-        [(staging / "main-attempts.jsonl", "main/attempts.jsonl"),
-         (ROOT / "results/failure-modes.jsonl", "main/failure-modes.jsonl"),
-         (ROOT / "evals/dev-eval-100.txt", "main/task-set.txt")],
-        README_COMMON,
-    )]
-
-    # ablations
-    ablation_members = []
-    for merged in sorted((ROOT / "results/abl/merged").glob("*/attempts.jsonl")):
-        name = merged.parent.name
-        dst = staging / f"abl-{name}.jsonl"
-        n = scrub_jsonl(merged, dst)
-        print(f"ablation {name}: {n} rows")
-        ablation_members.append((dst, f"ablations/{name}/attempts.jsonl"))
-    for episodes in sorted((ROOT / "results/abl/feedback").glob("*/episodes.jsonl")):
-        leg = episodes.parent.name
-        dst = staging / f"fb-{leg}.jsonl"
-        scrub_jsonl(episodes, dst)
-        ablation_members.append((dst, f"feedback/{leg}/episodes.jsonl"))
-    assets.append(tar_of("mazerunner-v1-traces-ablations.tar.gz", ablation_members, README_COMMON))
-
-    # sweeps (per-leg merged files live under results/sweep-*/)
-    sweep_members = []
-    for sweep in sorted(ROOT.glob("results/sweep-*/*/attempts.jsonl")):
-        leg = sweep.parts[-3].replace("sweep-", "")
-        dst = staging / f"sweep-{leg}-{sweep.parts[-2]}.jsonl"
-        scrub_jsonl(sweep, dst)
-        sweep_members.append((dst, f"sweeps/{leg}/attempts.jsonl"))
-    assets.append(tar_of("mazerunner-v1-traces-sweeps.tar.gz", sweep_members, README_COMMON))
-
-    if args.hidden:
-        key = os.environ.get("MAZERUNNER_HIDDEN_KEY")
-        if not key:
-            raise SystemExit("--hidden requires MAZERUNNER_HIDDEN_KEY in the environment")
-        plain = OUT / "hidden-split.tar.gz"
-        with tarfile.open(plain, "w:gz") as tar:
-            tar.add(ROOT / "datasets/v1/test-hidden", arcname="test-hidden")
-        enc = OUT / "mazerunner-v1-test-hidden.tar.gz.enc"
-        subprocess.run(
-            ["openssl", "enc", "-aes-256-cbc", "-pbkdf2", "-salt",
-             "-in", str(plain), "-out", str(enc), "-pass", "env:MAZERUNNER_HIDDEN_KEY"],
-            check=True,
-        )
-        plain.unlink()
-        assets.append(enc)
-        print("hidden split encrypted (openssl aes-256-cbc, pbkdf2)")
+    final = ROOT / "results/v2/final"
+    analysis = ROOT / "results/analysis"
+    n = scrub_jsonl(final / "attempts.jsonl", staging / "attempts.jsonl")
+    print(f"v2: {n} rows scrubbed")
+    members = [(staging / "attempts.jsonl", "attempts.jsonl")]
+    for src, arc in ((final / "merge-manifest.json", "merge-manifest.json"),
+                     (analysis / "board.json", "board.json"),
+                     (analysis / "failure-modes.jsonl", "failure-modes.jsonl"),
+                     (analysis / "tolerance.json", "tolerance.json"),
+                     (analysis / "findings.json", "findings.json"),
+                     (ROOT / "configs/providers.v2.json", "providers.v2.json")):
+        text = src.read_text()
+        for marker in FORBIDDEN:
+            if marker in text:
+                raise SystemExit(f"scrub failed: {marker!r} in {src.name}")
+        members.append((src, arc))
+    assets = [tar_of("mazerunner-v2-traces.tar.gz", members, README)]
 
     sums = OUT / "SHA-256SUMS"
     with sums.open("w") as handle:

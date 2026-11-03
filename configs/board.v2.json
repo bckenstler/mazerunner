@@ -1,0 +1,32 @@
+{
+  "_readme": [
+    "Leaderboard metadata for the v2 run: display names, which legs ran only",
+    "the L3/L4 cells (scored there, shown in the effort table), and the paired",
+    "effort comparisons. Read by `mazerunner board`, scripts/build_site.py,",
+    "scripts/make_figures.py and scripts/make_viewer_data.py."
+  ],
+  "attempts": "results/v2/final/attempts.jsonl",
+  "dataset": "datasets/v2/test",
+  "legs": {
+    "gpt6-astra":        {"name": "GPT-6 Astra · medium",            "model": "GPT-6 Astra",           "vendor": "OpenAI",    "effort": "medium"},
+    "gpt61-terra":       {"name": "GPT-6.1 Terra · medium",          "model": "GPT-6.1 Terra",         "vendor": "OpenAI",    "effort": "medium"},
+    "gpt61-sol":         {"name": "GPT-6.1 Sol · medium",            "model": "GPT-6.1 Sol",           "vendor": "OpenAI",    "effort": "medium"},
+    "argon":             {"name": "Gemini 4 Argon · default",        "model": "Gemini 4 Argon",        "vendor": "Google",    "effort": "default"},
+    "opus55":            {"name": "Claude Opus 5.5 · default",       "model": "Claude Opus 5.5",       "vendor": "Anthropic", "effort": "default"},
+    "kimi31":            {"name": "Kimi K3.1 Pro · high",            "model": "Kimi K3.1 Pro",         "vendor": "Moonshot",  "effort": "high"},
+    "muse-wonder":       {"name": "Muse Wonder 1.0 · medium",        "model": "Muse Wonder 1.0",       "vendor": "Meta",      "effort": "medium"},
+    "nemotron-vl":       {"name": "Nemotron 3.5 Super VL · default", "model": "Nemotron 3.5 Super VL", "vendor": "NVIDIA",    "effort": "default"},
+    "gpt6-astra-xhigh":  {"name": "GPT-6 Astra · xhigh",             "model": "GPT-6 Astra",           "vendor": "OpenAI",    "effort": "xhigh",        "upper_only": true},
+    "gpt61-sol-xhigh":   {"name": "GPT-6.1 Sol · xhigh",             "model": "GPT-6.1 Sol",           "vendor": "OpenAI",    "effort": "xhigh",        "upper_only": true},
+    "gpt61-terra-xhigh": {"name": "GPT-6.1 Terra · xhigh",           "model": "GPT-6.1 Terra",         "vendor": "OpenAI",    "effort": "xhigh",        "upper_only": true},
+    "opus55-max":        {"name": "Claude Opus 5.5 · max",           "model": "Claude Opus 5.5",       "vendor": "Anthropic", "effort": "max",          "upper_only": true},
+    "argon-nothink":     {"name": "Gemini 4 Argon · thinking off",   "model": "Gemini 4 Argon",        "vendor": "Google",    "effort": "thinking off", "upper_only": true}
+  },
+  "effort_pairs": [
+    {"more": "gpt6-astra-xhigh",  "less": "gpt6-astra"},
+    {"more": "gpt61-sol-xhigh",   "less": "gpt61-sol"},
+    {"more": "gpt61-terra-xhigh", "less": "gpt61-terra"},
+    {"more": "opus55-max",        "less": "opus55"},
+    {"more": "argon",             "less": "argon-nothink"}
+  ]
+}

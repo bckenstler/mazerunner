@@ -155,6 +155,12 @@ def _known_hashes(paths: list[str]) -> dict[str, str]:
     """Semantic hashes of already-built datasets the ladder must not repeat."""
     known: dict[str, str] = {}
     for root in paths:
+        if root.endswith(".txt"):
+            # A published hash list: dedup against a dataset no longer shipped.
+            for line in Path(root).read_text().splitlines():
+                if line.strip() and not line.startswith("#"):
+                    known[line.strip()] = root
+            continue
         for index in sorted(Path(root).glob("*/index.jsonl")):
             for line in index.read_text().splitlines():
                 row = json.loads(line)

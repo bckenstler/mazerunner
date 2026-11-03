@@ -7,7 +7,7 @@
   "per_cell": 4,
   "endpoint_band": [0.9, 1.0],
   "mask": {"fill_pinholes": true},
-  "dedup_against": ["datasets/v1"],
+  "dedup_against": ["datasets/v2/dedup-v1-graph-hashes.txt"],
   "archetypes": [
     "notebook", "dungeon-pebble", "blueprint-rooms", "forest-path",
     "glow-cavern", "parchment-chart", "watercolor-archipelago", "neon-pipes",
