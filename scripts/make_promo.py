@@ -1,5 +1,5 @@
-"""MazeRunner promo reel: real attempts, real paths, real verdicts, and a
-synthwave soundtrack rendered by scripts/make_music.py.
+"""MazeRunner promo reel: real attempts, real paths, real verdicts, and an
+8-bit racing soundtrack rendered by scripts/make_music.py.
 
 Every frame comes from the actual run — the trajectories are the coordinates
 models submitted, drawn at the speed they'd be dragged, and the WIN/FAIL stamp
@@ -737,6 +737,7 @@ def main():
     for rec in picked:
         marks[f"{rec[0]}/{rec[1]}/{rec[2]}"] = len(frames)
         frames += clip_frames(rec, tasks)
+    data_start = len(frames)
     frames += leaderboard_frames(rank)
     frames += warp_frames([100 * warp[lv]["straight"] for lv in ("L1", "L2", "L3", "L4")],
                           [100 * warp[lv]["warped"] for lv in ("L1", "L2", "L3", "L4")])
@@ -746,11 +747,13 @@ def main():
         f.save(OUT / f"f{i:05d}.png")
     (OUT / "clips.json").write_text(json.dumps(marks, indent=2))
     print(f"rendered {len(frames)} frames ({len(frames)/FPS:.1f}s)")
-    # The soundtrack is rendered to the reel's exact length, so the outro
-    # fade lands on the end card.
+    # The soundtrack is rendered to the reel's exact length and cued to it:
+    # the race starts on the first clip, the key lifts on the first data
+    # scene and the final hit rings over the end card.
     sys.path.insert(0, str(ROOT / "scripts"))
     from make_music import write as write_music
-    music = write_music(len(frames) / FPS, OUT / "music.wav")
+    music = write_music(len(frames) / FPS, OUT / "music.wav",
+                        go=min(marks.values()) / FPS, lift=data_start / FPS)
     # Frames render at 1080 for the zoom crops; the site shows the reel at
     # most 720 wide, and 720 keeps the file under the repo's 5MB blob limit.
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
