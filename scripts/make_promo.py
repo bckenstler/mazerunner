@@ -3,23 +3,35 @@
 Every frame comes from the actual run — the trajectories are the coordinates
 models submitted, drawn at the speed they'd be dragged, and the WIN/FAIL stamp
 is the scorer's verdict, not decoration.
+
+A failure is only shown when it is visibly wrong at the zoom: the drawn
+centreline must go well inside a wall, and the zoom lands on the first point
+where it does. A pointer that grazes a wall by a pixel fails the scorer just
+the same, but on screen it looks like a correct path, so those never make the
+reel.
+
+The look is synthwave: a dusk gradient, a neon perspective floor, a sliced
+sun on the title cards. The maze images themselves are the exact pictures the
+models saw and are never restyled.
 """
 
 from __future__ import annotations
 
 import json
 import math
-import random
 import shutil
 import subprocess
+import sys
 from collections import defaultdict
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+import numpy as np
+from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
+from scipy.ndimage import distance_transform_edt
 
-import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from mazerunner.analysis.board import UPPER, build_board, paired  # noqa: E402
+from mazerunner.geometry import densify_polyline  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 VIDEO = ROOT / "mazerunner-promo.mp4"
@@ -27,102 +39,188 @@ OUT = ROOT / "results" / "promo-frames"
 W = H = 1080
 FPS = 30
 
-BG = (9, 11, 18)
-PANEL = (16, 20, 30)
-CYAN = (34, 211, 238)
-AMBER = (245, 158, 11)
-GREEN = (52, 211, 153)
-RED = (248, 68, 84)
-WHITE = (237, 242, 247)
-DIM = (110, 122, 140)
+# Synthwave palette: shared with the site and the figures.
+NIGHT = (13, 2, 33)        # top of the sky
+DUSK = (43, 8, 79)         # toward the horizon
+PINK = (255, 42, 109)      # failure, the thing to notice
+CYAN = (5, 217, 232)       # the subject, success
+SUN_TOP = (249, 200, 14)
+SUN_BOTTOM = (255, 41, 117)
+ORANGE = (255, 108, 17)
+VIOLET = (140, 30, 255)
+WHITE = (245, 240, 255)
+LAVENDER = (185, 162, 230)
+DIM = (130, 108, 170)
+FLOOR = (255, 41, 117)
 
+FUTURA = "/System/Library/Fonts/Supplemental/Futura.ttc"
 MONO = "/System/Library/Fonts/Menlo.ttc"
-HELV = "/System/Library/Fonts/HelveticaNeue.ttc"
 
 META = json.loads((ROOT / "configs/board.v2.json").read_text())
 NAMES = {leg: v["name"].upper() for leg, v in META["legs"].items()}
+MODEL = {leg: v["model"].upper() for leg, v in META["legs"].items()}
+
+# What reads as an unmistakable wall crossing at the reel's zoom: the drawn
+# centreline runs at least WALL_DEPTH px inside a wall for MIN_CROSSING px of
+# path, reaching CLEAR_DEPTH px deep somewhere along it.
+WALL_DEPTH = 5.0
+CLEAR_DEPTH = 9.0
+MIN_CROSSING = 30
 
 
 def font(path, size, index=0):
     return ImageFont.truetype(path, size, index=index)
 
 
-F_TITLE = font(HELV, 128, 1)
-F_SUB = font(MONO, 26)
-F_MODEL = font(MONO, 34)
-F_META = font(MONO, 22)
-F_STAMP = font(HELV, 96, 1)
-F_LB = font(MONO, 30)
-F_LBH = font(MONO, 22)
-F_LBN = font(MONO, 26)
-F_MARK = font(MONO, 20)
+F_HUGE = font(FUTURA, 150, 4)       # Condensed ExtraBold
+F_HEAD = font(FUTURA, 58, 4)
+F_BOLD = font(FUTURA, 36, 2)
+F_MED = font(FUTURA, 26, 0)
+F_SMALL = font(FUTURA, 22, 0)
+F_STAMP = font(FUTURA, 110, 4)
+F_DATA = font(MONO, 28)
+F_DATA_S = font(MONO, 22)
+F_MARK = font(FUTURA, 22, 2)
 
 
-def text(d, xy, s, f, fill, anchor="la", spacing=0):
-    if spacing:
-        x, y = xy
-        for ch in s:
-            d.text((x, y), ch, font=f, fill=fill, anchor="la")
-            x += d.textlength(ch, font=f) + spacing
-        return
+def text(d, xy, s, f, fill, anchor="la"):
     d.text(xy, s, font=f, fill=fill, anchor=anchor)
 
 
-def glow(img, box, color, radius=18, alpha=120):
-    layer = Image.new("RGB", img.size, (0, 0, 0))
-    ImageDraw.Draw(layer).rectangle(box, fill=color)
-    layer = layer.filter(ImageFilter.GaussianBlur(radius))
-    return Image.blend(img, Image.blend(img, layer, alpha / 255), 0.85)
+def fade(color, a):
+    return tuple(int(c * a) for c in color)
+
+
+def lerp(a, b, t):
+    return tuple(int(a[k] + (b[k] - a[k]) * t) for k in range(3))
+
+
+# ------------------------------------------------------------ backgrounds
+
+def _sky(horizon):
+    """Vertical dusk gradient down to the horizon, dark floor below it."""
+    img = Image.new("RGB", (W, H), NIGHT)
+    px = np.zeros((H, W, 3), dtype=np.uint8)
+    for y in range(H):
+        t = min(1.0, y / max(1, horizon))
+        px[y, :] = lerp(NIGHT, DUSK, t ** 1.6) if y < horizon else (16, 3, 38)
+    return Image.fromarray(px)
+
+
+def _floor(img, horizon, phase=0.0, alpha=1.0):
+    """Neon perspective grid below the horizon; `phase` scrolls it toward the
+    viewer so title cards feel like driving into the sunset."""
+    layer = Image.new("RGB", (W, H), (0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    vx = W / 2
+    for k in range(-14, 15):
+        x_far = vx + k * 26
+        x_near = vx + k * 260
+        d.line([(x_far, horizon), (x_near, H)], fill=fade(FLOOR, 0.55 * alpha), width=2)
+    for j in range(14):
+        z = (j + phase) / 14
+        y = horizon + (H - horizon) * (z ** 2.2)
+        d.line([(0, y), (W, y)], fill=fade(FLOOR, (0.25 + 0.6 * z) * alpha), width=2)
+    d.line([(0, horizon), (W, horizon)], fill=fade(PINK, alpha), width=3)
+    glowed = layer.filter(ImageFilter.GaussianBlur(4))
+    return ImageChops.add(ImageChops.add(img, glowed), layer)
+
+
+def _sun(img, cx, cy, r):
+    """The sliced synthwave sun: a yellow-to-pink disc cut by horizontal gaps
+    that widen toward its base."""
+    disc = Image.new("RGB", (2 * r, 2 * r), (0, 0, 0))
+    mask = Image.new("L", (2 * r, 2 * r), 0)
+    dd = ImageDraw.Draw(disc)
+    for y in range(2 * r):
+        dd.line([(0, y), (2 * r, y)], fill=lerp(SUN_TOP, SUN_BOTTOM, y / (2 * r)))
+    md = ImageDraw.Draw(mask)
+    md.ellipse([0, 0, 2 * r - 1, 2 * r - 1], fill=255)
+    for k in range(7):
+        y = int(r * 1.05 + k * r * 0.14)
+        h = int(2 + k * 2.6)
+        md.rectangle([0, y, 2 * r, y + h], fill=0)
+    halo = Image.new("RGB", (W, H), (0, 0, 0))
+    ImageDraw.Draw(halo).ellipse([cx - r - 40, cy - r - 40, cx + r + 40, cy + r + 40], fill=(120, 20, 80))
+    img = ImageChops.add(img, halo.filter(ImageFilter.GaussianBlur(60)))
+    img.paste(disc, (cx - r, cy - r), mask)
+    return img
+
+
+BASE = None
 
 
 def base_frame():
-    img = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(img)
-    # faint grid, so the frame reads as an instrument rather than a slide
-    for x in range(0, W, 60):
-        d.line([(x, 0), (x, H)], fill=(14, 17, 26), width=1)
-    for y in range(0, H, 60):
-        d.line([(0, y), (W, y)], fill=(14, 17, 26), width=1)
-    return img, d
+    """The clip and data-scene backdrop: dusk sky, low neon floor."""
+    global BASE
+    if BASE is None:
+        BASE = _floor(_sky(960), 960, 0.0, 0.7)
+    img = BASE.copy()
+    return img, ImageDraw.Draw(img)
 
 
-def wordmark(d, y=H - 42):
+def neon(img, draw_fn, color, radius=10, strength=1.0):
+    """Draw something twice: blurred underneath as glow, sharp on top."""
+    layer = Image.new("RGB", img.size, (0, 0, 0))
+    draw_fn(ImageDraw.Draw(layer), color)
+    glow_layer = layer.filter(ImageFilter.GaussianBlur(radius))
+    if strength != 1.0:
+        glow_layer = Image.eval(glow_layer, lambda v: int(v * strength))
+    img = ImageChops.add(img, glow_layer)
+    draw_fn(ImageDraw.Draw(img), color)
+    return img
+
+
+def chrome_text(img, xy, s, f, anchor="mm", top=CYAN, bottom=PINK):
+    """Text filled with a vertical gradient, with a soft neon glow."""
+    mask = Image.new("L", img.size, 0)
+    ImageDraw.Draw(mask).text(xy, s, font=f, fill=255, anchor=anchor)
+    box = mask.getbbox()
+    if not box:
+        return img
+    grad = Image.new("RGB", img.size, (0, 0, 0))
+    gd = ImageDraw.Draw(grad)
+    for y in range(box[1], box[3] + 1):
+        t = (y - box[1]) / max(1, box[3] - box[1])
+        gd.line([(box[0], y), (box[2], y)], fill=lerp(top, WHITE, t * 2) if t < 0.5 else lerp(WHITE, bottom, (t - 0.5) * 2))
+    glow_src = Image.new("RGB", img.size, (0, 0, 0))
+    glow_src.paste(Image.new("RGB", img.size, PINK), (0, 0), mask)
+    img = ImageChops.add(img, Image.eval(glow_src.filter(ImageFilter.GaussianBlur(14)), lambda v: int(v * 0.8)))
+    img.paste(grad, (0, 0), mask)
+    return img
+
+
+def wordmark(d, y=H - 46):
     text(d, (46, y), "MAZE", F_MARK, CYAN)
     x = 46 + d.textlength("MAZE", font=F_MARK)
-    text(d, (x, y), "RUNNER", F_MARK, WHITE)
+    text(d, (x, y), "RUNNER", F_MARK, PINK)
 
 
-def title_frames(n=75):
-    """Opening titles: the wordmark assembles under a scan sweep."""
+# ------------------------------------------------------------------ title
+
+def title_frames(n=84):
+    """Opening card: drive toward the sliced sun, then the wordmark lands."""
     frames = []
+    sky = _sky(700)
+    lit = _sun(sky.copy(), W // 2, 600, 200)
     for i in range(n):
-        img, d = base_frame()
         t = i / n
-        # wordmark assembles, then a scan sweep
-        img = glow(img, (140, 470, 940, 620), (10, 40, 60), 40, 150)
+        bg = _floor(lit.copy(), 700, (t * 3) % 1.0)
+        a = min(1.0, t * 2.4)
+        img = Image.blend(bg, chrome_text(bg.copy(), (W / 2, 190), "MAZERUNNER", F_HUGE), a)
         d = ImageDraw.Draw(img)
-        reveal = min(1.0, t * 2.2)
-        full = "MAZERUNNER"
-        shown = full[: max(1, int(len(full) * reveal))]
-        wpx = d.textlength(full, font=F_TITLE)
-        x0 = (W - wpx) / 2
-        d.text((x0, 430), shown[:4], font=F_TITLE, fill=CYAN)
-        d.text((x0 + d.textlength("MAZE", font=F_TITLE), 430), shown[4:], font=F_TITLE, fill=WHITE)
-        if t > 0.45:
-            a = min(1.0, (t - 0.45) * 4)
-            c = tuple(int(DIM[k] * a) for k in range(3))
-            text(d, (W / 2, 590), "CAN A MODEL DRAW ITS WAY OUT?", F_SUB, c, anchor="ma")
-        if t > 0.62:
-            a = min(1.0, (t - 0.62) * 4)
-            c = tuple(int(AMBER[k] * a) for k in range(3))
-            text(d, (W / 2, 636), "192 MAZES · 4 SIZES · 8 MODELS · ONE CONTINUOUS DRAG", F_META, c, anchor="ma")
-        # sweep line
-        sy = int(t * H * 1.4) - 100
-        if 0 < sy < H:
-            d.line([(0, sy), (W, sy)], fill=(30, 60, 76), width=2)
+        if t > 0.42:
+            b = min(1.0, (t - 0.42) * 4)
+            text(d, (W / 2, 302), "CAN AN AI DRAW ITS WAY OUT OF A MAZE?", F_BOLD, fade(WHITE, b), anchor="mm")
+        if t > 0.6:
+            b = min(1.0, (t - 0.6) * 4)
+            text(d, (W / 2, 350), "ONE PICTURE  ·  ONE STROKE  ·  TOUCH A WALL AND IT'S OVER", F_SMALL,
+                 fade(CYAN, b), anchor="mm")
         frames.append(img)
     return frames
 
+
+# ------------------------------------------------------------------ clips
 
 def fit(img, box_w, box_h):
     s = min(box_w / img.width, box_h / img.height)
@@ -149,52 +247,54 @@ def walk(points, frac):
     return out
 
 
-def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34):
+def stamp(img, label, colr, y, pop=1.0):
+    f = font(FUTURA, int(110 * pop), 4)
+    return neon(img, lambda d, c: d.text((W / 2, y), label, font=f, fill=c, anchor="ma"), colr, 18)
+
+
+def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=40):
     """One attempt replayed: draw the path, stamp the verdict, and on a
-    failure zoom into the collision and linger there.
+    failure zoom into the first clear wall crossing and linger there.
 
     The zoom magnifies a rendered stage rather than re-deriving the overlay at
     a new scale, which is what keeps the path pinned to the pixels it was
-    drawn against — the marker-drift bug came from doing it the other way.
+    drawn against.
     """
-    provider, task_id, trial, family, archetype, tier, success, points_norm, collision, caption = rec
+    provider, task_id, trial, success, points_norm, crossing, caption, where = rec
     task = tasks[task_id]
     src = Image.open(Path(task["_dir"]) / task["image_file"]).convert("RGB")
-    canvas_w, canvas_h = 880, 700
-    maze, scale = fit(src, canvas_w, canvas_h)
+    maze, scale = fit(src, 880, 690)
     ox = (W - maze.width) // 2
-    oy = 200
+    oy = 196
 
     pts = [(p["x"] * (task["width"] - 1) * scale + ox, p["y"] * (task["height"] - 1) * scale + oy)
            for p in points_norm]
-    # Draw time grows with the square root of path length: long routes get
-    # visibly more frames without the clip dragging (a 4x longer path draws
-    # over 2x the frames, so it still moves faster — just watchably so).
     path_len = sum(math.dist(pts[i], pts[i + 1]) for i in range(len(pts) - 1))
     n_draw = max(n_draw, min(96, round(1.6 * math.sqrt(path_len))))
-    col = None
-    if collision:
-        col = (collision["x_px"] * scale + ox, collision["y_px"] * scale + oy)
+    col = (crossing["x_px"] * scale + ox, crossing["y_px"] * scale + oy) if crossing else None
 
-    # A "stage" holds the maze with whatever has been drawn on it, so the zoom
-    # phase can magnify the real pixels rather than re-deriving them.
     frames = []
     zoom_phase = (n_zoom + n_linger) if (not success and col) else 0
     total = n_in + n_draw + n_hold + zoom_phase
+    accent = CYAN if success else PINK
+    box = [ox - 3, oy - 3, ox + maze.width + 2, oy + maze.height + 2]
+    framed = neon(base_frame()[0], lambda dd, c: dd.rectangle(box, outline=c, width=3), VIOLET, 12)
+    framed_zoom = neon(base_frame()[0], lambda dd, c: dd.rectangle(box, outline=c, width=4), PINK, 14)
     for i in range(total):
-        img, d = base_frame()
+        img = framed.copy()
         stage = maze.copy()
         sd = ImageDraw.Draw(stage)
         img.paste(maze, (ox, oy))
         d = ImageDraw.Draw(img)
-        d.rectangle([ox - 2, oy - 2, ox + maze.width + 1, oy + maze.height + 1], outline=(38, 46, 62), width=2)
 
-        # HUD
-        text(d, (46, 74), NAMES.get(provider, provider.upper()), F_MODEL, WHITE)
-        text(d, (46, 122), caption.upper(), F_META, RED if not success else DIM)
-        text(d, (W - 46, 74), "ATTEMPT", F_META, DIM, anchor="ra")
-        text(d, (W - 46, 104), f"#{trial + 1}", F_MODEL, CYAN, anchor="ra")
+        def hud(d, right_label="ATTEMPT", right_value=f"#{trial + 1}", value_color=CYAN):
+            text(d, (46, 64), MODEL.get(provider, provider.upper()), F_BOLD, WHITE)
+            text(d, (46, 112), where.upper(), F_SMALL, LAVENDER)
+            text(d, (46, 146), caption.upper(), F_SMALL, accent if i >= n_in + n_draw - 1 else DIM)
+            text(d, (W - 46, 70), right_label, F_SMALL, DIM, anchor="ra")
+            text(d, (W - 46, 100), right_value, F_BOLD, value_color, anchor="ra")
 
+        hud(d)
         if i >= n_in:
             frac = min(1.0, (i - n_in) / max(1, n_draw - 1))
             drawn = walk(pts, frac)
@@ -202,250 +302,237 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=34
                 for target, off in ((d, 0), (sd, 1)):
                     line = drawn if off == 0 else [(x - ox, y - oy) for x, y in drawn]
                     target.line(line, fill=(255, 255, 255), width=9, joint="curve")
-                    target.line(line, fill=CYAN if frac < 1 or success else RED, width=5,
-                                joint="curve")
+                    target.line(line, fill=CYAN if frac < 1 or success else PINK, width=5, joint="curve")
                 hx, hy = drawn[-1]
                 d.ellipse([hx - 9, hy - 9, hx + 9, hy + 9], fill=WHITE)
             sx, sy = pts[0]
-            d.ellipse([sx - 11, sy - 11, sx + 11, sy + 11], outline=WHITE, width=3)
-            sd.ellipse([sx - ox - 11, sy - oy - 11, sx - ox + 11, sy - oy + 11],
-                       outline=WHITE, width=3)
+            for target, (x0, y0) in ((d, (sx, sy)), (sd, (sx - ox, sy - oy))):
+                target.ellipse([x0 - 11, y0 - 11, x0 + 11, y0 + 11], outline=WHITE, width=3)
 
         done = i >= n_in + n_draw - 1
         if done and not success and col:
             cx, cy = col
-            d.ellipse([cx - 26, cy - 26, cx + 26, cy + 26], outline=RED, width=6)
-            d.line([(cx - 17, cy - 17), (cx + 17, cy + 17)], fill=RED, width=7)
-            d.line([(cx - 17, cy + 17), (cx + 17, cy - 17)], fill=RED, width=7)
+            d.ellipse([cx - 26, cy - 26, cx + 26, cy + 26], outline=PINK, width=6)
+            d.line([(cx - 17, cy - 17), (cx + 17, cy + 17)], fill=PINK, width=7)
+            d.line([(cx - 17, cy + 17), (cx + 17, cy - 17)], fill=PINK, width=7)
 
         zoom_start = n_in + n_draw + n_hold
         if zoom_phase and i >= zoom_start:
             step = i - zoom_start
-            # push in, then linger at full magnification with the marker gone
             z = min(1.0, step / max(1, n_zoom - 1))
-            ease = z * z * (3 - 2 * z)                       # smoothstep
+            ease = z * z * (3 - 2 * z)
             lingering = step >= n_zoom
-            # The crop must keep the frame's aspect ratio, or x and y magnify by
-            # different factors and anything drawn on top drifts off the pixel
-            # it is meant to mark. Clamp the *centre* so the box stays inside
-            # the maze rather than clamping the box itself, which would also
-            # distort it.
+            # Keep the crop at the frame's aspect ratio so x and y magnify by
+            # the same factor; clamp the centre, not the box, to stay inside.
             half_w, half_h = maze.width / 2, maze.height / 2
-            tile_w = 150.0
+            tile_w = 125.0
             tile_h = tile_w * maze.height / maze.width
             cw = half_w + (tile_w - half_w) * ease
             ch = half_h + (tile_h - half_h) * ease
             tx, ty = col[0] - ox, col[1] - oy
             cx = min(max(half_w + (tx - half_w) * ease, cw), maze.width - cw)
             cy = min(max(half_h + (ty - half_h) * ease, ch), maze.height - ch)
-            box = (cx - cw, cy - ch, cx + cw, cy + ch)
-            crop_box = tuple(int(v) for v in box)
+            crop_box = tuple(int(v) for v in (cx - cw, cy - ch, cx + cw, cy + ch))
             crop = stage.crop(crop_box).resize((maze.width, maze.height), Image.LANCZOS)
             mag = maze.width / max(1, crop_box[2] - crop_box[0])
-            # Rebuild the frame: the normal HUD was already drawn above and
-            # would show through beneath the zoom labels.
-            img, d = base_frame()
+            img = framed_zoom.copy()
             img.paste(crop, (ox, oy))
             d = ImageDraw.Draw(img)
-            d.rectangle([ox - 2, oy - 2, ox + maze.width + 1, oy + maze.height + 1],
-                        outline=RED, width=3)
-            text(d, (46, 74), NAMES.get(provider, provider.upper()), F_MODEL, WHITE)
-            text(d, (46, 122), caption.upper(), F_META, RED)
-            text(d, (W - 46, 74), "ZOOM", F_META, DIM, anchor="ra")
-            text(d, (W - 46, 104), f"{mag:.0f}×", F_MODEL, RED, anchor="ra")
-
-            # Where the collision sits inside the magnified crop.
+            hud(d, "ZOOM", f"{mag:.0f}×", PINK)
             zx = ox + (col[0] - ox - crop_box[0]) * mag
             zy = oy + (col[1] - oy - crop_box[1]) * mag
             if not lingering:
                 r = 26 * min(2.2, mag)
-                d.ellipse([zx - r, zy - r, zx + r, zy + r], outline=RED, width=6)
-                k = r * 0.65
-                d.line([(zx - k, zy - k), (zx + k, zy + k)], fill=RED, width=7)
-                d.line([(zx - k, zy + k), (zx + k, zy - k)], fill=RED, width=7)
+                d.ellipse([zx - r, zy - r, zx + r, zy + r], outline=PINK, width=6)
             else:
-                # Marker removed: an open ring points at the crossing without
-                # covering the pixels the viewer is here to see.
-                r = 46 * min(2.2, mag)
+                # An open ring points at the crossing without covering it.
+                r = 50 * min(2.2, mag)
                 for a0, a1 in ((200, 250), (290, 340), (20, 70), (110, 160)):
-                    d.arc([zx - r, zy - r, zx + r, zy + r], a0, a1, fill=RED, width=5)
-            f = ImageFont.truetype(HELV, 96, index=1)
-            bw = d.textlength("FAIL", font=f)
-            bx, by = (W - bw) / 2, oy + maze.height + 28
-            img = glow(img, (bx - 30, by, bx + bw + 30, by + 96), RED, 26, 110)
-            d = ImageDraw.Draw(img)
-            d.text((bx, by), "FAIL", font=f, fill=RED)
-            wordmark(d)
+                    d.arc([zx - r, zy - r, zx + r, zy + r], a0, a1, fill=PINK, width=6)
+            img = stamp(img, "FAIL", PINK, oy + maze.height + 18)
+            wordmark(ImageDraw.Draw(img))
             frames.append(img)
             continue
 
         if done:
             k = (i - (n_in + n_draw - 1)) / max(1, n_hold)
-            pop = 1.0 + 0.14 * max(0.0, 1 - k * 6)
-            label = "WIN" if success else "FAIL"
-            colr = GREEN if success else RED
-            f = ImageFont.truetype(HELV, int(96 * pop), index=1)
-            bw = d.textlength(label, font=f)
-            bx, by = (W - bw) / 2, oy + maze.height + 28
-            img = glow(img, (bx - 30, by, bx + bw + 30, by + 96), colr, 26, 110)
-            d = ImageDraw.Draw(img)
-            d.text((bx, by), label, font=f, fill=colr)
-
-        wordmark(d)
+            img = stamp(img, "WIN" if success else "FAIL", CYAN if success else PINK,
+                        oy + maze.height + 18, 1.0 + 0.14 * max(0.0, 1 - k * 6))
+        wordmark(ImageDraw.Draw(img))
         frames.append(img)
     return frames
 
 
-def leaderboard_frames(rank, attempts, n=170):
-    """The standings, rows fading in from the top."""
+# ----------------------------------------------------------- data scenes
+
+def heading(img, title, sub):
+    img = chrome_text(img, (W / 2, 120), title, F_HEAD, "mm", CYAN, PINK)
+    text(ImageDraw.Draw(img), (W / 2, 186), sub, F_SMALL, LAVENDER, anchor="mm")
+    return img
+
+
+def leaderboard_frames(rank, n=176):
+    """The standings, rows sliding in from the top."""
     frames = []
     best = rank[0][1]
     for i in range(n):
-        img, d = base_frame()
         t = i / n
-        text(d, (W / 2, 96), "LEADERBOARD", ImageFont.truetype(HELV, 62, index=1),
-             WHITE, anchor="ma")
-        text(d, (W / 2, 176), f"192 MAZES · 4 ATTEMPTS EACH · {attempts:,} TRIES", F_META, DIM, anchor="ma")
-        text(d, (100, 244), "MODEL", F_LBH, DIM)
-        text(d, (780, 244), "PASS@1", F_LBH, DIM, anchor="ra")
-        text(d, (980, 244), "PASS@4", F_LBH, DIM, anchor="ra")
-        d.line([(100, 274), (980, 274)], fill=(38, 46, 62), width=2)
-
-        for r, (name, p1, pk) in enumerate(rank):
+        img, _ = base_frame()
+        img = heading(img, "LEADERBOARD", "192 MAZES  ·  4 TRIES EACH  ·  SUCCESS ON THE FIRST TRY")
+        d = ImageDraw.Draw(img)
+        for r, (name, p1) in enumerate(rank):
             appear = 0.05 + r * 0.055
             if t < appear:
                 continue
             a = min(1.0, (t - appear) * 9)
-            y = 300 + r * 70
+            y = 262 + r * 72
             lead = r == 0
-            col = WHITE if lead else (200, 210, 224)
-            bar_w = int(600 * (p1 / 100) * a)
-            d.rectangle([100, y + 42, 100 + bar_w, y + 50], fill=CYAN if lead else (30, 90, 108))
-            text(d, (100, y), f"{r + 1}", F_LB, AMBER if lead else DIM)
-            text(d, (150, y + 3), name, F_LBN, tuple(int(c * a) for c in col))
-            text(d, (780, y), f"{p1:.1f}%", F_LB, tuple(int(c * a) for c in (CYAN if lead else col)), anchor="ra")
-            text(d, (980, y), f"{pk:.0f}%", F_LB, tuple(int(c * a) for c in (DIM if not lead else WHITE)), anchor="ra")
-
+            bar_x = 520
+            bar_w = int(380 * (p1 / 100) * a)
+            colr = CYAN if lead else lerp(VIOLET, PINK, r / max(1, len(rank) - 1))
+            d.rectangle([bar_x, y + 8, bar_x + max(3, bar_w), y + 40], fill=fade(colr, 0.9))
+            text(d, (80, y + 2), f"{r + 1}", F_BOLD, fade(SUN_TOP if lead else DIM, a))
+            text(d, (126, y + 6), name, F_MED, fade(WHITE if lead else LAVENDER, a))
+            text(d, (bar_x + max(3, bar_w) + 16, y + 6), f"{p1:.0f}%", F_DATA, fade(WHITE if lead else LAVENDER, a))
         if t > 0.72:
             a = min(1.0, (t - 0.72) * 5)
-            text(d, (W / 2, 900), f"THE BEST MODEL STILL FAILS {100 - best:.0f}% OF THE TIME",
-                 F_SUB, tuple(int(AMBER[k] * a) for k in range(3)), anchor="ma")
-        wordmark(d)
+            img = neon(img, lambda dd, c: dd.text((W / 2, 880), f"THE BEST MODEL STILL FAILS {100 - best:.0f}% OF THE TIME",
+                                                   font=F_BOLD, fill=c, anchor="mm"), fade(SUN_TOP, a), 10)
+        wordmark(ImageDraw.Draw(img))
         frames.append(img)
     return frames
 
 
-def warp_frames(straight, warped, n=180):
+def warp_frames(straight, warped, n=186):
     """Punchline 1: the same maze, bent, gets harder the bigger it is."""
-    labels = ["L1", "L2", "L3", "L4"]
+    labels = ["SIZE 1", "SIZE 2", "SIZE 3", "SIZE 4"]
     x0, x1, y0, y1 = 190, 900, 720, 320
     frames = []
     for i in range(n):
-        img, d = base_frame()
         t = i / n
-        f_h = ImageFont.truetype(HELV, 52, index=1)
-        text(d, (W / 2, 104), "SAME MAZE, BENT", F_SUB, DIM, anchor="ma")
-        d.text((W / 2, 146), "BIGGER IS HARD. BENT IS HARDER.", font=f_h, fill=WHITE, anchor="ma")
-        text(d, (W / 2, 226), "GPT-6 ASTRA · EACH WARPED MAZE VS THE STRAIGHT ONE IT CAME FROM",
-             F_META, (78, 90, 106), anchor="ma")
-        d.line([(x0, y0), (x1, y0)], fill=(46, 56, 74), width=2)
-        d.line([(x0, y0), (x0, y1 - 30)], fill=(46, 56, 74), width=2)
+        img, _ = base_frame()
+        img = heading(img, "BEND THE SAME MAZE", "GPT-6 ASTRA  ·  EACH BENT MAZE AGAINST THE STRAIGHT ONE IT CAME FROM")
+        d = ImageDraw.Draw(img)
+        d.line([(x0, y0), (x1, y0)], fill=DIM, width=2)
+        d.line([(x0, y0), (x0, y1 - 30)], fill=DIM, width=2)
         for k, lab in enumerate(labels):
-            x = x0 + (x1 - x0) * k / 3
-            text(d, (x, y0 + 18), lab, F_LBH, (86, 98, 116), anchor="ma")
+            text(d, (x0 + (x1 - x0) * k / 3, y0 + 20), lab, F_SMALL, LAVENDER, anchor="ma")
         for pct in (0, 50, 100):
             y = y0 - (y0 - y1) * pct / 100
-            d.line([(x0 - 8, y), (x0, y)], fill=(46, 56, 74), width=2)
-            text(d, (x0 - 20, y - 12), f"{pct}", F_LBH, (86, 98, 116), anchor="ra")
+            text(d, (x0 - 18, y), f"{pct}%", F_DATA_S, DIM, anchor="rm")
         grow = min(1.0, max(0.0, (t - 0.06) * 1.8))
-        for values, colr, w in ((straight, (200, 210, 224), 5), (warped, CYAN, 7)):
-            pts = [(x0 + (x1 - x0) * k / 3, y0 - (y0 - y1) * v / 100) for k, v in enumerate(values)]
-            shown = walk(pts, grow) if grow < 1 else pts
-            if len(shown) >= 2:
-                d.line(shown, fill=colr, width=w, joint="curve")
-            for px, py in shown:
-                d.ellipse([px - 8, py - 8, px + 8, py + 8], fill=colr)
+        for values, colr, w in ((straight, LAVENDER, 5), (warped, CYAN, 7)):
+            p = [(x0 + (x1 - x0) * k / 3, y0 - (y0 - y1) * v / 100) for k, v in enumerate(values)]
+            shown = walk(p, grow) if grow < 1 else p
+
+            def draw(dd, c, shown=shown, w=w):
+                if len(shown) >= 2:
+                    dd.line(shown, fill=c, width=w, joint="curve")
+                for px, py in shown:
+                    dd.ellipse([px - 8, py - 8, px + 8, py + 8], fill=c)
+            img = neon(img, draw, colr, 8, 0.8)
+        d = ImageDraw.Draw(img)
         if grow >= 1:
-            sx, sy = x1, y0 - (y0 - y1) * straight[-1] / 100
-            wx, wy = x1, y0 - (y0 - y1) * warped[-1] / 100
-            text(d, (sx + 22, sy - 14), f"{straight[-1]:.0f}%", F_LB, (200, 210, 224))
-            text(d, (wx + 22, wy - 14), f"{warped[-1]:.0f}%", F_LB, CYAN)
-            a = min(1.0, (t - 0.62) * 5) if t > 0.62 else 0
-            if a:
-                d.line([(x1 - 30, sy + 14), (x1 - 30, wy - 14)], fill=tuple(int(AMBER[k] * a) for k in range(3)), width=4)
+            sy = y0 - (y0 - y1) * straight[-1] / 100
+            wy = y0 - (y0 - y1) * warped[-1] / 100
+            text(d, (x1 + 22, sy), f"{straight[-1]:.0f}%", F_DATA, LAVENDER, anchor="lm")
+            text(d, (x1 + 22, wy), f"{warped[-1]:.0f}%", F_DATA, CYAN, anchor="lm")
+            if t > 0.62:
+                d.line([(x1 - 30, sy + 14), (x1 - 30, wy - 14)], fill=SUN_TOP, width=4)
         if t > 0.5:
             a = min(1.0, (t - 0.5) * 5)
-            for r, (name, colr) in enumerate((("STRAIGHT", (200, 210, 224)), ("WARPED TWIN", CYAN))):
-                y = 790 + r * 40
-                d.rectangle([190, y + 8, 226, y + 14], fill=tuple(int(c * a) for c in colr))
-                text(d, (242, y), name, F_META, tuple(int(c * a) for c in colr))
+            for r, (name, colr) in enumerate((("STRAIGHT", LAVENDER), ("BENT", CYAN))):
+                y = 792 + r * 38
+                d.rectangle([190, y + 10, 226, y + 16], fill=fade(colr, a))
+                text(d, (242, y), name, F_SMALL, fade(colr, a))
         if t > 0.66:
             a = min(1.0, (t - 0.66) * 6)
-            f_p = ImageFont.truetype(HELV, 44, index=1)
-            d.text((W / 2, 910), f"−{straight[-1] - warped[-1]:.0f} POINTS ON THE LARGEST MAZES", font=f_p,
-                   fill=tuple(int(AMBER[k] * a) for k in range(3)), anchor="ma")
-        wordmark(d)
+            img = neon(img, lambda dd, c: dd.text((W / 2, 900), f"−{straight[-1] - warped[-1]:.0f} POINTS ON THE BIGGEST MAZES",
+                                                   font=F_BOLD, fill=c, anchor="mm"), fade(SUN_TOP, a), 10)
+        wordmark(ImageDraw.Draw(img))
         frames.append(img)
     return frames
 
 
-def effort_frames(effort, n=180):
+def effort_frames(effort, n=186):
     """Punchline 2: thinking longer helps GPT and Claude, not Gemini."""
     frames = []
-    x0, x1 = 420, 960
+    x0, x1 = 430, 960
     for i in range(n):
-        img, d = base_frame()
         t = i / n
-        f_h = ImageFont.truetype(HELV, 52, index=1)
-        d.text((W / 2, 116), "THINKING LONGER", font=f_h, fill=WHITE, anchor="ma")
-        text(d, (W / 2, 190), "SAME MAZES · MORE EFFORT · L3 AND L4 ONLY",
-             F_META, (78, 90, 106), anchor="ma")
+        img, _ = base_frame()
+        img = heading(img, "THINK LONGER?", "SAME BIG MAZES  ·  NORMAL EFFORT  VS  EXTRA EFFORT")
+        d = ImageDraw.Draw(img)
         for r, e in enumerate(effort):
             appear = 0.08 + r * 0.07
             if t < appear:
                 continue
             a = min(1.0, (t - appear) * 6)
-            y = 290 + r * 108
-            text(d, (100, y), e["model"].upper(), F_LBH, tuple(int(c * a) for c in (200, 210, 224)))
-            text(d, (100, y + 32), f"{e['less'].upper()} → {e['more'].upper()}", F_MARK,
-                 tuple(int(c * a) for c in DIM))
+            y = 280 + r * 104
+            text(d, (100, y), e["model"].upper(), F_MED, fade(WHITE, a))
+            text(d, (100, y + 34), f"{e['less'].upper()}  ›  {e['more'].upper()}", F_SMALL, fade(DIM, a))
             lo = x0 + (x1 - x0) * e["less_score"] / 100
             hi = x0 + (x1 - x0) * (e["less_score"] + (e["more_score"] - e["less_score"]) * a) / 100
-            d.line([(x0, y + 26), (x1, y + 26)], fill=(28, 34, 48), width=2)
+            d.line([(x0, y + 28), (x1, y + 28)], fill=(52, 22, 92), width=2)
             sig = e["ci_lo"] > 0
-            d.line([(lo, y + 26), (hi, y + 26)], fill=AMBER if sig else DIM, width=6)
-            d.ellipse([lo - 9, y + 17, lo + 9, y + 35], fill=(140, 151, 170))
-            d.ellipse([hi - 11, y + 15, hi + 11, y + 37], fill=CYAN)
+            d.line([(lo, y + 28), (hi, y + 28)], fill=SUN_TOP if sig else DIM, width=6)
+            d.ellipse([lo - 9, y + 19, lo + 9, y + 37], fill=LAVENDER)
+            d.ellipse([hi - 11, y + 17, hi + 11, y + 39], fill=CYAN)
             if a >= 1:
-                text(d, (max(lo, hi) + 26, y + 10), f"{e['delta']:+.0f}", F_LB, WHITE if sig else DIM)
+                text(d, (max(lo, hi) + 26, y + 28), f"{e['delta']:+.0f}", F_DATA, WHITE if sig else DIM, anchor="lm")
         if t > 0.66:
             a = min(1.0, (t - 0.66) * 6)
-            f_p = ImageFont.truetype(HELV, 42, index=1)
-            d.text((W / 2, 870), "GPT AND CLAUDE GAIN 8–14 POINTS.", font=f_p,
-                   fill=tuple(int(CYAN[k] * a) for k in range(3)), anchor="ma")
-            d.text((W / 2, 922), "GEMINI'S THINKING ADDS NOTHING.", font=f_p,
-                   fill=tuple(int(WHITE[k] * a) for k in range(3)), anchor="ma")
-        wordmark(d)
+            img = neon(img, lambda dd, c: dd.text((W / 2, 850), "GPT AND CLAUDE GAIN 8–14 POINTS",
+                                                   font=F_BOLD, fill=c, anchor="mm"), fade(CYAN, a), 10)
+            img = neon(img, lambda dd, c: dd.text((W / 2, 900), "GEMINI'S THINKING ADDS NOTHING",
+                                                   font=F_BOLD, fill=c, anchor="mm"), fade(PINK, a), 10)
+        wordmark(ImageDraw.Draw(img))
         frames.append(img)
     return frames
 
 
-def end_frames(n=60):
+def end_frames(n=72):
     frames = []
+    lit = _sun(_sky(700), W // 2, 600, 200)
     for i in range(n):
-        img, d = base_frame()
-        img = glow(img, (200, 440, 880, 600), (10, 40, 60), 44, 140)
+        img = _floor(lit.copy(), 700, (i / n * 2) % 1.0)
+        img = chrome_text(img, (W / 2, 190), "MAZERUNNER", F_HUGE)
         d = ImageDraw.Draw(img)
-        f = ImageFont.truetype(HELV, 104, index=1)
-        wpx = d.textlength("MAZERUNNER", font=f)
-        x0 = (W - wpx) / 2
-        d.text((x0, 452), "MAZE", font=f, fill=CYAN)
-        d.text((x0 + d.textlength("MAZE", font=f), 452), "RUNNER", font=f, fill=WHITE)
-        text(d, (W / 2, 596), "A CONTINUOUS-CONTROL BENCHMARK FOR MULTIMODAL MODELS",
-             F_META, DIM, anchor="ma")
-        text(d, (W / 2, 646), "EVERY PATH IN THIS CLIP IS A REAL MODEL SUBMISSION", F_META, (70, 82, 98), anchor="ma")
+        text(d, (W / 2, 302), "CAN AN AI DRAW ITS WAY OUT OF A MAZE?", F_BOLD, WHITE, anchor="mm")
+        text(d, (W / 2, 350), "EVERY PATH IN THIS CLIP IS A REAL MODEL SUBMISSION", F_SMALL, CYAN, anchor="mm")
         frames.append(img)
     return frames
+
+
+# ------------------------------------------------------------- selection
+
+def crossings(task, mask, depth_map, points_norm):
+    """(the clearest wall crossing or None, its length in px).
+
+    A crossing is a stretch of the drawn centreline that runs at least
+    WALL_DEPTH px inside a wall; the clearest is the longest one, and it only
+    counts if it is long enough to read on screen and goes CLEAR_DEPTH deep
+    somewhere. The zoom lands in its middle."""
+    w, h = task["width"], task["height"]
+    pts = [(float(p["x"]) * (w - 1), float(p["y"]) * (h - 1)) for p in points_norm]
+    dense = densify_polyline(pts, 1.0)
+    best, run, peak = (0, None, 0.0), [], 0.0
+    for i, (x, y) in enumerate(dense + [(-1.0, -1.0)]):
+        xi, yi = int(round(x)), int(round(y))
+        inside = 0 <= xi < w and 0 <= yi < h
+        dpt = float(depth_map[yi, xi]) if inside else 0.0
+        if dpt >= WALL_DEPTH:
+            run.append(i)
+            peak = max(peak, dpt)
+            continue
+        if run and len(run) > best[0] and peak >= CLEAR_DEPTH:
+            best = (len(run), run[len(run) // 2], peak)
+        run, peak = [], 0.0
+    length, mid, _peak = best
+    if length < MIN_CROSSING:
+        return None, length
+    x, y = dense[mid]
+    return {"x_px": x, "y_px": y, "at": mid / max(1, len(dense) - 1)}, length
 
 
 def main():
@@ -460,128 +547,132 @@ def main():
             rows.append(r)
     index = {json.loads(l)["task_id"]: json.loads(l)
              for l in (ROOT / META["dataset"] / "index.jsonl").read_text().splitlines() if l.strip()}
-
-    # Clip selection is driven by the failure-mode classifier, so the reel
-    # shows *named* failures — walls read as corridors, hopping between
-    # imagined nodes — rather than a wall of near-misses that all look alike.
     verdicts = {}
-    fm = ROOT / "results/analysis/failure-modes.jsonl"
-    for line in fm.read_text().splitlines():
+    for line in (ROOT / "results/analysis/failure-modes.jsonl").read_text().splitlines():
         if line.strip():
             v = json.loads(line)
             verdicts[(v["provider"], v["maze"], v["trial"])] = v
 
+    task_cache = {}
+
+    def task_of(tid):
+        if tid not in task_cache:
+            d = ROOT / index[tid]["dir"]
+            t = json.loads((d / "task.json").read_text())
+            t["_dir"] = str(d)
+            mask = np.asarray(Image.open(d / t["mask_file"]).convert("L")) > 127
+            task_cache[tid] = (t, mask, distance_transform_edt(~mask))
+        return task_cache[tid]
+
+    def where(meta):
+        size = f"size {meta['level'][1]}"
+        return f"{meta['family']} maze · {size}" + (" · bent" if meta["warped"] else "")
+
     CAPTION = {
-        "endpoint_misidentification": "didn't even start on the badge",
-        "figure_ground_inversion": "drove straight through the walls",
-        "graph_abstraction": "hopped between imaginary nodes",
-        "clearance_failure": "right route — clipped the wall",
-        "corridor_departure": "cut the corner through a wall",
-        "almost": "made it most of the way — then clipped a wall",
-        "hard_win": "largest size — solved it",
+        "figure_ground_inversion": "read the walls as the corridors",
+        "graph_abstraction": "jumped between imagined junctions",
+        "corridor_departure": "cut straight through a wall",
+        "almost": "nearly there — then through a wall",
     }
     main_legs = [k for k, v in META["legs"].items() if not v.get("upper_only")]
 
-    def in_frame(row):
-        pts = (row.get("submission") or {}).get("points") or []
+    def in_frame(pts):
         try:
-            return bool(pts) and all(-0.02 <= float(p["x"]) <= 1.02
-                                     and -0.02 <= float(p["y"]) <= 1.02 for p in pts)
+            return bool(pts) and all(-0.02 <= float(p["x"]) <= 1.02 and -0.02 <= float(p["y"]) <= 1.02
+                                     for p in pts)
         except (TypeError, ValueError, KeyError):
             return False
 
-    def where(meta):
-        level = meta["tier"].replace("w", " · warped")
-        return f"{meta['family']} · {level}"
-
     by_mode = defaultdict(list)
-    outcome = {}
+    wins_by_task = defaultdict(list)
+    fails_by_task = defaultdict(list)
     for r in rows:
         if r.get("error") or not r.get("submission") or r["provider"] not in main_legs:
             continue
         ev = r.get("evaluation") or {}
         meta = index.get(r["maze"])
         pts = r["submission"].get("points") or []
-        if not meta or len(pts) < 6 or not in_frame(r):
+        if not meta or len(pts) < 6 or not in_frame(pts):
             continue
-        rec = (r["provider"], r["maze"], r["trial"], meta["family"], meta["archetype"],
-               meta["tier"], bool(ev.get("success")), pts, ev.get("first_collision"))
-        outcome.setdefault((r["provider"], r["maze"]), []).append(rec)
+        key = (r["provider"], r["maze"], r["trial"])
         if ev.get("success"):
-            # The counterweight to the failure reel: an L4 maze, solved,
-            # ranked by how gnarly the route actually is.
+            rec = (r["provider"], r["maze"], r["trial"], True, pts, None)
+            wins_by_task[(r["provider"], r["maze"])].append(rec)
             if meta["level"] == "L4" and len(pts) >= 12:
                 m = meta.get("measures") or {}
                 by_mode["hard_win"].append((m.get("turns", 0) + 2 * m.get("route_branches", 0), rec))
             continue
-        # "Almost there": the route is essentially complete and the pointer
-        # leaves the corridor in the final stretch. The most painful failures
-        # to watch, and invisible without the zoom.
-        collision = ev.get("first_collision") or {}
-        progress = (r.get("derived") or {}).get("route_progress", 0)
-        died_at = collision.get("segment_index", 0) / max(1, len(pts) - 1)
-        if collision and progress > 0.75 and died_at > 0.6:
-            by_mode["almost"].append((progress + died_at, rec))
-        v = verdicts.get((r["provider"], r["maze"], r["trial"]))
-        if v:
-            by_mode[v["primary"]].append((v["measures"].get("outside_fraction", 0), rec))
+        v = verdicts.get(key)
+        mode = v["primary"] if v else None
+        progress = (r.get("derived") or {}).get("route_progress", 0) or 0
+        wanted = mode in CAPTION or progress > 0.75 or (meta["warped"] and meta["level"] in ("L3", "L4"))
+        if not wanted:
+            continue
+        task, mask, depth = task_of(r["maze"])
+        first, deepest = crossings(task, mask, depth, pts)  # deepest = crossing length
+        if first is None:
+            continue  # fails the scorer, but would look correct on screen
+        rec = (r["provider"], r["maze"], r["trial"], False, pts, first)
+        fails_by_task[(r["provider"], r["maze"])].append((deepest, rec))
+        if mode in CAPTION:
+            by_mode[mode].append((deepest, rec))
+        if progress > 0.75 and first["at"] > 0.6:
+            by_mode["almost"].append((progress + first["at"], rec))
 
-    used_tasks, picked = set(), []
+    used, picked = set(), []
 
-    def take_mode(mode, n=1, providers=None):
+    def label(rec, caption):
+        return rec + (caption, where(index[rec[1]]))
+
+    def take(mode, n=1, providers=None, caption=None):
         out = []
-        for _score, rec in sorted(by_mode.get(mode, []), key=lambda x: -x[0]):
-            if rec[1] in used_tasks or (providers and rec[0] not in providers):
+        for _s, rec in sorted(by_mode.get(mode, []), key=lambda x: -x[0]):
+            if rec[1] in used or (providers and rec[0] not in providers):
                 continue
-            used_tasks.add(rec[1])
-            out.append(rec + (CAPTION.get(mode, mode.replace("_", " ")),))
+            used.add(rec[1])
+            out.append(label(rec, caption or CAPTION.get(mode, "")))
             if len(out) >= n:
                 break
         return out
 
     def take_warp_pair(provider):
-        """The leader solving a straight L3/L4 maze, then failing its warped
-        twin: the v2 finding in two clips."""
-        for (prov, maze), recs in sorted(outcome.items()):
+        """The leader solving a big straight maze, then visibly failing its
+        bent twin."""
+        best = None
+        for (prov, maze), fails in fails_by_task.items():
             meta = index[maze]
             if prov != provider or not meta["warped"] or meta["level"] not in ("L3", "L4"):
                 continue
             twin = meta["twin"]
-            fails = [r for r in recs if not r[6] and r[8]]
-            wins = [r for r in outcome.get((prov, twin), []) if r[6]]
-            if fails and wins and maze not in used_tasks and twin not in used_tasks:
-                used_tasks.update({maze, twin})
-                return [wins[0] + (f"{where(index[twin])} — solved",),
-                        fails[0] + (f"same maze, warped — failed",)]
-        return []
+            wins = wins_by_task.get((prov, twin))
+            if not wins or maze in used or twin in used:
+                continue
+            deepest, rec = max(fails, key=lambda x: x[0])
+            score = deepest + (5 if meta["level"] == "L4" else 0)
+            if best is None or score > best[0]:
+                best = (score, wins[0], rec)
+        if not best:
+            return []
+        _s, win, fail = best
+        used.update({win[1], fail[1]})
+        return [label(win, "solved it"), label(fail, "same maze, bent — failed")]
 
-    # One of each thing worth showing, and nothing twice. The reel earns its
-    # length from variety, not volume.
-    picked += take_mode("hard_win", 1, {"gpt6-astra"})
+    picked += take("hard_win", 1, {"gpt6-astra"}, "biggest size — solved it")
     picked += take_warp_pair("gpt6-astra")
-    picked += take_mode("figure_ground_inversion", 1)
-    picked += take_mode("graph_abstraction", 1)
-    picked += take_mode("hard_win", 1, {"argon", "gpt61-terra"})
-    picked += take_mode("corridor_departure", 1, {"opus55"})
-    picked += take_mode("clearance_failure", 1, {"gpt61-sol"})
-    picked += take_mode("almost", 2)
-    print(f"selected {len(picked)} clips: "
-          f"{sum(1 for p in picked if p[6])} wins, {sum(1 for p in picked if not p[6])} fails")
-
-    tasks = {}
-    for rec in picked:
-        tid = rec[1]
-        if tid not in tasks:
-            d = ROOT / index[tid]["dir"]
-            t = json.loads((d / "task.json").read_text())
-            t["_dir"] = str(d)
-            tasks[tid] = t
+    picked += take("figure_ground_inversion", 1)
+    picked += take("graph_abstraction", 1)
+    picked += take("hard_win", 1, {"argon", "gpt61-terra"}, "biggest size — solved it")
+    picked += take("corridor_departure", 1, {"opus55"})
+    picked += take("almost", 2)
+    print(f"selected {len(picked)} clips: {sum(1 for p in picked if p[3])} wins, "
+          f"{sum(1 for p in picked if not p[3])} fails")
+    for p in picked:
+        print(f"  {p[0]:12s} {p[1]:24s} trial {p[2]}  {'WIN ' if p[3] else 'FAIL'}  {p[6]}")
+    tasks = {p[1]: task_of(p[1])[0] for p in picked}
 
     upper_only = frozenset(k for k, v in META["legs"].items() if v.get("upper_only"))
     board, trials = build_board(attempts_path, upper_only)
-    rank = sorted(((NAMES[k], 100 * board[k]["headline"]["score"], 100 * board[k]["pass_at_k"]["score"])
-                   for k in main_legs), key=lambda x: -x[1])
-    attempts = sum(board[k]["attempts"] for k in main_legs)
+    rank = sorted(((MODEL[k], 100 * board[k]["headline"]["score"]) for k in main_legs), key=lambda x: -x[1])
     warp = board["gpt6-astra"]["warp"]
     effort = []
     for pair in META["effort_pairs"]:
@@ -597,18 +688,19 @@ def main():
     if OUT.exists():
         shutil.rmtree(OUT)
     OUT.mkdir(parents=True)
-
     frames = title_frames()
+    marks = {}
     for rec in picked:
+        marks[f"{rec[0]}/{rec[1]}/{rec[2]}"] = len(frames)
         frames += clip_frames(rec, tasks)
-    frames += leaderboard_frames(rank, attempts)
+    frames += leaderboard_frames(rank)
     frames += warp_frames([100 * warp[lv]["straight"] for lv in ("L1", "L2", "L3", "L4")],
                           [100 * warp[lv]["warped"] for lv in ("L1", "L2", "L3", "L4")])
     frames += effort_frames(effort)
     frames += end_frames()
-
     for i, f in enumerate(frames):
         f.save(OUT / f"f{i:05d}.png")
+    (OUT / "clips.json").write_text(json.dumps(marks, indent=2))
     print(f"rendered {len(frames)} frames ({len(frames)/FPS:.1f}s)")
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
                     "-i", str(OUT / "f%05d.png"), "-c:v", "libx264", "-pix_fmt", "yuv420p",

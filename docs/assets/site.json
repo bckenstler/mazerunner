@@ -1,0 +1,414 @@
+{
+  "hero": [
+    {
+      "n": "72%",
+      "label": "best first-try score (GPT-6 Astra)"
+    },
+    {
+      "n": "28%",
+      "label": "best score on the largest bent mazes, at any effort"
+    },
+    {
+      "n": "+14",
+      "label": "most points gained by thinking longer"
+    }
+  ],
+  "board": [
+    {
+      "id": "gpt6-astra",
+      "model": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "effort": "medium",
+      "overall": 71.9,
+      "ci": [
+        68.5,
+        75.1
+      ],
+      "small": 86,
+      "large": 66,
+      "large_grid": 86,
+      "large_bent": 38,
+      "best_of_4": 86
+    },
+    {
+      "id": "gpt61-terra",
+      "model": "GPT-6.1 Terra",
+      "vendor": "OpenAI",
+      "effort": "medium",
+      "overall": 69.7,
+      "ci": [
+        66.1,
+        73.2
+      ],
+      "small": 88,
+      "large": 59,
+      "large_grid": 85,
+      "large_bent": 35,
+      "best_of_4": 81
+    },
+    {
+      "id": "gpt61-sol",
+      "model": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "effort": "medium",
+      "overall": 63.9,
+      "ci": [
+        60.4,
+        67.6
+      ],
+      "small": 82,
+      "large": 58,
+      "large_grid": 76,
+      "large_bent": 26,
+      "best_of_4": 80
+    },
+    {
+      "id": "argon",
+      "model": "Gemini 4 Argon",
+      "vendor": "Google",
+      "effort": "default",
+      "overall": 59.1,
+      "ci": [
+        56.4,
+        62.0
+      ],
+      "small": 81,
+      "large": 49,
+      "large_grid": 68,
+      "large_bent": 14,
+      "best_of_4": 71
+    },
+    {
+      "id": "opus55",
+      "model": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "effort": "default",
+      "overall": 34.2,
+      "ci": [
+        31.2,
+        37.4
+      ],
+      "small": 63,
+      "large": 26,
+      "large_grid": 45,
+      "large_bent": 4,
+      "best_of_4": 42
+    },
+    {
+      "id": "kimi31",
+      "model": "Kimi K3.1 Pro",
+      "vendor": "Moonshot",
+      "effort": "high",
+      "overall": 20.7,
+      "ci": [
+        17.8,
+        23.7
+      ],
+      "small": 41,
+      "large": 9,
+      "large_grid": 16,
+      "large_bent": 4,
+      "best_of_4": 33
+    },
+    {
+      "id": "muse-wonder",
+      "model": "Muse Wonder 1.0",
+      "vendor": "Meta",
+      "effort": "medium",
+      "overall": 0.9,
+      "ci": [
+        0.1,
+        1.8
+      ],
+      "small": 3,
+      "large": 0,
+      "large_grid": 0,
+      "large_bent": 0,
+      "best_of_4": 2
+    },
+    {
+      "id": "nemotron-vl",
+      "model": "Nemotron 3.5 Super VL",
+      "vendor": "NVIDIA",
+      "effort": "default",
+      "overall": 0.0,
+      "ci": [
+        0.0,
+        0.0
+      ],
+      "small": 0,
+      "large": 0,
+      "large_grid": 0,
+      "large_bent": 0,
+      "best_of_4": 0
+    }
+  ],
+  "effort": [
+    {
+      "model": "Claude Opus 5.5",
+      "more": "max",
+      "less": "default",
+      "more_score": 32.3,
+      "less_score": 18.8,
+      "delta": 13.5,
+      "ci": [
+        7.8,
+        19.3
+      ],
+      "trials": 1,
+      "tokens": [
+        1460.5,
+        46042.0
+      ],
+      "cost": [
+        0.044475385416666645,
+        1.1635276250000002
+      ]
+    },
+    {
+      "model": "GPT-6 Astra",
+      "more": "xhigh",
+      "less": "medium",
+      "more_score": 69.5,
+      "less_score": 56.8,
+      "delta": 12.8,
+      "ci": [
+        8.1,
+        17.4
+      ],
+      "trials": 4,
+      "tokens": [
+        1950.0,
+        5992.0
+      ],
+      "cost": [
+        0.131043779527559,
+        0.35636716621253395
+      ]
+    },
+    {
+      "model": "GPT-6.1 Sol",
+      "more": "xhigh",
+      "less": "medium",
+      "more_score": 59.6,
+      "less_score": 47.1,
+      "delta": 12.5,
+      "ci": [
+        8.3,
+        16.7
+      ],
+      "trials": 4,
+      "tokens": [
+        2006.0,
+        6783.0
+      ],
+      "cost": [
+        0.027514421875,
+        0.07491068817204301
+      ]
+    },
+    {
+      "model": "GPT-6.1 Terra",
+      "more": "xhigh",
+      "less": "medium",
+      "more_score": 58.6,
+      "less_score": 51.0,
+      "delta": 7.6,
+      "ci": [
+        2.9,
+        12.2
+      ],
+      "trials": 4,
+      "tokens": [
+        1597.0,
+        5607.5
+      ],
+      "cost": [
+        0.011492346354166664,
+        0.03904156510416664
+      ]
+    },
+    {
+      "model": "Gemini 4 Argon",
+      "more": "default",
+      "less": "thinking off",
+      "more_score": 37.5,
+      "less_score": 36.2,
+      "delta": 1.3,
+      "ci": [
+        -2.3,
+        5.2
+      ],
+      "trials": 4,
+      "tokens": [
+        522.0,
+        1157.0
+      ],
+      "cost": [
+        0.011966880208333334,
+        0.025547114583333325
+      ]
+    }
+  ],
+  "findings": [
+    {
+      "id": "bending",
+      "stat": "−64",
+      "stat_label": "points the top model loses when its largest mazes are bent",
+      "title": "Bigger is harder. Bent is much harder.",
+      "body": "Every model loses ground as the mazes grow: GPT-6 Astra, the top model, solves 93% of the smallest mazes and 59% of the largest. Bending hurts more, and the bigger the maze, the more it hurts. Four of the layouts also come bent: the same maze, with the same route, start and finish, drawn on a warped grid. On small mazes the bend barely matters (Astra loses 9 points). On the largest, Astra falls from 83% to 19%. Claude Opus 5.5 is thrown by bending at any size: it solves 100% of the smallest straight grids and 42% of the same mazes bent.",
+      "figures": [
+        {
+          "file": "02-ladder.png",
+          "caption": "Success rate on straight mazes, by size."
+        },
+        {
+          "file": "03-warp.png",
+          "caption": "Each bent maze against the straight maze it was made from."
+        }
+      ]
+    },
+    {
+      "id": "steady-hand",
+      "stat": "92%",
+      "stat_label": "of GPT-6 Astra's failures follow the right route",
+      "title": "The best models know the way. Their hand isn't steady enough.",
+      "body": "We sorted every failed attempt by what went wrong, from the drawn path and, where the model shared it, its reasoning. Nine in ten of GPT-6 Astra's failures take the correct route and still touch a wall: the line runs a few pixels too close to an edge. That is why corridor width, more than any other feature of a maze, predicts whether it succeeds. Weaker models fail differently. Claude Opus 5.5 cuts straight through walls (44% of its failures), and Kimi K3.1 Pro and Nemotron 3.5 Super VL often mistake the walls for the corridors.",
+      "figures": [
+        {
+          "file": "07-failure-modes.png",
+          "caption": "Why each failed attempt failed, per model."
+        },
+        {
+          "file": "06-regression.png",
+          "caption": "Which maze features predict success, with the others held fixed."
+        }
+      ]
+    },
+    {
+      "id": "early",
+      "stat": "72%",
+      "stat_label": "of the top model's failures happen in the first half of the route",
+      "title": "Mistakes come early, not at the finish line.",
+      "body": "You might expect long routes to go wrong near the end, as small errors pile up. They don't. Even for the leader, 72% of failed attempts first touch a wall before the halfway point; for Claude and Kimi it is 90% and 91%.",
+      "figures": [
+        {
+          "file": "08-progress.png",
+          "caption": "How far each failed attempt got before it touched a wall."
+        }
+      ]
+    },
+    {
+      "id": "blind-spots",
+      "stat": "12%",
+      "stat_label": "Gemini 4 Argon on size-2 organic mazes, after 100% at size 1",
+      "title": "Each model has its own blind spots.",
+      "body": "Scores for every layout and size, for three models. What stops one model is often easy for another. Organic mazes, with curved and irregular corridors, stop Claude at the smallest size and Gemini from size 2, while GPT-6 Astra still solves 50% of them at size 2. Island and pipes layouts stay solvable for all three.",
+      "figures": [
+        {
+          "file": "05-cells.png",
+          "caption": "Success rate per group of four mazes."
+        }
+      ]
+    },
+    {
+      "id": "effort",
+      "stat": "+14",
+      "stat_label": "points for Claude Opus 5.5 at maximum effort, at 26× the cost",
+      "title": "Thinking longer helps some models, at a price.",
+      "body": "Four models also ran at a higher effort setting on the large mazes (sizes 3 and 4), compared maze by maze with their normal setting. The GPT-6 models gain 8 to 13 points. Claude Opus 5.5 gains 13.5 at maximum effort, but writes about 30 times as much and costs 26 times as much per try. Gemini 4 Argon decides for itself when to think, and switching its thinking off costs it only 1.3 points. Even at the highest settings, no model passes 30% on the largest bent mazes.",
+      "figures": [
+        {
+          "file": "04-effort.png",
+          "caption": "Large mazes at normal and extra effort, same mazes at both."
+        },
+        {
+          "file": "10-cost.png",
+          "caption": "Success against list price per try."
+        }
+      ]
+    }
+  ],
+  "method": [
+    {
+      "title": "How a try is scored",
+      "body": "The model gets one picture of a maze and returns a list of points. We sweep a pointer 3 pixels in radius along the line through them. If it touches a wall anywhere, or doesn't start on the start badge and end on the goal, the try fails. There is no partial credit."
+    },
+    {
+      "title": "How the score is averaged",
+      "body": "The 192 mazes fall into 48 groups of four: eight layouts at four sizes, plus bent versions of the four grid layouts at every size. Each group counts equally, so no layout or size dominates. The ranges are 95% confidence intervals, from resampling the mazes within each group."
+    },
+    {
+      "title": "Does the 3-pixel pointer decide the ranking?",
+      "body": "We re-scored every stored attempt with pointers from 1 to 8 pixels. Every score moves, but the order holds from 1 to 4 pixels. From 5 pixels up, two pairs trade places, and both pairs are already within each other's ranges at 3 pixels.",
+      "figure": "09-tolerance.png"
+    },
+    {
+      "title": "Settings and fine print",
+      "body": "Each model ran at its default or standard setting, four tries per maze, 7,776 tries in all, from 29 October to 2 November 2026. A call gets ten minutes (thirty at the extra-effort settings). A try that got no answer twice counts as a fail: 32 of 7,776, all on the longest routes. OpenAI, Google, Anthropic and Meta models ran through a LiteLLM gateway; Kimi and Nemotron through OpenRouter, each pinned to one host."
+    }
+  ],
+  "examples": {
+    "sizes": [
+      {
+        "file": "rectilinear-L1-s0000.jpg",
+        "label": "size 1"
+      },
+      {
+        "file": "rectilinear-L2-s0004.jpg",
+        "label": "size 2"
+      },
+      {
+        "file": "rectilinear-L3-s0008.jpg",
+        "label": "size 3"
+      },
+      {
+        "file": "rectilinear-L4-s0012.jpg",
+        "label": "size 4"
+      },
+      {
+        "file": "rectilinear-L4w-s0012.jpg",
+        "label": "size 4, bent"
+      }
+    ],
+    "families": [
+      {
+        "file": "rectilinear-L2-s0004.jpg",
+        "label": "rectilinear"
+      },
+      {
+        "file": "braided-L2-s0020.jpg",
+        "label": "braided"
+      },
+      {
+        "file": "pipes-L2-s0116.jpg",
+        "label": "pipes"
+      },
+      {
+        "file": "island-L2-s0100.jpg",
+        "label": "island"
+      },
+      {
+        "file": "rooms-L2-s0036.jpg",
+        "label": "rooms"
+      },
+      {
+        "file": "cave-L2-s0068.jpg",
+        "label": "cave"
+      },
+      {
+        "file": "radial-L2-s0084.jpg",
+        "label": "radial"
+      },
+      {
+        "file": "organic-L2-s0052.jpg",
+        "label": "organic"
+      }
+    ]
+  },
+  "counts": {
+    "mazes": 192,
+    "attempts": 7776,
+    "models": 8
+  }
+}

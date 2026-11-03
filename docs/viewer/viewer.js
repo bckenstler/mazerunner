@@ -202,14 +202,14 @@ function draw() {
 
   if ($("t-ref").checked) {
     const ref = task.reference_path.map((p) => [p.x * (task.width - 1), p.y * (task.height - 1)]);
-    stroke(ctx, ref, "rgba(52,211,153,0.9)", 2, [6, 5]);
+    stroke(ctx, ref, "rgba(45,226,166,0.9)", 2, [6, 5]);
   }
 
   if ($("t-radii").checked) {
     circle(ctx, task.start.x * (task.width - 1), task.start.y * (task.height - 1),
-           task.start_radius_px, "rgba(34,211,238,0.8)");
+           task.start_radius_px, "rgba(5,217,232,0.8)");
     circle(ctx, task.goal.x * (task.width - 1), task.goal.y * (task.height - 1),
-           task.goal_radius_px, "rgba(245,158,11,0.8)");
+           task.goal_radius_px, "rgba(249,200,14,0.85)");
   }
 
   const pts = pointsPx();
@@ -217,15 +217,15 @@ function draw() {
   if (drawn.length >= 2) {
     const win = state.attempt.evaluation?.success;
     stroke(ctx, drawn, "rgba(255,255,255,0.95)", 7);
-    stroke(ctx, drawn, state.frac < 1 || win ? "#22D3EE" : "#F84454", 3.5);
+    stroke(ctx, drawn, state.frac < 1 || win ? "#05D9E8" : "#FF2A6D", 3.5);
     const head = drawn[drawn.length - 1];
     dot(ctx, head[0], head[1], 5, "#FFFFFF");
   }
 
   const col = state.attempt.evaluation?.first_collision;
   if (col && state.frac >= 1) {
-    circle(ctx, col.x_px, col.y_px, 12, "#F84454", 3.5);
-    ctx.strokeStyle = "#F84454"; ctx.lineWidth = 3;
+    circle(ctx, col.x_px, col.y_px, 12, "#FF2A6D", 3.5);
+    ctx.strokeStyle = "#FF2A6D"; ctx.lineWidth = 3;
     ctx.beginPath();
     ctx.moveTo(col.x_px - 8, col.y_px - 8); ctx.lineTo(col.x_px + 8, col.y_px + 8);
     ctx.moveTo(col.x_px - 8, col.y_px + 8); ctx.lineTo(col.x_px + 8, col.y_px - 8);

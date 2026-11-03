@@ -4,25 +4,29 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MazeRunner · Trace Viewer</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌀</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%23F9C80E'/><stop offset='1' stop-color='%23FF2975'/></linearGradient></defs><circle cx='50' cy='50' r='44' fill='url(%23g)'/><rect x='0' y='58' width='100' height='5' fill='%230D0221'/><rect x='0' y='70' width='100' height='7' fill='%230D0221'/><rect x='0' y='83' width='100' height='9' fill='%230D0221'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#090B12; --panel:#0E121C; --panel2:#131826; --grid:#1A2030;
-  --cyan:#22D3EE; --amber:#F59E0B; --green:#34D399; --red:#F84454;
-  --white:#EDF2F7; --dim:#6E7A8C; --dimmer:#3B4658;
+  --bg:#0D0221; --panel:#160535; --panel2:#22094A; --grid:#3A1F66;
+  --cyan:#05D9E8; --amber:#F9C80E; --green:#2DE2A6; --red:#FF2A6D;
+  --white:#F5F0FF; --dim:#9583BE; --dimmer:#5D4396;
 }
 * { box-sizing:border-box; margin:0; }
 body {
   background:var(--bg); color:var(--white);
-  font-family:Menlo,"DejaVu Sans Mono",monospace; font-size:13px;
+  font-family:"JetBrains Mono",Menlo,"DejaVu Sans Mono",monospace; font-size:13px;
+  background-image:linear-gradient(180deg, #0D0221 0%, #1A0640 100%);
   height:100vh; display:flex; flex-direction:column; overflow:hidden;
 }
 header {
   padding:10px 18px; border-bottom:1px solid var(--grid);
   display:flex; align-items:baseline; gap:14px; flex-shrink:0;
 }
-header .mark b { color:var(--cyan); font-weight:700; }
-header .mark { font-size:16px; letter-spacing:.5px; }
+header .mark b { color:var(--cyan); font-weight:800; }
+header .mark { font-family:"Jost","Futura",sans-serif; font-weight:800; font-size:18px; letter-spacing:.08em; }
 header .sub { color:var(--dim); font-size:11px; }
 header a { color:var(--dim); margin-left:auto; text-decoration:none; }
 header a:hover { color:var(--cyan); }
@@ -46,8 +50,8 @@ main { flex:1; display:flex; min-height:0; }
 .row:hover { background:var(--panel); }
 .row.sel { background:var(--panel2); border-left:3px solid var(--cyan); padding-left:9px; }
 .badge { font-size:10px; padding:1px 6px; border-radius:3px; font-weight:700; }
-.badge.win { background:rgba(52,211,153,.15); color:var(--green); }
-.badge.fail { background:rgba(248,68,84,.15); color:var(--red); }
+.badge.win { background:rgba(5,217,232,.15); color:var(--cyan); }
+.badge.fail { background:rgba(255,42,109,.16); color:var(--red); }
 .row .who { flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .row .who small { color:var(--dim); display:block; font-size:10px; }
 .row .rp { color:var(--dim); font-size:11px; }
@@ -90,7 +94,7 @@ label.tog input { accent-color:var(--cyan); }
   text-transform:uppercase; letter-spacing:1px; flex-shrink:0; }
 #trace {
   flex:1; overflow-y:auto; padding:4px 14px 16px; white-space:pre-wrap;
-  color:#B9C2D0; font-size:12px; line-height:1.55;
+  color:#C6B0F2; font-size:12px; line-height:1.55;
 }
 #trace.empty { color:var(--dimmer); font-style:italic; }
 #empty {
@@ -117,8 +121,10 @@ label.tog input { accent-color:var(--cyan); }
       <select id="f-family"><option value="">all families</option></select>
       <select id="f-tier">
         <option value="">all sizes</option>
-        <option>L1</option><option>L2</option><option>L3</option><option>L4</option>
-        <option>L1w</option><option>L2w</option><option>L3w</option><option>L4w</option>
+        <option value="L1">size 1</option><option value="L2">size 2</option>
+        <option value="L3">size 3</option><option value="L4">size 4</option>
+        <option value="L1w">size 1 · bent</option><option value="L2w">size 2 · bent</option>
+        <option value="L3w">size 3 · bent</option><option value="L4w">size 4 · bent</option>
       </select>
       <select id="f-mode"><option value="">all failure modes</option></select>
       <select id="f-sort">
