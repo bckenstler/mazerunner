@@ -2,7 +2,7 @@
   "hero": [
     {
       "n": "72%",
-      "label": "best first-try score (GPT-6 Astra)"
+      "label": "best pass@1, solved on the first try (GPT-6 Astra)"
     },
     {
       "n": "28%",

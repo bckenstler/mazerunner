@@ -241,7 +241,7 @@ def main() -> int:
 
     found, bent_l4_best = findings(board, f, by_more)
     hero = [
-        {"n": f"{rows[0]['overall']:.0f}%", "label": f"best first-try score ({rows[0]['model']})"},
+        {"n": f"{rows[0]['overall']:.0f}%", "label": f"best pass@1, solved on the first try ({rows[0]['model']})"},
         {"n": f"{100 * bent_l4_best:.0f}%", "label": "best score on the largest bent mazes, at any effort"},
         {"n": f"+{max(e['delta'] for e in effort):.0f}", "label": "most points gained by thinking longer"},
     ]

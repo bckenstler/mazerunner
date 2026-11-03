@@ -1,14 +1,17 @@
-"""MazeRunner promo reel: real attempts, real paths, real verdicts.
+"""MazeRunner promo reel: real attempts, real paths, real verdicts, and a
+synthwave soundtrack rendered by scripts/make_music.py.
 
 Every frame comes from the actual run — the trajectories are the coordinates
 models submitted, drawn at the speed they'd be dragged, and the WIN/FAIL stamp
 is the scorer's verdict, not decoration.
 
-A failure is only shown when it is visibly wrong at the zoom: the drawn
-centreline must go well inside a wall, and the zoom lands on the first point
-where it does. A pointer that grazes a wall by a pixel fails the scorer just
-the same, but on screen it looks like a correct path, so those never make the
-reel.
+A failure clip ends on the scorer's own evidence. The zoom lands on the
+first point where the pointer touched a wall and switches to a true-scale
+view: the path drawn at the pointer's real width, and every wall pixel it
+touched lit up. The drawn line elsewhere in the reel is wider than the
+pointer and would hide a contact, so the zoom never relies on it. Clips are
+still chosen from attempts whose line visibly crosses a wall somewhere, so the
+failure reads at a glance before the zoom confirms it.
 
 The look is synthwave: a dusk gradient, a neon perspective floor, a sliced
 sun on the title cards. The maze images themselves are the exact pictures the
@@ -27,7 +30,7 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont
-from scipy.ndimage import distance_transform_edt
+from scipy.ndimage import distance_transform_edt, gaussian_filter
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from mazerunner.analysis.board import UPPER, build_board, paired  # noqa: E402
@@ -198,7 +201,7 @@ def wordmark(d, y=H - 46):
 
 # ------------------------------------------------------------------ title
 
-def title_frames(n=84):
+def title_frames(n=165):
     """Opening card: drive toward the sliced sun, then the wordmark lands."""
     frames = []
     sky = _sky(700)
@@ -206,14 +209,15 @@ def title_frames(n=84):
     for i in range(n):
         t = i / n
         bg = _floor(lit.copy(), 700, (t * 3) % 1.0)
-        a = min(1.0, t * 2.4)
+        # Reveal fast, then hold every line on screen for about three seconds.
+        a = min(1.0, t * 5)
         img = Image.blend(bg, chrome_text(bg.copy(), (W / 2, 190), "MAZERUNNER", F_HUGE), a)
         d = ImageDraw.Draw(img)
-        if t > 0.42:
-            b = min(1.0, (t - 0.42) * 4)
+        if t > 0.2:
+            b = min(1.0, (t - 0.2) * 8)
             text(d, (W / 2, 302), "CAN AN AI DRAW ITS WAY OUT OF A MAZE?", F_BOLD, fade(WHITE, b), anchor="mm")
-        if t > 0.6:
-            b = min(1.0, (t - 0.6) * 4)
+        if t > 0.3:
+            b = min(1.0, (t - 0.3) * 8)
             text(d, (W / 2, 350), "ONE PICTURE  ·  ONE STROKE  ·  TOUCH A WALL AND IT'S OVER", F_SMALL,
                  fade(CYAN, b), anchor="mm")
         frames.append(img)
@@ -252,18 +256,44 @@ def stamp(img, label, colr, y, pop=1.0):
     return neon(img, lambda d, c: d.text((W / 2, y), label, font=f, fill=c, anchor="ma"), colr, 18)
 
 
-def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=40):
-    """One attempt replayed: draw the path, stamp the verdict, and on a
-    failure zoom into the first clear wall crossing and linger there.
+def contact_stage(src, task, mask, points_norm, size):
+    """The maze at true scale for the zoom: the path at the pointer's real
+    width as a translucent tube, and every wall pixel it touched in pink.
+    Built at the task's own resolution, then scaled with nearest-neighbour so
+    the magnified pixels are the real ones."""
+    w, h = task["width"], task["height"]
+    r = task["pointer_radius_px"]
+    pts = [(float(p["x"]) * (w - 1), float(p["y"]) * (h - 1)) for p in points_norm]
+    tube_img = Image.new("L", (w, h), 0)
+    td = ImageDraw.Draw(tube_img)
+    td.line(pts, fill=255, width=2 * r + 1, joint="curve")
+    for x, y in pts:
+        td.ellipse([x - r, y - r, x + r, y + r], fill=255)
+    tube = np.asarray(tube_img) > 0
+    hit = tube & ~mask
+    rgb = np.asarray(src, dtype=np.float32).copy()
+    rgb[tube] = rgb[tube] * 0.35 + np.array(CYAN, dtype=np.float32) * 0.65
+    # A soft halo around the touched pixels, so a one-pixel graze still reads
+    # at video resolution; the touched pixels themselves stay solid pink.
+    halo = np.clip(gaussian_filter(hit.astype(np.float32), 2.5) * 5, 0, 1)[..., None] * 0.75
+    rgb = rgb * (1 - halo) + np.array(PINK, dtype=np.float32) * halo
+    rgb[hit] = np.array(PINK, dtype=np.float32)
+    return Image.fromarray(rgb.clip(0, 255).astype(np.uint8)).resize(size, Image.NEAREST)
 
-    The zoom magnifies a rendered stage rather than re-deriving the overlay at
-    a new scale, which is what keeps the path pinned to the pixels it was
-    drawn against.
+
+def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=30, n_linger=54):
+    """One attempt replayed: draw the path, stamp the verdict, and on a
+    failure zoom into the first wall contact and linger there.
+
+    The zoom crossfades from the drawn stage to the true-scale contact view,
+    both rendered at the stage's resolution, so the magnified pixels stay
+    pinned to the ones the path was drawn against.
     """
     provider, task_id, trial, success, points_norm, crossing, caption, where = rec
-    task = tasks[task_id]
+    task, mask = tasks[task_id]
     src = Image.open(Path(task["_dir"]) / task["image_file"]).convert("RGB")
     maze, scale = fit(src, 880, 690)
+    truth = contact_stage(src, task, mask, points_norm, maze.size) if not success else None
     ox = (W - maze.width) // 2
     oy = 196
 
@@ -325,7 +355,7 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=40
             # Keep the crop at the frame's aspect ratio so x and y magnify by
             # the same factor; clamp the centre, not the box, to stay inside.
             half_w, half_h = maze.width / 2, maze.height / 2
-            tile_w = 125.0
+            tile_w = 80.0
             tile_h = tile_w * maze.height / maze.width
             cw = half_w + (tile_w - half_w) * ease
             ch = half_h + (tile_h - half_h) * ease
@@ -333,12 +363,18 @@ def clip_frames(rec, tasks, n_draw=40, n_hold=16, n_in=6, n_zoom=26, n_linger=40
             cx = min(max(half_w + (tx - half_w) * ease, cw), maze.width - cw)
             cy = min(max(half_h + (ty - half_h) * ease, ch), maze.height - ch)
             crop_box = tuple(int(v) for v in (cx - cw, cy - ch, cx + cw, cy + ch))
-            crop = stage.crop(crop_box).resize((maze.width, maze.height), Image.LANCZOS)
+            drawn_crop = stage.crop(crop_box).resize((maze.width, maze.height), Image.LANCZOS)
+            true_crop = truth.crop(crop_box).resize((maze.width, maze.height), Image.NEAREST)
+            blend = min(1.0, step / 12)
+            crop = Image.blend(drawn_crop, true_crop, blend)
             mag = maze.width / max(1, crop_box[2] - crop_box[0])
             img = framed_zoom.copy()
             img.paste(crop, (ox, oy))
             d = ImageDraw.Draw(img)
-            hud(d, "ZOOM", f"{mag:.0f}×", PINK)
+            hud(d, "FIRST WALL CONTACT", f"{mag:.0f}×", PINK)
+            if blend >= 1:
+                d.rectangle([46, 140, 660, 172], fill=NIGHT)
+                text(d, (46, 146), "CYAN: THE POINTER'S REAL WIDTH   ·   PINK: WALL IT TOUCHED", F_SMALL, WHITE)
             zx = ox + (col[0] - ox - crop_box[0]) * mag
             zy = oy + (col[1] - oy - crop_box[1]) * mag
             if not lingering:
@@ -378,9 +414,11 @@ def leaderboard_frames(rank, n=176):
     for i in range(n):
         t = i / n
         img, _ = base_frame()
-        img = heading(img, "LEADERBOARD", "192 MAZES  ·  4 TRIES EACH  ·  SUCCESS ON THE FIRST TRY")
+        img = heading(img, "LEADERBOARD", "192 MAZES  ·  4 TRIES EACH")
         d = ImageDraw.Draw(img)
-        for r, (name, p1) in enumerate(rank):
+        text(d, (520, 232), "PASS@1 · FIRST TRY", F_SMALL, DIM)
+        text(d, (1000, 232), "PASS@4", F_SMALL, DIM, anchor="ra")
+        for r, (name, p1, pk) in enumerate(rank):
             appear = 0.05 + r * 0.055
             if t < appear:
                 continue
@@ -388,12 +426,13 @@ def leaderboard_frames(rank, n=176):
             y = 262 + r * 72
             lead = r == 0
             bar_x = 520
-            bar_w = int(380 * (p1 / 100) * a)
+            bar_w = int(300 * (p1 / 100) * a)
             colr = CYAN if lead else lerp(VIOLET, PINK, r / max(1, len(rank) - 1))
             d.rectangle([bar_x, y + 8, bar_x + max(3, bar_w), y + 40], fill=fade(colr, 0.9))
             text(d, (80, y + 2), f"{r + 1}", F_BOLD, fade(SUN_TOP if lead else DIM, a))
             text(d, (126, y + 6), name, F_MED, fade(WHITE if lead else LAVENDER, a))
             text(d, (bar_x + max(3, bar_w) + 16, y + 6), f"{p1:.0f}%", F_DATA, fade(WHITE if lead else LAVENDER, a))
+            text(d, (1000, y + 6), f"{pk:.0f}%", F_DATA, fade(CYAN if lead else DIM, a), anchor="ra")
         if t > 0.72:
             a = min(1.0, (t - 0.72) * 5)
             img = neon(img, lambda dd, c: dd.text((W / 2, 880), f"THE BEST MODEL STILL FAILS {100 - best:.0f}% OF THE TIME",
@@ -612,12 +651,16 @@ def main():
         first, deepest = crossings(task, mask, depth, pts)  # deepest = crossing length
         if first is None:
             continue  # fails the scorer, but would look correct on screen
-        rec = (r["provider"], r["maze"], r["trial"], False, pts, first)
+        contact = ev.get("first_collision")
+        if not contact:
+            continue
+        rec = (r["provider"], r["maze"], r["trial"], False, pts, contact)
         fails_by_task[(r["provider"], r["maze"])].append((deepest, rec))
         if mode in CAPTION:
             by_mode[mode].append((deepest, rec))
-        if progress > 0.75 and first["at"] > 0.6:
-            by_mode["almost"].append((progress + first["at"], rec))
+        died_at = contact.get("segment_index", 0) / max(1, len(pts) - 1)
+        if progress > 0.75 and died_at > 0.6:
+            by_mode["almost"].append((progress + died_at, rec))
 
     used, picked = set(), []
 
@@ -668,11 +711,12 @@ def main():
           f"{sum(1 for p in picked if not p[3])} fails")
     for p in picked:
         print(f"  {p[0]:12s} {p[1]:24s} trial {p[2]}  {'WIN ' if p[3] else 'FAIL'}  {p[6]}")
-    tasks = {p[1]: task_of(p[1])[0] for p in picked}
+    tasks = {p[1]: task_of(p[1])[:2] for p in picked}
 
     upper_only = frozenset(k for k, v in META["legs"].items() if v.get("upper_only"))
     board, trials = build_board(attempts_path, upper_only)
-    rank = sorted(((MODEL[k], 100 * board[k]["headline"]["score"]) for k in main_legs), key=lambda x: -x[1])
+    rank = sorted(((MODEL[k], 100 * board[k]["headline"]["score"], 100 * board[k]["pass_at_k"]["score"])
+                   for k in main_legs), key=lambda x: -x[1])
     warp = board["gpt6-astra"]["warp"]
     effort = []
     for pair in META["effort_pairs"]:
@@ -702,9 +746,18 @@ def main():
         f.save(OUT / f"f{i:05d}.png")
     (OUT / "clips.json").write_text(json.dumps(marks, indent=2))
     print(f"rendered {len(frames)} frames ({len(frames)/FPS:.1f}s)")
+    # The soundtrack is rendered to the reel's exact length, so the outro
+    # fade lands on the end card.
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from make_music import write as write_music
+    music = write_music(len(frames) / FPS, OUT / "music.wav")
+    # Frames render at 1080 for the zoom crops; the site shows the reel at
+    # most 720 wide, and 720 keeps the file under the repo's 5MB blob limit.
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", str(FPS),
-                    "-i", str(OUT / "f%05d.png"), "-c:v", "libx264", "-pix_fmt", "yuv420p",
-                    "-crf", "22", "-movflags", "+faststart", str(VIDEO)], check=True)
+                    "-i", str(OUT / "f%05d.png"), "-i", str(music),
+                    "-vf", "scale=720:720:flags=lanczos", "-c:v", "libx264", "-preset", "slow",
+                    "-pix_fmt", "yuv420p", "-crf", "26", "-c:a", "aac", "-b:a", "128k", "-shortest",
+                    "-movflags", "+faststart", str(VIDEO)], check=True)
     print(f"encoded {VIDEO.name} ({VIDEO.stat().st_size / 1e6:.1f} MB)")
 
 

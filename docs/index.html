@@ -78,7 +78,8 @@ a:focus-visible, button:focus-visible { outline:2px solid var(--sun1); outline-o
 .screen video { display:block; width:100%; aspect-ratio:1/1; border-radius:10px; background:#000;
   border:2px solid var(--violet); box-shadow:0 0 0 1px rgba(255,42,109,.4), 0 0 40px rgba(140,30,255,.55),
   0 30px 80px rgba(0,0,0,.6); }
-.toggle { position:absolute; right:34px; bottom:14px; font:600 12px/1 var(--mono); letter-spacing:.08em;
+.controls { position:absolute; right:34px; bottom:14px; display:flex; gap:8px; }
+.toggle { font:600 12px/1 var(--mono); letter-spacing:.08em;
   text-transform:uppercase; color:var(--ink); background:rgba(13,2,33,.7); border:1px solid var(--line);
   border-radius:999px; padding:8px 12px; cursor:pointer; }
 .stats { position:relative; z-index:2; display:grid; grid-template-columns:repeat(3, 1fr); gap:16px;
@@ -96,6 +97,7 @@ section { padding:72px 0; border-top:1px solid var(--line); }
 h2 { font-family:var(--display); font-weight:800; font-size:clamp(30px, 4.6vw, 44px); line-height:1.1;
   margin:10px 0 14px; letter-spacing:.005em; text-wrap:balance; }
 .intro { color:var(--lav); max-width:66ch; font-size:18px; }
+.intro b { color:var(--ink); font-weight:600; }
 .cols { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-top:30px; }
 .card { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; }
 .card h3 { font-family:var(--display); font-size:21px; font-weight:700; margin-bottom:6px; color:var(--cyan); }
@@ -203,7 +205,10 @@ footer { padding:40px 0 70px; color:var(--dim); font-size:14px; text-align:cente
   <div class="screen">
     <video id="promo" src="assets/mazerunner-promo.mp4" muted autoplay loop playsinline preload="auto"
       aria-label="Real attempts from the benchmark: models drawing paths through mazes, each win or fail as scored"></video>
-    <button class="toggle" id="toggle" type="button">Pause</button>
+    <div class="controls">
+      <button class="toggle" id="sound" type="button" aria-pressed="false">Sound on</button>
+      <button class="toggle" id="toggle" type="button">Pause</button>
+    </div>
   </div>
   <div class="stats" id="stats"></div>
 </header>
@@ -232,19 +237,20 @@ footer { padding:40px 0 70px; color:var(--dim); font-size:14px; text-align:cente
 <section id="leaderboard"><div class="wrap">
   <div class="kicker">Leaderboard</div>
   <h2 id="board-title">The leaderboard</h2>
-  <p class="intro">Each model tried every maze four times. The score is the share of tries that
-  succeeded, with every group of mazes counting equally.</p>
+  <p class="intro">Each model tried every maze four times. The score, <b>pass@1</b>, is the share of
+  tries that succeeded on their own, with every group of mazes counting equally. <b>pass@4</b> is
+  the chance that at least one of four tries succeeds.</p>
   <div class="scroll"><table id="board">
     <thead><tr>
-      <th></th><th>Model</th><th>Overall <span class="lc">(95% range)</span></th>
+      <th></th><th>Model</th><th><span class="lc">pass@1</span> overall <span class="lc">(95% range)</span></th>
       <th class="r">Small<br>mazes</th><th class="r">Large<br>mazes</th>
-      <th class="r">Large grids<br>straight → bent</th><th class="r">Within<br>4 tries</th>
+      <th class="r">Large grids<br>straight → bent</th><th class="r"><span class="lc">pass@4</span></th>
     </tr></thead>
     <tbody></tbody>
   </table></div>
-  <p class="legend"><b>Small</b> is sizes 1–2 and <b>large</b> is sizes 3–4, over all eight layouts.
-  <b>Large grids</b> takes the four grid layouts at sizes 3–4 and compares them drawn straight with the
-  same mazes bent. <b>Within 4 tries</b> is the chance that at least one of four tries succeeds.</p>
+  <p class="legend">The size columns are pass@1 too. <b>Small</b> is sizes 1–2 and <b>large</b> is
+  sizes 3–4, over all eight layouts. <b>Large grids</b> takes the four grid layouts at sizes 3–4 and
+  compares them drawn straight with the same mazes bent.</p>
 </div></section>
 
 <section id="effort"><div class="wrap">
@@ -254,7 +260,7 @@ footer { padding:40px 0 70px; color:var(--dim); font-size:14px; text-align:cente
   compared with itself, maze by maze.</p>
   <div class="scroll"><table id="effort-table">
     <thead><tr>
-      <th>Model</th><th>Setting</th><th class="r">Large mazes solved</th><th class="r">Change <span class="lc">(95% range)</span></th>
+      <th>Model</th><th>Setting</th><th class="r">Large mazes, <span class="lc">pass@1</span></th><th class="r">Change <span class="lc">(95% range)</span></th>
       <th class="r">Output per try</th><th class="r">Cost per try</th>
     </tr></thead>
     <tbody></tbody>
@@ -312,6 +318,14 @@ uv run mazerunner board --attempts results/myrun/merged/attempts.jsonl</pre>
   video.addEventListener("pause", label);
   label();
   toggle.addEventListener("click", () => (video.paused ? video.play() : video.pause()));
+  // Browsers only autoplay muted video, so the soundtrack waits for a click.
+  const sound = document.getElementById("sound");
+  sound.addEventListener("click", () => {
+    video.muted = !video.muted;
+    if (!video.muted && video.paused) video.play().catch(() => {});
+    sound.textContent = video.muted ? "Sound on" : "Sound off";
+    sound.setAttribute("aria-pressed", String(!video.muted));
+  });
 })();
 
 (async () => {

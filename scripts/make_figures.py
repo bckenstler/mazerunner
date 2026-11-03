@@ -180,13 +180,13 @@ def fig_leaderboard(board):
         label_x = hi + 1.6
         ax.text(label_x, i, f"{m:.1f}%", va="center", color=WHITE if lead else DIM,
                 fontsize=10, fontweight="bold" if lead else "normal")
-        ax.text(max(pk, label_x + 11) + 1.6, i, f"best of 4: {pk:.0f}%", va="center",
+        ax.text(max(pk, label_x + 11) + 1.6, i, f"pass@4 {pk:.0f}%", va="center",
                 color=DIM, fontsize=8)
     ax.set_yticks(range(len(legs)), [name(k) for k in legs])
     ax.set_xlim(0, 100)
-    ax.set_xlabel("solved on the first try (%), averaged over 48 equal groups of mazes")
+    ax.set_xlabel("pass@1: solved on the first try (%), averaged over 48 equal groups of mazes")
     _frame(ax, "Leaderboard",
-           "192 mazes × 4 tries each · faint bars: solved within 4 tries · whiskers: 95% confidence interval")
+           "192 mazes × 4 tries each · faint bars: pass@4, solved within 4 tries · whiskers: 95% confidence interval")
     save(fig, "01-leaderboard.png")
 
 
@@ -204,7 +204,7 @@ def fig_ladder(tasks):
         y = spread_labels(finals, 4.2)[leg]
         ax.text(3.1, y, f"{name(leg).split(' · ')[0]} {finals[leg]:.0f}%",
                 color=CYAN if leg == LEAD else DIM, fontsize=8, va="center")
-    ax.set_ylabel("solved on the first try  (%)")
+    ax.set_ylabel("pass@1  (%)")
     ax.set_ylim(-3, 103)
     ax.set_xlim(-0.2, 4.3)
     _frame(ax, "Bigger mazes, lower scores — for every model",
@@ -234,7 +234,7 @@ def fig_warp(board):
         ax.grid(True, alpha=0.35, linewidth=0.6)
         ax.set_axisbelow(True)
     for ax in axes[:, 0]:
-        ax.set_ylabel("solved on the first try  (%)")
+        ax.set_ylabel("pass@1  (%)")
     axes[0, 0].legend(fontsize=8, frameon=False, labelcolor=DIM, loc="lower left")
     _suptitle(fig, "Bending a maze costs more the bigger it is",
               "the four grid families · each bent maze against the straight maze it was made from "
@@ -274,7 +274,7 @@ def fig_effort(board, effort, rows):
     ax.set_yticks(range(len(ordered)), labels)
     ax.set_xlim(0, 112)
     ax.set_ylim(-0.6, len(ordered) - 0.4)
-    ax.set_xlabel("solved on the first try, large mazes (sizes 3–4)  (%)    lavender: less effort · cyan: more")
+    ax.set_xlabel("pass@1 on large mazes (sizes 3–4)  (%)    lavender: less effort · cyan: more")
     _frame(ax, "Thinking longer: +8 to +14 points for GPT and Claude, nothing for Gemini",
            "same mazes at both settings · gain and 95% interval compared maze by maze · orange: a real gain\n"
            "4 tries per maze, except Claude at max effort (1)")
@@ -305,7 +305,7 @@ def fig_families(tasks):
         ax.tick_params(length=0)
     axes[0].set_yticks(range(len(row_keys)), [f + (" · bent" if w else "") for f, w in row_keys])
     _suptitle(fig, "Where each model breaks",
-              "solved on the first try (%), per group of 4 mazes × 4 tries · below the orange line: "
+              "pass@1 (%), per group of 4 mazes × 4 tries · below the orange line: "
               "bent versions of the grid mazes")
     fig.tight_layout(rect=(0, 0, 1, 0.91))
     save(fig, "05-cells.png", tight=False)
@@ -467,7 +467,7 @@ def fig_tolerance(tasks_by_leg):
     ax.axvline(3, color=AMBER, lw=1, ls="--", alpha=0.7)
     ax.text(3.1, 97, "the benchmark's setting", color=AMBER, fontsize=8)
     ax.set_xlabel("pointer size (radius in px; bigger is stricter)")
-    ax.set_ylabel("solved on the first try  (%)")
+    ax.set_ylabel("pass@1  (%)")
     ax.set_xlim(0.5, radii[-1] + 3.2)
     ax.set_ylim(-3, 103)
     base = sorted(CAPABLE, key=lambda k: -rankings[k][radii.index(3)])
@@ -532,7 +532,7 @@ def fig_cost(board, rows):
     ax.set_xscale("log")
     ax.xaxis.set_major_formatter(matplotlib.ticker.FuncFormatter(lambda v, _p: f"${v:g}"))
     ax.set_xlabel("list-price cost per try on large mazes (USD, log scale)")
-    ax.set_ylabel("solved on the first try, sizes 3–4  (%)")
+    ax.set_ylabel("pass@1 on sizes 3–4  (%)")
     ax.set_xlim(min(cost.values()) / 1.6, max(cost.values()) * 9)
     ax.set_ylim(-3, 85)
     _frame(ax, "What a solve costs",
