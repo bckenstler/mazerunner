@@ -142,11 +142,11 @@ src/mazerunner/
   generators/              8 topology families
   providers/               openai (Responses), anthropic (Messages), gemini adapters
 mazes/                     generated tasks + contact/reference sheets + manifest
-tests/                     255 offline tests
+tests/                     offline tests (pytest, no network)
 results/                   per-run outputs
 ```
 
-## Dataset engine (v1)
+## Dataset engine
 
 Beyond the smoke set, the dataset pipeline builds stratified splits with
 style decoupled from topology:
@@ -173,23 +173,29 @@ style decoupled from topology:
   certification thresholds/metrics, and rejection history. `dataset verify`
   rebuilds tasks from provenance and demands byte-identical masks.
 
+The v2 set is a **difficulty ladder** ([ladder.py](src/mazerunner/ladder.py)),
+configured in `dataset.v2.config.json`: each family has four size levels
+(L1–L4) whose generator settings are listed per level, and the four grid
+families also get a warped twin per slot, built from the same generation
+attempt so only the geometry differs. Four tasks per cell, 48 cells. A
+straight topology that repeats any v1 task (by Weisfeiler-Lehman graph hash,
+listed in `datasets/v2/dedup-v1-graph-hashes.txt`) is resampled.
+
 ```bash
-uv run mazerunner dataset build            # all splits from dataset.config.json
-uv run mazerunner dataset verify           # sampled reproducibility + integrity check
-uv run mazerunner dataset stats            # tiers, coverage matrix, length histograms
-uv run mazerunner dataset sheet --split dev
+uv run mazerunner dataset build --config dataset.v2.config.json   # datasets/v2/test
+uv run mazerunner dataset verify --full    # rebuild every task from provenance
+uv run mazerunner dataset stats            # levels, coverage matrix, length histograms
+uv run mazerunner dataset sheet --split test
 ```
 
-Splits: `dev` (200, public), `test-public` (300, disjoint seeds), and
-`test-hidden` (500, gitignored) holding out six archetypes and eight
-family×archetype cells never seen publicly. Cross-split semantic leakage
-(Weisfeiler-Lehman graph hash) is a build failure.
-
-Evaluate providers against a split:
+Evaluate providers against the set, then score:
 
 ```bash
-uv run mazerunner run --dataset datasets/v1/dev --dry-run
-uv run mazerunner run --dataset datasets/v1/dev --providers anthropic
+uv run mazerunner run --config configs/providers.v2.json --dataset datasets/v2/test --dry-run
+uv run mazerunner run --config configs/providers.v2.json --dataset datasets/v2/test \
+    --providers gpt6-astra --trials 4 --run-id myrun --order-seed 20261028
+uv run mazerunner merge --runs 'results/myrun-*' --out results/myrun/merged
+uv run mazerunner board --attempts results/myrun/merged/attempts.jsonl
 ```
 
 ## Known limitations

@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>MazeRunner — can a multimodal model draw its way out of a maze?</title>
-<meta name="description" content="The model sees one image and must draw its escape as a single continuous drag path. 7 models, 5,600 attempts, every trace public.">
+<meta name="description" content="The model sees one image and must draw its escape as a single continuous drag path. v2: 192 mazes on a four-level size ladder with warped twins, 8 models, 7,776 attempts, every trace public.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="MazeRunner — can a multimodal model draw its way out of a maze?">
-<meta property="og:description" content="The model sees one image and must draw its escape as a single continuous drag path. 7 models, 5,600 attempts, every trace public.">
+<meta property="og:description" content="The model sees one image and must draw its escape as a single continuous drag path. v2: 192 mazes on a four-level size ladder with warped twins, 8 models, 7,776 attempts, every trace public.">
 <meta property="og:url" content="https://bckenstler.github.io/mazerunner/">
 <meta property="og:image" content="https://bckenstler.github.io/mazerunner/assets/01-leaderboard.png">
 <meta name="twitter:card" content="summary_large_image">
@@ -47,16 +47,23 @@ h2 { font-size:22px; margin-bottom:6px; }
 
 video { width:100%; border:1px solid var(--grid); border-radius:6px; }
 
+.scroll { overflow-x:auto; }
 table { width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; }
 th { text-align:left; color:var(--dim); font-weight:400; font-size:12px;
   padding:6px 10px; border-bottom:1px solid var(--grid); }
 td { padding:9px 10px; border-bottom:1px solid var(--panel); }
 tr.lead td { color:var(--white); font-weight:700; }
 tr.lead td:first-child { color:var(--amber); }
-td.bar { width:34%; }
+td.bar { width:22%; min-width:90px; }
+#board td, #board th, #effort td, #effort th { white-space:nowrap; }
 .barfill { height:8px; background:#2B7A8C; border-radius:2px; }
 tr.lead .barfill { background:var(--cyan); }
-td.num { text-align:right; }
+td.num, th.num { text-align:right; }
+td.lv { text-align:right; color:#A8B4C4; font-size:12.5px; }
+td.lv.w { color:var(--amber); }
+td.pos { color:var(--white); font-weight:700; }
+td.flat { color:var(--dim); }
+.note { color:var(--dim); font-size:12px; margin-top:12px; max-width:86ch; }
 .ci { color:var(--dim); font-size:11px; }
 
 .finding { margin:46px 0; }
@@ -77,9 +84,9 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
   <h1><b>MAZE</b>RUNNER</h1>
   <div class="tag">Can a multimodal model draw its way out of a maze?</div>
   <div class="stats">
-    <div class="stat"><div class="n">61%</div><div class="l">best model pass@1</div></div>
-    <div class="stat"><div class="n">86%</div><div class="l">best model pass@8</div></div>
-    <div class="stat"><div class="n">1 of 4</div><div class="l">models where thinking longer helps</div></div>
+    <div class="stat"><div class="n" id="s-best">72%</div><div class="l">best model pass@1</div></div>
+    <div class="stat"><div class="n" id="s-l4w">22%</div><div class="l">best on the largest warped mazes</div></div>
+    <div class="stat"><div class="n" id="s-effort">+14</div><div class="l">points from thinking longer, at best</div></div>
   </div>
   <div class="cta">
     <a href="viewer/">🔬 explore the traces</a>
@@ -94,8 +101,10 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
   <p class="sub">The model gets one image and must return a single drag path —
   an ordered list of coordinates from the cyan start badge to the amber goal.
   Most maze benchmarks are discrete: grid cells, move tokens. This one asks the
-  model to <em>draw</em>, and the whole path has to stay inside the
-  corridor.</p>
+  model to <em>draw</em>, and the whole path has to stay inside the corridor.
+  Version 2 is a difficulty ladder: eight maze families at four sizes, plus
+  warped twins of the four grid families, so the same maze can be made
+  bigger or bent and the cost of each read off directly.</p>
   <video id="promo" controls muted playsinline loop preload="metadata" src="assets/mazerunner-promo.mp4"></video>
   <script>
   (() => {
@@ -112,18 +121,45 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
 
 <section>
   <h2>Leaderboard</h2>
-  <p class="sub">100 mazes × 8 attempts · frozen protocol · CIs clustered over tasks</p>
+  <p class="sub">192 mazes × 4 attempts · 48 equally weighted cells (12 maze
+  types × 4 sizes) · 95% CIs resample tasks within cells</p>
+  <div class="scroll">
   <table id="board">
     <thead><tr><th>#</th><th>model</th><th class="bar"></th>
-    <th class="num">pass@1</th><th class="num">pass@8</th></tr></thead>
+    <th class="num">pass@1</th><th class="num">pass@4</th>
+    <th class="num">L1</th><th class="num">L4</th><th class="num">L4 warped</th></tr></thead>
     <tbody></tbody>
   </table>
+  </div>
+  <p class="note">L1 is the original v1 medium size; an L4 route has 3.4× the
+  turns, in narrower corridors. Warped cells exist for the four grid families (rectilinear, braided,
+  pipes, island). An attempt the model never answered, after two tries at a
+  10- or 30-minute budget, counts as a fail (32 of 7,776, all at the longest
+  routes).</p>
+</section>
+
+<section>
+  <h2>Thinking longer</h2>
+  <p class="sub">Each model at a second effort setting, on the 24 L3/L4 cells
+  only · gains are paired by task, with 95% CIs</p>
+  <div class="scroll">
+  <table id="effort">
+    <thead><tr><th>model</th><th>setting</th><th class="num">L3/L4 pass@1</th>
+    <th class="num">gain</th><th class="num">median output</th></tr></thead>
+    <tbody></tbody>
+  </table>
+  </div>
+  <p class="note">GPT xhigh and Claude max run with a 30-minute budget per
+  call. Claude max is one attempt per maze (96 calls); the rest are four.
+  Gemini 4 Argon thinks by default, and its higher settings had no effect
+  through the serving gateway, so its comparison runs the other way: default
+  against thinking switched off.</p>
 </section>
 
 <section>
   <h2>What the study found</h2>
-  <p class="sub">Seven findings from 5,600 attempts, five ablations, and a
-  per-trace failure classification. The full argument with caveats is in the
+  <p class="sub">From 7,776 attempts, re-scoring at other tolerances, and a
+  per-attempt failure classification. The full argument with caveats is in the
   <a href="https://github.com/bckenstler/mazerunner/blob/main/STUDY.md">study</a>.</p>
   <div id="figs"></div>
 </section>
@@ -131,12 +167,16 @@ footer { padding:40px 0 60px; color:var(--dim); font-size:12px; text-align:cente
 <section>
   <h2>Run it</h2>
 <pre>git clone https://github.com/bckenstler/mazerunner && cd mazerunner
-uv sync && uv run pytest -q            # 255 tests, no network
-uv run mazerunner run --config configs/providers.example.json \
-    --dataset datasets/v1/dev --mazes-file evals/dev-eval-100.txt --trials 8</pre>
+uv sync && uv run pytest -q            # offline, no API keys
+uv run mazerunner run --config configs/providers.v2.json \
+    --providers gpt6-astra --dataset datasets/v2/test \
+    --trials 4 --run-id myrun --order-seed 20261028
+uv run mazerunner merge --runs 'results/myrun-*' --out results/myrun/merged
+uv run mazerunner board --attempts results/myrun/merged/attempts.jsonl</pre>
   <p class="sub" style="margin-top:12px">Full traces for every attempt in this
-  study are in the <a href="https://github.com/bckenstler/mazerunner/releases">release assets</a>;
-  the hidden test split ships encrypted.</p>
+  study are in the <a href="https://github.com/bckenstler/mazerunner/releases">release assets</a>.
+  v1 (1,000 tasks, July 2026) remains available at the
+  <a href="https://github.com/bckenstler/mazerunner/releases/tag/v1.0.0">v1.0.0 release</a>.</p>
 </section>
 </div>
 
@@ -147,6 +187,7 @@ uv run mazerunner run --config configs/providers.example.json \
 <script>
 (async () => {
   const board = await (await fetch("assets/leaderboard.json")).json();
+  const effort = await (await fetch("assets/effort.json")).json();
   const tbody = document.querySelector("#board tbody");
   board.forEach((r, i) => {
     const tr = document.createElement("tr");
@@ -154,10 +195,27 @@ uv run mazerunner run --config configs/providers.example.json \
     tr.innerHTML =
       `<td>${i + 1}</td><td>${r.name}</td>` +
       `<td class="bar"><div class="barfill" style="width:${r.pass1}%"></div></td>` +
-      `<td class="num">${r.pass1.toFixed(1)}% <span class="ci">[${r.ci[0]}, ${r.ci[1]}]</span></td>` +
-      `<td class="num">${r.pass8}%</td>`;
+      `<td class="num">${r.pass1.toFixed(1)}% <span class="ci">[${r.ci[0].toFixed(1)}, ${r.ci[1].toFixed(1)}]</span></td>` +
+      `<td class="num">${r.passk}%</td>` +
+      `<td class="lv">${r.levels.L1}</td><td class="lv">${r.levels.L4}</td>` +
+      `<td class="lv w">${r.levels.L4w}</td>`;
     tbody.appendChild(tr);
   });
+  const ebody = document.querySelector("#effort tbody");
+  const k = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}K` : `${Math.round(n)}`;
+  for (const e of effort) {
+    const sig = e.ci[0] > 0;
+    const tr = document.createElement("tr");
+    tr.innerHTML =
+      `<td>${e.model}</td><td>${e.less} → ${e.more}${e.trials === 1 ? " <span class='ci'>(1 attempt)</span>" : ""}</td>` +
+      `<td class="num">${e.less_score.toFixed(1)}% → ${e.more_score.toFixed(1)}%</td>` +
+      `<td class="num ${sig ? "pos" : "flat"}">${e.delta > 0 ? "+" : ""}${e.delta.toFixed(1)} <span class="ci">[${e.ci[0].toFixed(1)}, ${e.ci[1].toFixed(1)}]</span></td>` +
+      `<td class="num ci">${k(e.tokens[0])} → ${k(e.tokens[1])} tok</td>`;
+    ebody.appendChild(tr);
+  }
+  document.getElementById("s-best").textContent = `${Math.round(board[0].pass1)}%`;
+  document.getElementById("s-l4w").textContent = `${Math.max(...board.map((r) => r.levels.L4w))}%`;
+  document.getElementById("s-effort").textContent = `+${Math.round(Math.max(...effort.map((e) => e.delta)))}`;
   const sections = await (await fetch("assets/figures.json")).json();
   const box = document.getElementById("figs");
   for (const s of sections) {

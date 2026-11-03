@@ -9,72 +9,84 @@ the exact mask that stenciled the render. No grid, no move tokens, no partial
 credit for a plan that reads well: the drag either stays in the corridor or it
 doesn't.
 
-The best model configuration tested fails 39% of the time.
+v2 is a difficulty ladder: eight maze families at four sizes, plus warped
+twins of the four grid families. The best model solves 72% of it; on the
+largest warped mazes, none passes 30%.
 
-📊 **[Full study](STUDY.md)** · 🔬 **[Trace viewer / replayer](docs/viewer/)** ·
-🎬 [promo clip](mazerunner-promo.mp4) · 📦 traces in
-[Releases](../../releases)
+📊 **[Full study](STUDY.md)** · 🌐 **[Site + leaderboard](https://bckenstler.github.io/mazerunner/)** ·
+🔬 **[Trace viewer / replayer](https://bckenstler.github.io/mazerunner/viewer/)** ·
+🎬 [promo clip](mazerunner-promo.mp4) · 📦 traces in [Releases](../../releases)
 
 ## Results
 
-100 mazes × 8 attempts, frozen protocol, task-clustered 95% CIs. (The dataset
-is 1,000 tasks; every evaluated number here is from the frozen 100-task dev
-subset — the other 800 tasks ship unevaluated as headroom for future runs and
-contamination auditing.)
+192 mazes × 4 attempts. pass@1 is the mean over 48 equally weighted cells
+(12 maze types × 4 sizes); 95% CIs resample tasks within cells.
 
-| Model | pass@1 | 95% CI | pass@8 | Route progress |
-|---|---|---|---|---|
-| GPT-5.6 Sol · xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
-| GPT-5.6 Sol · medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
-| Gemini 3.6 Flash · medium | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
-| Kimi K3 · high | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
-| Claude Opus 5 · high | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
-| Muse Spark 1.1 · medium | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
-| Inkling · default | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
+| Model | pass@1 | 95% CI | pass@4 | L1 | L4 | L4 warped |
+|---|---|---|---|---|---|---|
+| GPT-6 Astra · medium | **71.9%** | [68.5, 75.1] | 86% | 93 | 59 | 19 |
+| GPT-6.1 Terra · medium | **69.7%** | [66.1, 73.2] | 81% | 92 | 47 | 22 |
+| GPT-6.1 Sol · medium | **63.9%** | [60.4, 67.6] | 80% | 87 | 51 | 12 |
+| Gemini 4 Argon · default | **59.1%** | [56.4, 62.0] | 71% | 89 | 37 | 6 |
+| Claude Opus 5.5 · default | **34.2%** | [31.2, 37.4] | 42% | 70 | 20 | 2 |
+| Kimi K3.1 Pro · high | **20.7%** | [17.8, 23.7] | 33% | 57 | 4 | 0 |
+| Muse Wonder 1.0 · medium | **0.9%** | [0.1, 1.8] | 2% | 5 | 0 | 0 |
+| Nemotron 3.5 Super VL · default | **0.0%** | [0.0, 0.0] | 0% | 0 | 0 | 0 |
 
-Findings that survived the ablations (details and caveats in
-[STUDY.md](STUDY.md)):
+More effort, on the 24 L3/L4 cells, paired by task:
 
-- **Test-time compute is not a portable knob.** The same effort ladder scales
-  GPT (+37pp, unsaturated), steps once for Gemini (then exactly flat across a
-  6× token spread), and does nothing for Claude or Kimi.
-- **Showing a model its own mistake makes it worse.** After a failed attempt,
-  seeing its own path with the collision marked beats a blind retry for *no*
-  model; for mid-tier models it costs up to 24 points.
-- **Style is a per-maze difficulty axis.** Identical mazes re-rendered in five
-  styles: style's average effect is ~0, but the per-maze swing is 24pp.
-- **Each model fails differently** (per-trace classification of all 4,140
-  failures): GPT runs out of corridor *width*, Gemini and Claude drive through
-  walls, Kimi announces its path is approximate and submits anyway, Inkling
-  perceives the layout only coarsely — its reported positions are quantized to
-  a 0.01 grid with ~25px of slop, fatal at this task's tolerances.
-- Control: with a blank or wrong image, 0 passes in 700 attempts — the scores
-  come from reading the specific picture.
+| Model | Setting | L3/L4 pass@1 | Gain [95% CI] |
+|---|---|---|---|
+| Claude Opus 5.5 | default → max (1 attempt per maze) | 18.8% → 32.3% | +13.5 [+7.8, +19.3] |
+| GPT-6 Astra | medium → xhigh | 56.8% → 69.5% | +12.8 [+8.1, +17.4] |
+| GPT-6.1 Sol | medium → xhigh | 47.1% → 59.6% | +12.5 [+8.3, +16.7] |
+| GPT-6.1 Terra | medium → xhigh | 51.0% → 58.6% | +7.6 [+2.9, +12.2] |
+| Gemini 4 Argon | thinking off → default | 36.2% → 37.5% | +1.3 [−2.3, +5.2] |
+
+Findings (details and caveats in [STUDY.md](STUDY.md)):
+
+- **Bending a maze is harder than enlarging it.** Each warped maze has the
+  same route, endpoints and style as a straight twin. GPT-6 Astra loses 9
+  points to the warp at L1 and 64 at L4; Claude Opus 5.5 solves every straight
+  L1 grid and 42% of their warped twins.
+- **The leaders' failures are drawing failures.** Nine in ten of GPT-6
+  Astra's failed attempts follow a route that stays in the corridor and clip a
+  wall; corridor width is its strongest predictor of success. Claude loses the
+  route itself, and Kimi and Nemotron read the walls as corridors.
+- **Thinking longer helps GPT and Claude, by 8–14 points, and not Gemini.**
+  Switching Gemini 4 Argon's thinking off costs it 1.3 points, inside the
+  noise. No setting gets any model past 28% on the largest warped mazes.
+- **The scoring constant doesn't decide the order.** Re-scored at pointer
+  radii 1–4px the order holds; only pairs that already overlap at 3px swap at
+  5px and above.
+
+v1 (1,000 tasks, July 2026) is retired; it remains available at the
+[v1.0.0 release](../../releases/tag/v1.0.0).
 
 ## Quickstart
 
 ```bash
 uv sync
-uv run pytest -q                       # 255 tests, no network
+uv run pytest -q                       # offline, no API keys
 uv run mazerunner validate             # rebuild + certify the smoke set
 ```
 
-Run models on a few mazes (keys via environment only):
+Run a model on a few mazes (keys via environment only):
 
 ```bash
-export OPENAI_API_KEY=... ANTHROPIC_API_KEY=... GEMINI_API_KEY=...
-uv run mazerunner run --config configs/providers.example.json \
-    --dataset datasets/v1/dev --mazes braided-easy-s0024,rooms-easy-s0039 --trials 1
+export OPENAI_API_KEY=...
+uv run mazerunner run --config configs/providers.example.json --providers openai \
+    --dataset datasets/v2/test --mazes braided-L1-s0016,pipes-L2w-s0116 --trials 1
 ```
 
-Reproduce the full protocol:
+Reproduce the protocol for one configuration (the v2 settings for every
+model are in `configs/providers.v2.json`):
 
 ```bash
-uv run mazerunner run --config configs/providers.example.json \
-    --dataset datasets/v1/dev --mazes-file evals/dev-eval-100.txt \
-    --trials 8 --run-id myrun --order-seed 20260730
+uv run mazerunner run --config configs/providers.v2.json --providers gpt6-astra \
+    --dataset datasets/v2/test --trials 4 --run-id myrun --order-seed 20261028
 uv run mazerunner merge --runs 'results/myrun-*' --out results/myrun/merged
-uv run mazerunner failuremodes --attempts results/myrun/merged/attempts.jsonl
+uv run mazerunner board --attempts results/myrun/merged/attempts.jsonl
 ```
 
 Explore any recorded attempt locally:
@@ -89,38 +101,33 @@ Operator detail (hardening checks, dataset engine, adding styles):
 
 ## Dataset
 
-`datasets/v1/` — 1,000 tasks, 8 topology families × 20 certified style
-archetypes, three splits:
-
-| Split | Tasks | In repo | Notes |
-|---|---|---|---|
-| dev | 200 | ✅ | all public archetypes |
-| test-public | 300 | ✅ | same cells, disjoint seeds |
-| test-hidden | 500 | ❌ encrypted release asset | 6 unseen archetypes + held-out family×style cells |
+`datasets/v2/test` — 192 tasks: 8 families × 4 size levels (L1–L4) plus
+warped twins of the four grid families (rectilinear, braided, pipes, island),
+4 tasks per cell, 14 style archetypes. L1 is v1's medium setting; an L4 route
+has 3.4× the turns in narrower corridors. A warped task is built from the same
+generation attempt as its straight twin, so only the geometry differs.
 
 Every task carries full provenance (seeds, resolved parameters, certification
-metrics, rejection history); `mazerunner dataset verify` rebuilds tasks from
-provenance and requires byte-identical masks. The rendered image can never
-disagree with the scored mask: corridors are painted *through* the mask as a
-stencil, then every render passes pixel-level fairness certification
-(fail-closed) before it may ship.
+metrics, rejection history); `mazerunner dataset verify --full` rebuilds every
+task from provenance and requires byte-identical masks. The rendered image can
+never disagree with the scored mask: corridors are painted *through* the mask
+as a stencil, then every render passes pixel-level fairness certification
+(fail-closed) before it may ship. Build it yourself with
+`mazerunner dataset build --config dataset.v2.config.json`.
 
-The hidden split ships encrypted so future results on it are verifiable
-without exposing the tasks. Please don't run the public splits through
-training pipelines; the hidden split is how we'll know.
+v2 has no hidden split. Please don't run it through training pipelines.
 
 ## Repository map
 
 | | |
 |---|---|
 | `src/mazerunner/` | generators, renderer, certifier, evaluator, providers, analysis |
-| `datasets/v1/` | the benchmark |
-| `evals/` | frozen task subsets with selection manifests |
-| `configs/` | provider configs (env-key indirection only) |
-| `results/*.md` | findings: leaderboard, sweeps, ablations, failure modes |
+| `datasets/v2/` | the benchmark |
+| `configs/` | provider configs (env-key indirection only) and board metadata |
+| `results/analysis/` | the board, failure verdicts, tolerance re-scoring, figure findings |
 | `results/figures/` | the study's charts |
+| `results/failure-modes.md` | the failure taxonomy and how it was applied to v2 |
 | `docs/` | landing page + trace viewer (GitHub Pages) |
-| `ANALYSIS_PLAN.md` | the analysis plan frozen before the main run, with dated amendments |
 
 ## Citation
 
@@ -129,7 +136,7 @@ training pipelines; the hidden split is how we'll know.
   author  = {Kenstler, Bradley},
   title   = {MazeRunner: A Continuous-Control Benchmark for Multimodal Models},
   year    = {2026},
-  version = {1.0.0},
+  version = {2.0.0},
   license = {MIT}
 }
 ```

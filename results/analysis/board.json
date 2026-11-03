@@ -1,0 +1,1428 @@
+{
+  "legs": {
+    "argon": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.5911458333333334,
+        "lo": 0.5638020833333334,
+        "hi": 0.6197916666666666,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.375,
+        "lo": 0.33587239583333334,
+        "hi": 0.4166666666666667,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.7083333333333334
+      },
+      "route_progress": 0.6921133762371182,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.890625,
+        "L1w": 0.875,
+        "L2": 0.7265625,
+        "L2w": 0.734375,
+        "L3": 0.6171875,
+        "L3w": 0.21875,
+        "L4": 0.3671875,
+        "L4w": 0.0625
+      },
+      "by_cell": {
+        "braided/L1": 1.0,
+        "braided/L1w": 1.0,
+        "braided/L2": 1.0,
+        "braided/L2w": 0.9375,
+        "braided/L3": 0.9375,
+        "braided/L3w": 0.4375,
+        "braided/L4": 0.3125,
+        "braided/L4w": 0.0625,
+        "cave/L1": 0.4375,
+        "cave/L2": 0.5,
+        "cave/L3": 0.4375,
+        "cave/L4": 0.125,
+        "island/L1": 1.0,
+        "island/L1w": 0.5625,
+        "island/L2": 1.0,
+        "island/L2w": 0.375,
+        "island/L3": 0.875,
+        "island/L3w": 0.0,
+        "island/L4": 1.0,
+        "island/L4w": 0.1875,
+        "organic/L1": 1.0,
+        "organic/L2": 0.125,
+        "organic/L3": 0.0625,
+        "organic/L4": 0.0,
+        "pipes/L1": 1.0,
+        "pipes/L1w": 0.9375,
+        "pipes/L2": 1.0,
+        "pipes/L2w": 0.625,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.4375,
+        "pipes/L4": 0.8125,
+        "pipes/L4w": 0.0,
+        "radial/L1": 0.6875,
+        "radial/L2": 0.3125,
+        "radial/L3": 0.125,
+        "radial/L4": 0.125,
+        "rectilinear/L1": 1.0,
+        "rectilinear/L1w": 1.0,
+        "rectilinear/L2": 0.9375,
+        "rectilinear/L2w": 1.0,
+        "rectilinear/L3": 0.5,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 1.0,
+        "rooms/L2": 0.9375,
+        "rooms/L3": 1.0,
+        "rooms/L4": 0.5625
+      },
+      "warp": {
+        "L1": {
+          "straight": 1.0,
+          "warped": 0.875,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.984375,
+          "warped": 0.734375,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.828125,
+          "warped": 0.21875,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.53125,
+          "warped": 0.0625,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 804.0,
+      "median_output_tokens_upper": 1157.0,
+      "median_latency_s": 12.715
+    },
+    "argon-nothink": {
+      "upper_only": true,
+      "headline": {
+        "score": 0.3619791666666667,
+        "lo": 0.3203125,
+        "hi": 0.4010416666666667,
+        "cells": 24
+      },
+      "upper": {
+        "score": 0.3619791666666667,
+        "lo": 0.3203125,
+        "hi": 0.4010416666666667,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.4479166666666667
+      },
+      "route_progress": 0.48530819137294906,
+      "attempts": 384,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L3": 0.6328125,
+        "L3w": 0.203125,
+        "L4": 0.328125,
+        "L4w": 0.046875
+      },
+      "by_cell": {
+        "braided/L3": 1.0,
+        "braided/L3w": 0.375,
+        "braided/L4": 0.1875,
+        "braided/L4w": 0.0,
+        "cave/L3": 0.4375,
+        "cave/L4": 0.125,
+        "island/L3": 0.6875,
+        "island/L3w": 0.0,
+        "island/L4": 1.0,
+        "island/L4w": 0.0625,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.375,
+        "pipes/L4": 0.625,
+        "pipes/L4w": 0.125,
+        "radial/L3": 0.0,
+        "radial/L4": 0.0,
+        "rectilinear/L3": 0.9375,
+        "rectilinear/L3w": 0.0625,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L3": 1.0,
+        "rooms/L4": 0.6875
+      },
+      "warp": {
+        "L3": {
+          "straight": 0.90625,
+          "warped": 0.203125,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.453125,
+          "warped": 0.046875,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 522.0,
+      "median_output_tokens_upper": 522.0,
+      "median_latency_s": 19.314999999999998
+    },
+    "gpt6-astra": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.71875,
+        "lo": 0.6848958333333334,
+        "hi": 0.7513020833333334,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.5677083333333334,
+        "lo": 0.5208333333333334,
+        "hi": 0.6145833333333334,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.859375
+      },
+      "route_progress": 0.8182004638233765,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 3,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.9296875,
+        "L1w": 0.90625,
+        "L2": 0.796875,
+        "L2w": 0.859375,
+        "L3": 0.734375,
+        "L3w": 0.5625,
+        "L4": 0.59375,
+        "L4w": 0.1875
+      },
+      "by_cell": {
+        "braided/L1": 1.0,
+        "braided/L1w": 1.0,
+        "braided/L2": 1.0,
+        "braided/L2w": 0.875,
+        "braided/L3": 1.0,
+        "braided/L3w": 0.6875,
+        "braided/L4": 0.9375,
+        "braided/L4w": 0.3125,
+        "cave/L1": 0.9375,
+        "cave/L2": 0.75,
+        "cave/L3": 0.6875,
+        "cave/L4": 0.4375,
+        "island/L1": 1.0,
+        "island/L1w": 0.875,
+        "island/L2": 0.8125,
+        "island/L2w": 0.75,
+        "island/L3": 0.625,
+        "island/L3w": 0.0625,
+        "island/L4": 0.625,
+        "island/L4w": 0.0625,
+        "organic/L1": 0.5625,
+        "organic/L2": 0.5,
+        "organic/L3": 0.3125,
+        "organic/L4": 0.0625,
+        "pipes/L1": 1.0,
+        "pipes/L1w": 0.75,
+        "pipes/L2": 1.0,
+        "pipes/L2w": 0.8125,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.8125,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.375,
+        "radial/L1": 0.9375,
+        "radial/L2": 0.6875,
+        "radial/L3": 0.3125,
+        "radial/L4": 0.3125,
+        "rectilinear/L1": 1.0,
+        "rectilinear/L1w": 1.0,
+        "rectilinear/L2": 1.0,
+        "rectilinear/L2w": 1.0,
+        "rectilinear/L3": 0.9375,
+        "rectilinear/L3w": 0.6875,
+        "rectilinear/L4": 0.75,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 1.0,
+        "rooms/L2": 0.625,
+        "rooms/L3": 1.0,
+        "rooms/L4": 0.625
+      },
+      "warp": {
+        "L1": {
+          "straight": 1.0,
+          "warped": 0.90625,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.953125,
+          "warped": 0.859375,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.890625,
+          "warped": 0.5625,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.828125,
+          "warped": 0.1875,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 1231.0,
+      "median_output_tokens_upper": 1950.0,
+      "median_latency_s": 27.19
+    },
+    "gpt6-astra-xhigh": {
+      "upper_only": true,
+      "headline": {
+        "score": 0.6953125,
+        "lo": 0.65625,
+        "hi": 0.734375,
+        "cells": 24
+      },
+      "upper": {
+        "score": 0.6953125,
+        "lo": 0.65625,
+        "hi": 0.734375,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.8333333333333334
+      },
+      "route_progress": 0.7820503448658854,
+      "attempts": 384,
+      "missing": 0,
+      "unanswered": 17,
+      "trials": 4,
+      "by_level": {
+        "L3": 0.8359375,
+        "L3w": 0.6875,
+        "L4": 0.765625,
+        "L4w": 0.28125
+      },
+      "by_cell": {
+        "braided/L3": 1.0,
+        "braided/L3w": 0.875,
+        "braided/L4": 1.0,
+        "braided/L4w": 0.3125,
+        "cave/L3": 0.9375,
+        "cave/L4": 0.75,
+        "island/L3": 0.875,
+        "island/L3w": 0.1875,
+        "island/L4": 0.9375,
+        "island/L4w": 0.375,
+        "organic/L3": 0.1875,
+        "organic/L4": 0.0625,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.9375,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.4375,
+        "radial/L3": 0.6875,
+        "radial/L4": 0.5625,
+        "rectilinear/L3": 1.0,
+        "rectilinear/L3w": 0.75,
+        "rectilinear/L4": 0.9375,
+        "rectilinear/L4w": 0.0,
+        "rooms/L3": 1.0,
+        "rooms/L4": 0.875
+      },
+      "warp": {
+        "L3": {
+          "straight": 0.96875,
+          "warped": 0.6875,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.96875,
+          "warped": 0.28125,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 5992.0,
+      "median_output_tokens_upper": 5992.0,
+      "median_latency_s": 135.9
+    },
+    "gpt61-sol": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.6393229166666666,
+        "lo": 0.6041666666666666,
+        "hi": 0.67578125,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.4713541666666667,
+        "lo": 0.421875,
+        "hi": 0.5208333333333334,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.796875
+      },
+      "route_progress": 0.7572506468473043,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.8671875,
+        "L1w": 0.921875,
+        "L2": 0.765625,
+        "L2w": 0.65625,
+        "L3": 0.6484375,
+        "L3w": 0.390625,
+        "L4": 0.5078125,
+        "L4w": 0.125
+      },
+      "by_cell": {
+        "braided/L1": 1.0,
+        "braided/L1w": 1.0,
+        "braided/L2": 1.0,
+        "braided/L2w": 0.6875,
+        "braided/L3": 0.9375,
+        "braided/L3w": 0.5,
+        "braided/L4": 0.875,
+        "braided/L4w": 0.0625,
+        "cave/L1": 0.8125,
+        "cave/L2": 0.6875,
+        "cave/L3": 0.5625,
+        "cave/L4": 0.25,
+        "island/L1": 0.9375,
+        "island/L1w": 0.75,
+        "island/L2": 0.8125,
+        "island/L2w": 0.5,
+        "island/L3": 0.4375,
+        "island/L3w": 0.0625,
+        "island/L4": 0.5625,
+        "island/L4w": 0.0,
+        "organic/L1": 0.5625,
+        "organic/L2": 0.625,
+        "organic/L3": 0.25,
+        "organic/L4": 0.0625,
+        "pipes/L1": 1.0,
+        "pipes/L1w": 0.9375,
+        "pipes/L2": 1.0,
+        "pipes/L2w": 0.6875,
+        "pipes/L3": 0.9375,
+        "pipes/L3w": 0.625,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.4375,
+        "radial/L1": 0.6875,
+        "radial/L2": 0.4375,
+        "radial/L3": 0.1875,
+        "radial/L4": 0.4375,
+        "rectilinear/L1": 1.0,
+        "rectilinear/L1w": 1.0,
+        "rectilinear/L2": 0.9375,
+        "rectilinear/L2w": 0.75,
+        "rectilinear/L3": 0.9375,
+        "rectilinear/L3w": 0.375,
+        "rectilinear/L4": 0.375,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 0.9375,
+        "rooms/L2": 0.625,
+        "rooms/L3": 0.9375,
+        "rooms/L4": 0.5
+      },
+      "warp": {
+        "L1": {
+          "straight": 0.984375,
+          "warped": 0.921875,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.9375,
+          "warped": 0.65625,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.8125,
+          "warped": 0.390625,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.703125,
+          "warped": 0.125,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 1329.5,
+      "median_output_tokens_upper": 2006.0,
+      "median_latency_s": 38.33
+    },
+    "gpt61-sol-xhigh": {
+      "upper_only": true,
+      "headline": {
+        "score": 0.5963541666666666,
+        "lo": 0.5442708333333334,
+        "hi": 0.6510416666666666,
+        "cells": 24
+      },
+      "upper": {
+        "score": 0.5963541666666666,
+        "lo": 0.5442708333333334,
+        "hi": 0.6510416666666666,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.7083333333333334
+      },
+      "route_progress": 0.706546371881779,
+      "attempts": 384,
+      "missing": 0,
+      "unanswered": 12,
+      "trials": 4,
+      "by_level": {
+        "L3": 0.78125,
+        "L3w": 0.546875,
+        "L4": 0.671875,
+        "L4w": 0.125
+      },
+      "by_cell": {
+        "braided/L3": 1.0,
+        "braided/L3w": 0.8125,
+        "braided/L4": 0.875,
+        "braided/L4w": 0.3125,
+        "cave/L3": 0.6875,
+        "cave/L4": 0.6875,
+        "island/L3": 0.875,
+        "island/L3w": 0.0,
+        "island/L4": 0.9375,
+        "island/L4w": 0.0,
+        "organic/L3": 0.3125,
+        "organic/L4": 0.0625,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.875,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.1875,
+        "radial/L3": 0.5,
+        "radial/L4": 0.5,
+        "rectilinear/L3": 1.0,
+        "rectilinear/L3w": 0.5,
+        "rectilinear/L4": 0.625,
+        "rectilinear/L4w": 0.0,
+        "rooms/L3": 0.875,
+        "rooms/L4": 0.6875
+      },
+      "warp": {
+        "L3": {
+          "straight": 0.96875,
+          "warped": 0.546875,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.859375,
+          "warped": 0.125,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 6783.0,
+      "median_output_tokens_upper": 6783.0,
+      "median_latency_s": 146.51
+    },
+    "gpt61-terra": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.6966145833333334,
+        "lo": 0.6614583333333334,
+        "hi": 0.7317708333333334,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.5104166666666666,
+        "lo": 0.4583333333333333,
+        "hi": 0.5625,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.8072916666666666
+      },
+      "route_progress": 0.7829868887478754,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.921875,
+        "L1w": 0.921875,
+        "L2": 0.8359375,
+        "L2w": 0.859375,
+        "L3": 0.7109375,
+        "L3w": 0.484375,
+        "L4": 0.46875,
+        "L4w": 0.21875
+      },
+      "by_cell": {
+        "braided/L1": 1.0,
+        "braided/L1w": 0.9375,
+        "braided/L2": 1.0,
+        "braided/L2w": 1.0,
+        "braided/L3": 1.0,
+        "braided/L3w": 0.4375,
+        "braided/L4": 0.9375,
+        "braided/L4w": 0.125,
+        "cave/L1": 0.75,
+        "cave/L2": 0.6875,
+        "cave/L3": 0.375,
+        "cave/L4": 0.0625,
+        "island/L1": 0.9375,
+        "island/L1w": 0.8125,
+        "island/L2": 1.0,
+        "island/L2w": 0.875,
+        "island/L3": 1.0,
+        "island/L3w": 0.3125,
+        "island/L4": 0.75,
+        "island/L4w": 0.3125,
+        "organic/L1": 1.0,
+        "organic/L2": 0.5625,
+        "organic/L3": 0.3125,
+        "organic/L4": 0.0625,
+        "pipes/L1": 1.0,
+        "pipes/L1w": 0.9375,
+        "pipes/L2": 1.0,
+        "pipes/L2w": 0.8125,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.9375,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.4375,
+        "radial/L1": 0.6875,
+        "radial/L2": 0.6875,
+        "radial/L3": 0.1875,
+        "radial/L4": 0.1875,
+        "rectilinear/L1": 1.0,
+        "rectilinear/L1w": 1.0,
+        "rectilinear/L2": 1.0,
+        "rectilinear/L2w": 0.75,
+        "rectilinear/L3": 1.0,
+        "rectilinear/L3w": 0.25,
+        "rectilinear/L4": 0.125,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 1.0,
+        "rooms/L2": 0.75,
+        "rooms/L3": 0.8125,
+        "rooms/L4": 0.625
+      },
+      "warp": {
+        "L1": {
+          "straight": 0.984375,
+          "warped": 0.921875,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 1.0,
+          "warped": 0.859375,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 1.0,
+          "warped": 0.484375,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.703125,
+          "warped": 0.21875,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 1199.0,
+      "median_output_tokens_upper": 1597.0,
+      "median_latency_s": 15.875
+    },
+    "gpt61-terra-xhigh": {
+      "upper_only": true,
+      "headline": {
+        "score": 0.5859375,
+        "lo": 0.53125,
+        "hi": 0.640625,
+        "cells": 24
+      },
+      "upper": {
+        "score": 0.5859375,
+        "lo": 0.53125,
+        "hi": 0.640625,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.71875
+      },
+      "route_progress": 0.703551954278954,
+      "attempts": 384,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L3": 0.7890625,
+        "L3w": 0.5625,
+        "L4": 0.5859375,
+        "L4w": 0.203125
+      },
+      "by_cell": {
+        "braided/L3": 1.0,
+        "braided/L3w": 0.5,
+        "braided/L4": 1.0,
+        "braided/L4w": 0.0625,
+        "cave/L3": 0.5,
+        "cave/L4": 0.625,
+        "island/L3": 0.9375,
+        "island/L3w": 0.3125,
+        "island/L4": 1.0,
+        "island/L4w": 0.25,
+        "organic/L3": 0.3125,
+        "organic/L4": 0.0625,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 1.0,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.5,
+        "radial/L3": 0.625,
+        "radial/L4": 0.125,
+        "rectilinear/L3": 1.0,
+        "rectilinear/L3w": 0.4375,
+        "rectilinear/L4": 0.3125,
+        "rectilinear/L4w": 0.0,
+        "rooms/L3": 0.9375,
+        "rooms/L4": 0.5625
+      },
+      "warp": {
+        "L3": {
+          "straight": 0.984375,
+          "warped": 0.5625,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.828125,
+          "warped": 0.203125,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 5607.5,
+      "median_output_tokens_upper": 5607.5,
+      "median_latency_s": 69.25999999999999
+    },
+    "kimi31": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.20703125,
+        "lo": 0.17835286458333333,
+        "hi": 0.23697916666666666,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.07552083333333333,
+        "lo": 0.044270833333333336,
+        "hi": 0.10677083333333333,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.328125
+      },
+      "route_progress": 0.32087096684591626,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.5703125,
+        "L1w": 0.359375,
+        "L2": 0.2421875,
+        "L2w": 0.046875,
+        "L3": 0.1484375,
+        "L3w": 0.078125,
+        "L4": 0.0390625,
+        "L4w": 0.0
+      },
+      "by_cell": {
+        "braided/L1": 0.875,
+        "braided/L1w": 0.5,
+        "braided/L2": 0.375,
+        "braided/L2w": 0.0,
+        "braided/L3": 0.0,
+        "braided/L3w": 0.0,
+        "braided/L4": 0.0,
+        "braided/L4w": 0.0,
+        "cave/L1": 0.4375,
+        "cave/L2": 0.0625,
+        "cave/L3": 0.0,
+        "cave/L4": 0.0,
+        "island/L1": 0.875,
+        "island/L1w": 0.3125,
+        "island/L2": 0.75,
+        "island/L2w": 0.1875,
+        "island/L3": 0.3125,
+        "island/L3w": 0.0,
+        "island/L4": 0.25,
+        "island/L4w": 0.0,
+        "organic/L1": 0.25,
+        "organic/L2": 0.0,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L1": 0.875,
+        "pipes/L1w": 0.1875,
+        "pipes/L2": 0.4375,
+        "pipes/L2w": 0.0,
+        "pipes/L3": 0.6875,
+        "pipes/L3w": 0.3125,
+        "pipes/L4": 0.0625,
+        "pipes/L4w": 0.0,
+        "radial/L1": 0.0625,
+        "radial/L2": 0.0,
+        "radial/L3": 0.0,
+        "radial/L4": 0.0,
+        "rectilinear/L1": 0.8125,
+        "rectilinear/L1w": 0.4375,
+        "rectilinear/L2": 0.0625,
+        "rectilinear/L2w": 0.0,
+        "rectilinear/L3": 0.0,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 0.375,
+        "rooms/L2": 0.25,
+        "rooms/L3": 0.1875,
+        "rooms/L4": 0.0
+      },
+      "warp": {
+        "L1": {
+          "straight": 0.859375,
+          "warped": 0.359375,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.40625,
+          "warped": 0.046875,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.25,
+          "warped": 0.078125,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.078125,
+          "warped": 0.0,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 6513.0,
+      "median_output_tokens_upper": 11689.0,
+      "median_latency_s": 203.195
+    },
+    "muse-wonder": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.009114583333333334,
+        "lo": 0.0013020833333333333,
+        "hi": 0.018229166666666668,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.020833333333333332
+      },
+      "route_progress": 0.08044383649635273,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.0546875,
+        "L1w": 0.0,
+        "L2": 0.0,
+        "L2w": 0.0,
+        "L3": 0.0,
+        "L3w": 0.0,
+        "L4": 0.0,
+        "L4w": 0.0
+      },
+      "by_cell": {
+        "braided/L1": 0.125,
+        "braided/L1w": 0.0,
+        "braided/L2": 0.0,
+        "braided/L2w": 0.0,
+        "braided/L3": 0.0,
+        "braided/L3w": 0.0,
+        "braided/L4": 0.0,
+        "braided/L4w": 0.0,
+        "cave/L1": 0.0,
+        "cave/L2": 0.0,
+        "cave/L3": 0.0,
+        "cave/L4": 0.0,
+        "island/L1": 0.0625,
+        "island/L1w": 0.0,
+        "island/L2": 0.0,
+        "island/L2w": 0.0,
+        "island/L3": 0.0,
+        "island/L3w": 0.0,
+        "island/L4": 0.0,
+        "island/L4w": 0.0,
+        "organic/L1": 0.0,
+        "organic/L2": 0.0,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L1": 0.25,
+        "pipes/L1w": 0.0,
+        "pipes/L2": 0.0,
+        "pipes/L2w": 0.0,
+        "pipes/L3": 0.0,
+        "pipes/L3w": 0.0,
+        "pipes/L4": 0.0,
+        "pipes/L4w": 0.0,
+        "radial/L1": 0.0,
+        "radial/L2": 0.0,
+        "radial/L3": 0.0,
+        "radial/L4": 0.0,
+        "rectilinear/L1": 0.0,
+        "rectilinear/L1w": 0.0,
+        "rectilinear/L2": 0.0,
+        "rectilinear/L2w": 0.0,
+        "rectilinear/L3": 0.0,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 0.0,
+        "rooms/L2": 0.0,
+        "rooms/L3": 0.0,
+        "rooms/L4": 0.0
+      },
+      "warp": {
+        "L1": {
+          "straight": 0.109375,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 5116.5,
+      "median_output_tokens_upper": 6598.0,
+      "median_latency_s": 26.465
+    },
+    "nemotron-vl": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.0,
+        "lo": 0.0,
+        "hi": 0.0,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.0
+      },
+      "route_progress": 0.04125820121664795,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.0,
+        "L1w": 0.0,
+        "L2": 0.0,
+        "L2w": 0.0,
+        "L3": 0.0,
+        "L3w": 0.0,
+        "L4": 0.0,
+        "L4w": 0.0
+      },
+      "by_cell": {
+        "braided/L1": 0.0,
+        "braided/L1w": 0.0,
+        "braided/L2": 0.0,
+        "braided/L2w": 0.0,
+        "braided/L3": 0.0,
+        "braided/L3w": 0.0,
+        "braided/L4": 0.0,
+        "braided/L4w": 0.0,
+        "cave/L1": 0.0,
+        "cave/L2": 0.0,
+        "cave/L3": 0.0,
+        "cave/L4": 0.0,
+        "island/L1": 0.0,
+        "island/L1w": 0.0,
+        "island/L2": 0.0,
+        "island/L2w": 0.0,
+        "island/L3": 0.0,
+        "island/L3w": 0.0,
+        "island/L4": 0.0,
+        "island/L4w": 0.0,
+        "organic/L1": 0.0,
+        "organic/L2": 0.0,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L1": 0.0,
+        "pipes/L1w": 0.0,
+        "pipes/L2": 0.0,
+        "pipes/L2w": 0.0,
+        "pipes/L3": 0.0,
+        "pipes/L3w": 0.0,
+        "pipes/L4": 0.0,
+        "pipes/L4w": 0.0,
+        "radial/L1": 0.0,
+        "radial/L2": 0.0,
+        "radial/L3": 0.0,
+        "radial/L4": 0.0,
+        "rectilinear/L1": 0.0,
+        "rectilinear/L1w": 0.0,
+        "rectilinear/L2": 0.0,
+        "rectilinear/L2w": 0.0,
+        "rectilinear/L3": 0.0,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 0.0,
+        "rooms/L2": 0.0,
+        "rooms/L3": 0.0,
+        "rooms/L4": 0.0
+      },
+      "warp": {
+        "L1": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.0,
+          "warped": 0.0,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 11271.5,
+      "median_output_tokens_upper": 10632.0,
+      "median_latency_s": 62.83
+    },
+    "opus55": {
+      "upper_only": false,
+      "headline": {
+        "score": 0.3424479166666667,
+        "lo": 0.3125,
+        "hi": 0.3736979166666667,
+        "cells": 48
+      },
+      "upper": {
+        "score": 0.1875,
+        "lo": 0.15104166666666666,
+        "hi": 0.2265625,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 4,
+        "score": 0.421875
+      },
+      "route_progress": 0.4606521376474301,
+      "attempts": 768,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 4,
+      "by_level": {
+        "L1": 0.703125,
+        "L1w": 0.421875,
+        "L2": 0.5546875,
+        "L2w": 0.046875,
+        "L3": 0.3203125,
+        "L3w": 0.0625,
+        "L4": 0.203125,
+        "L4w": 0.015625
+      },
+      "by_cell": {
+        "braided/L1": 1.0,
+        "braided/L1w": 0.4375,
+        "braided/L2": 0.875,
+        "braided/L2w": 0.0625,
+        "braided/L3": 0.5,
+        "braided/L3w": 0.0,
+        "braided/L4": 0.0625,
+        "braided/L4w": 0.0,
+        "cave/L1": 0.5625,
+        "cave/L2": 0.125,
+        "cave/L3": 0.0,
+        "cave/L4": 0.0,
+        "island/L1": 1.0,
+        "island/L1w": 0.5625,
+        "island/L2": 1.0,
+        "island/L2w": 0.125,
+        "island/L3": 0.75,
+        "island/L3w": 0.0,
+        "island/L4": 0.8125,
+        "island/L4w": 0.0625,
+        "organic/L1": 0.0625,
+        "organic/L2": 0.0,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L1": 1.0,
+        "pipes/L1w": 0.1875,
+        "pipes/L2": 1.0,
+        "pipes/L2w": 0.0,
+        "pipes/L3": 0.75,
+        "pipes/L3w": 0.25,
+        "pipes/L4": 0.6875,
+        "pipes/L4w": 0.0,
+        "radial/L1": 0.0,
+        "radial/L2": 0.25,
+        "radial/L3": 0.0,
+        "radial/L4": 0.0,
+        "rectilinear/L1": 1.0,
+        "rectilinear/L1w": 0.5,
+        "rectilinear/L2": 0.8125,
+        "rectilinear/L2w": 0.0,
+        "rectilinear/L3": 0.0625,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L1": 1.0,
+        "rooms/L2": 0.375,
+        "rooms/L3": 0.5,
+        "rooms/L4": 0.0625
+      },
+      "warp": {
+        "L1": {
+          "straight": 1.0,
+          "warped": 0.421875,
+          "pairs": 16
+        },
+        "L2": {
+          "straight": 0.921875,
+          "warped": 0.046875,
+          "pairs": 16
+        },
+        "L3": {
+          "straight": 0.515625,
+          "warped": 0.0625,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.390625,
+          "warped": 0.015625,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 1115.5,
+      "median_output_tokens_upper": 1460.5,
+      "median_latency_s": 12.775
+    },
+    "opus55-max": {
+      "upper_only": true,
+      "headline": {
+        "score": 0.3229166666666667,
+        "lo": 0.2604166666666667,
+        "hi": 0.3854166666666667,
+        "cells": 24
+      },
+      "upper": {
+        "score": 0.3229166666666667,
+        "lo": 0.2604166666666667,
+        "hi": 0.3854166666666667,
+        "cells": 24
+      },
+      "pass_at_k": {
+        "k": 1,
+        "score": 0.3229166666666667
+      },
+      "route_progress": 0.42110857311257144,
+      "attempts": 96,
+      "missing": 0,
+      "unanswered": 0,
+      "trials": 1,
+      "by_level": {
+        "L3": 0.5625,
+        "L3w": 0.125,
+        "L4": 0.34375,
+        "L4w": 0.0
+      },
+      "by_cell": {
+        "braided/L3": 1.0,
+        "braided/L3w": 0.0,
+        "braided/L4": 0.5,
+        "braided/L4w": 0.0,
+        "cave/L3": 0.5,
+        "cave/L4": 0.0,
+        "island/L3": 0.75,
+        "island/L3w": 0.25,
+        "island/L4": 0.75,
+        "island/L4w": 0.0,
+        "organic/L3": 0.0,
+        "organic/L4": 0.0,
+        "pipes/L3": 1.0,
+        "pipes/L3w": 0.25,
+        "pipes/L4": 1.0,
+        "pipes/L4w": 0.0,
+        "radial/L3": 0.0,
+        "radial/L4": 0.25,
+        "rectilinear/L3": 0.5,
+        "rectilinear/L3w": 0.0,
+        "rectilinear/L4": 0.0,
+        "rectilinear/L4w": 0.0,
+        "rooms/L3": 0.75,
+        "rooms/L4": 0.25
+      },
+      "warp": {
+        "L3": {
+          "straight": 0.8125,
+          "warped": 0.125,
+          "pairs": 16
+        },
+        "L4": {
+          "straight": 0.5625,
+          "warped": 0.0,
+          "pairs": 16
+        }
+      },
+      "median_output_tokens": 46042.0,
+      "median_output_tokens_upper": 46042.0,
+      "median_latency_s": 438.505
+    }
+  },
+  "effort": [
+    {
+      "more": "gpt6-astra-xhigh",
+      "less": "gpt6-astra",
+      "delta": {
+        "score": 0.12760416666666666,
+        "lo": 0.08072916666666667,
+        "hi": 0.17447916666666666,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.6953125,
+        "lo": 0.65625,
+        "hi": 0.734375,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.5677083333333334,
+        "lo": 0.5208333333333334,
+        "hi": 0.6145833333333334,
+        "cells": 24
+      }
+    },
+    {
+      "more": "gpt61-sol-xhigh",
+      "less": "gpt61-sol",
+      "delta": {
+        "score": 0.125,
+        "lo": 0.08333333333333333,
+        "hi": 0.16666666666666666,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.5963541666666666,
+        "lo": 0.5442708333333334,
+        "hi": 0.6510416666666666,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.4713541666666667,
+        "lo": 0.421875,
+        "hi": 0.5208333333333334,
+        "cells": 24
+      }
+    },
+    {
+      "more": "gpt61-terra-xhigh",
+      "less": "gpt61-terra",
+      "delta": {
+        "score": 0.07552083333333333,
+        "lo": 0.028645833333333332,
+        "hi": 0.12239583333333333,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.5859375,
+        "lo": 0.53125,
+        "hi": 0.640625,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.5104166666666666,
+        "lo": 0.4583333333333333,
+        "hi": 0.5625,
+        "cells": 24
+      }
+    },
+    {
+      "more": "opus55-max",
+      "less": "opus55",
+      "delta": {
+        "score": 0.13541666666666666,
+        "lo": 0.078125,
+        "hi": 0.19277343750000026,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.3229166666666667,
+        "lo": 0.2604166666666667,
+        "hi": 0.3854166666666667,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.1875,
+        "lo": 0.15104166666666666,
+        "hi": 0.2265625,
+        "cells": 24
+      }
+    },
+    {
+      "more": "argon",
+      "less": "argon-nothink",
+      "delta": {
+        "score": 0.013020833333333334,
+        "lo": -0.0234375,
+        "hi": 0.052083333333333336,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.375,
+        "lo": 0.33587239583333334,
+        "hi": 0.4166666666666667,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.3619791666666667,
+        "lo": 0.3203125,
+        "hi": 0.4010416666666667,
+        "cells": 24
+      }
+    }
+  ],
+  "meta": {
+    "gpt6-astra": {
+      "name": "GPT-6 Astra \u00b7 medium",
+      "model": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "effort": "medium"
+    },
+    "gpt61-terra": {
+      "name": "GPT-6.1 Terra \u00b7 medium",
+      "model": "GPT-6.1 Terra",
+      "vendor": "OpenAI",
+      "effort": "medium"
+    },
+    "gpt61-sol": {
+      "name": "GPT-6.1 Sol \u00b7 medium",
+      "model": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "effort": "medium"
+    },
+    "argon": {
+      "name": "Gemini 4 Argon \u00b7 default",
+      "model": "Gemini 4 Argon",
+      "vendor": "Google",
+      "effort": "default"
+    },
+    "opus55": {
+      "name": "Claude Opus 5.5 \u00b7 default",
+      "model": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "effort": "default"
+    },
+    "kimi31": {
+      "name": "Kimi K3.1 Pro \u00b7 high",
+      "model": "Kimi K3.1 Pro",
+      "vendor": "Moonshot",
+      "effort": "high"
+    },
+    "muse-wonder": {
+      "name": "Muse Wonder 1.0 \u00b7 medium",
+      "model": "Muse Wonder 1.0",
+      "vendor": "Meta",
+      "effort": "medium"
+    },
+    "nemotron-vl": {
+      "name": "Nemotron 3.5 Super VL \u00b7 default",
+      "model": "Nemotron 3.5 Super VL",
+      "vendor": "NVIDIA",
+      "effort": "default"
+    },
+    "gpt6-astra-xhigh": {
+      "name": "GPT-6 Astra \u00b7 xhigh",
+      "model": "GPT-6 Astra",
+      "vendor": "OpenAI",
+      "effort": "xhigh",
+      "upper_only": true
+    },
+    "gpt61-sol-xhigh": {
+      "name": "GPT-6.1 Sol \u00b7 xhigh",
+      "model": "GPT-6.1 Sol",
+      "vendor": "OpenAI",
+      "effort": "xhigh",
+      "upper_only": true
+    },
+    "gpt61-terra-xhigh": {
+      "name": "GPT-6.1 Terra \u00b7 xhigh",
+      "model": "GPT-6.1 Terra",
+      "vendor": "OpenAI",
+      "effort": "xhigh",
+      "upper_only": true
+    },
+    "opus55-max": {
+      "name": "Claude Opus 5.5 \u00b7 max",
+      "model": "Claude Opus 5.5",
+      "vendor": "Anthropic",
+      "effort": "max",
+      "upper_only": true
+    },
+    "argon-nothink": {
+      "name": "Gemini 4 Argon \u00b7 thinking off",
+      "model": "Gemini 4 Argon",
+      "vendor": "Google",
+      "effort": "thinking off",
+      "upper_only": true
+    }
+  }
+}

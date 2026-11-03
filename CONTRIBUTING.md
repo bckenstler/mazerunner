@@ -23,22 +23,22 @@ git config blame.ignoreRevsFile .git-blame-ignore-revs
   must come with the full per-attempt records (`attempts.jsonl` including
   `submission`, `evaluation`, and the provider's reasoning where offered).
   Scores without traces are not accepted.
-- **The scorer is frozen for v1.** Changes to `evaluator.py`, the pointer
-  radius, or acceptance radii invalidate cross-run comparability and belong in
-  a v2 branch, not a patch.
+- **The scorer is frozen.** v2 scores with the same evaluator, pointer radius
+  and acceptance radii as v1. Changes to any of them invalidate cross-run
+  comparability and belong in a new benchmark version, not a patch.
 - **Fairness certification is fail-closed.** New style archetypes must pass
   `certify.certified_render` on every family they claim to support; see
   `tests/test_certify.py` for the adversarial fixtures a new style must survive.
 - **Run the release gate.** `uv run python scripts/sanitize_release.py` must be
   green; CI enforces it.
-- The hidden split (`datasets/v1/test-hidden`) is never sent to a provider API
-  in public work and never committed. Don't ask; that's the point of it.
 
 ## Adding a model
 
-Add an entry to `configs/providers.example.json` (env_key indirection only —
-no keys in files), validate on 2–3 mazes, then run the frozen protocol:
-`evals/dev-eval-100.txt`, 8 trials, randomized order with a recorded seed.
+Add an entry to `configs/providers.v2.json` (env_key indirection only — no
+keys in files) and a display name in `configs/board.v2.json`, validate on 2–3
+mazes, then run the protocol: all 192 tasks of `datasets/v2/test`, 4 trials,
+`--order-seed 20261028`, `--resume --resume-max-timeouts 2` to replay
+connection errors. Score with `mazerunner board`.
 
 ## Documentation conventions
 

@@ -1,0 +1,461 @@
+{
+  "effort": [
+    {
+      "more": "gpt6-astra-xhigh",
+      "less": "gpt6-astra",
+      "delta": {
+        "score": 0.12760416666666666,
+        "lo": 0.08072916666666667,
+        "hi": 0.17447916666666666,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.6953125,
+        "lo": 0.65625,
+        "hi": 0.734375,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.5677083333333334,
+        "lo": 0.5208333333333334,
+        "hi": 0.6145833333333334,
+        "cells": 24
+      }
+    },
+    {
+      "more": "gpt61-sol-xhigh",
+      "less": "gpt61-sol",
+      "delta": {
+        "score": 0.125,
+        "lo": 0.08333333333333333,
+        "hi": 0.16666666666666666,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.5963541666666666,
+        "lo": 0.5442708333333334,
+        "hi": 0.6510416666666666,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.4713541666666667,
+        "lo": 0.421875,
+        "hi": 0.5208333333333334,
+        "cells": 24
+      }
+    },
+    {
+      "more": "gpt61-terra-xhigh",
+      "less": "gpt61-terra",
+      "delta": {
+        "score": 0.07552083333333333,
+        "lo": 0.028645833333333332,
+        "hi": 0.12239583333333333,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.5859375,
+        "lo": 0.53125,
+        "hi": 0.640625,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.5104166666666666,
+        "lo": 0.4583333333333333,
+        "hi": 0.5625,
+        "cells": 24
+      }
+    },
+    {
+      "more": "opus55-max",
+      "less": "opus55",
+      "delta": {
+        "score": 0.13541666666666666,
+        "lo": 0.078125,
+        "hi": 0.19277343750000026,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.3229166666666667,
+        "lo": 0.2604166666666667,
+        "hi": 0.3854166666666667,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.1875,
+        "lo": 0.15104166666666666,
+        "hi": 0.2265625,
+        "cells": 24
+      }
+    },
+    {
+      "more": "argon",
+      "less": "argon-nothink",
+      "delta": {
+        "score": 0.013020833333333334,
+        "lo": -0.0234375,
+        "hi": 0.052083333333333336,
+        "cells": 24
+      },
+      "more_score": {
+        "score": 0.375,
+        "lo": 0.33587239583333334,
+        "hi": 0.4166666666666667,
+        "cells": 24
+      },
+      "less_score": {
+        "score": 0.3619791666666667,
+        "lo": 0.3203125,
+        "hi": 0.4010416666666667,
+        "cells": 24
+      }
+    }
+  ],
+  "regression": {
+    "gpt6-astra": {
+      "intercept": {
+        "beta": 1.382750936164024,
+        "odds_ratio": 3.9858513822631263,
+        "ci": [
+          1.0262395013330603,
+          1.9160186598869238
+        ]
+      },
+      "normalized_length": {
+        "beta": -0.8942894611485604,
+        "odds_ratio": 0.40889803338504177,
+        "ci": [
+          -1.6908473747373387,
+          -0.38116641773678106
+        ]
+      },
+      "turns": {
+        "beta": 0.7314865566160964,
+        "odds_ratio": 2.0781676264259814,
+        "ci": [
+          0.1469381716160414,
+          1.5247973187644839
+        ]
+      },
+      "route_branches": {
+        "beta": -0.2277849452346579,
+        "odds_ratio": 0.7962954885624527,
+        "ci": [
+          -0.5301238916203167,
+          0.05952870496823309
+        ]
+      },
+      "min_clearance_px": {
+        "beta": 1.5209320218795273,
+        "odds_ratio": 4.576488595544763,
+        "ci": [
+          1.0431793841384323,
+          2.200309377121839
+        ]
+      },
+      "warped": {
+        "beta": -0.36315642611326787,
+        "odds_ratio": 0.6954776341266142,
+        "ci": [
+          -0.6488738406134853,
+          -0.09526240257746899
+        ]
+      }
+    },
+    "argon": {
+      "intercept": {
+        "beta": 0.4801700737256594,
+        "odds_ratio": 1.6163492773612764,
+        "ci": [
+          0.1306166732224733,
+          0.8232555530413033
+        ]
+      },
+      "normalized_length": {
+        "beta": -0.558642365259746,
+        "odds_ratio": 0.5719850837744542,
+        "ci": [
+          -1.461307061891027,
+          0.14922072461858016
+        ]
+      },
+      "turns": {
+        "beta": -0.5026011457975994,
+        "odds_ratio": 0.6049550351390101,
+        "ci": [
+          -1.6860065100441903,
+          0.43370456739028146
+        ]
+      },
+      "route_branches": {
+        "beta": -0.7480039914148815,
+        "odds_ratio": 0.47331034202802635,
+        "ci": [
+          -1.2930658871804859,
+          -0.49545318678659384
+        ]
+      },
+      "min_clearance_px": {
+        "beta": 1.2192208054271292,
+        "odds_ratio": 3.3845494833106473,
+        "ci": [
+          0.7989673539226652,
+          1.8371318274190354
+        ]
+      },
+      "warped": {
+        "beta": -0.5298180569097419,
+        "odds_ratio": 0.5887120720284506,
+        "ci": [
+          -0.8694829109548048,
+          -0.28090585669357904
+        ]
+      }
+    },
+    "opus55": {
+      "intercept": {
+        "beta": -1.2902902547646375,
+        "odds_ratio": 0.2751908960277561,
+        "ci": [
+          -1.9631388838550277,
+          -0.945548535131039
+        ]
+      },
+      "normalized_length": {
+        "beta": -0.5716754472998199,
+        "odds_ratio": 0.5645787239370968,
+        "ci": [
+          -1.5968251686380641,
+          0.2964428202816891
+        ]
+      },
+      "turns": {
+        "beta": -1.1637392278404195,
+        "odds_ratio": 0.31231617345287593,
+        "ci": [
+          -2.9143086714252115,
+          0.15009092225189394
+        ]
+      },
+      "route_branches": {
+        "beta": -0.9602407612123531,
+        "odds_ratio": 0.38280071131616983,
+        "ci": [
+          -1.484167066009149,
+          -0.6293212751490198
+        ]
+      },
+      "min_clearance_px": {
+        "beta": 0.5626108368150342,
+        "odds_ratio": 1.7552491924093325,
+        "ci": [
+          0.23373816930625962,
+          0.9559533087443435
+        ]
+      },
+      "warped": {
+        "beta": -1.0218667699892006,
+        "odds_ratio": 0.3599224202757878,
+        "ci": [
+          -1.4711534844110046,
+          -0.6718237418775357
+        ]
+      }
+    }
+  },
+  "failure_modes": {
+    "argon": {
+      "clearance_failure": 227,
+      "corridor_departure": 38,
+      "figure_ground_inversion": 19,
+      "other": 26,
+      "graph_abstraction": 1,
+      "satisficing": 2,
+      "endpoint_misidentification": 1
+    },
+    "argon-nothink": {
+      "clearance_failure": 161,
+      "corridor_departure": 49,
+      "other": 7,
+      "endpoint_misidentification": 4,
+      "figure_ground_inversion": 24
+    },
+    "gpt6-astra": {
+      "clearance_failure": 197,
+      "procedural_template": 4,
+      "other": 3,
+      "corridor_departure": 8,
+      "figure_ground_inversion": 1
+    },
+    "gpt6-astra-xhigh": {
+      "clearance_failure": 89,
+      "other": 7,
+      "graph_abstraction": 3,
+      "corridor_departure": 1
+    },
+    "gpt61-sol": {
+      "corridor_departure": 38,
+      "clearance_failure": 221,
+      "figure_ground_inversion": 3,
+      "satisficing": 2,
+      "procedural_template": 9,
+      "other": 4
+    },
+    "gpt61-sol-xhigh": {
+      "clearance_failure": 124,
+      "other": 7,
+      "graph_abstraction": 3,
+      "corridor_departure": 8,
+      "procedural_template": 1
+    },
+    "gpt61-terra": {
+      "clearance_failure": 162,
+      "corridor_departure": 55,
+      "procedural_template": 5,
+      "other": 7,
+      "figure_ground_inversion": 4
+    },
+    "gpt61-terra-xhigh": {
+      "corridor_departure": 26,
+      "clearance_failure": 108,
+      "satisficing": 1,
+      "other": 15,
+      "graph_abstraction": 2,
+      "figure_ground_inversion": 7
+    },
+    "kimi31": {
+      "corridor_departure": 123,
+      "figure_ground_inversion": 177,
+      "clearance_failure": 98,
+      "satisficing": 23,
+      "other": 104,
+      "graph_abstraction": 83,
+      "endpoint_misidentification": 1
+    },
+    "muse-wonder": {
+      "clearance_failure": 17,
+      "other": 19,
+      "corridor_departure": 295,
+      "endpoint_misidentification": 97,
+      "procedural_template": 206,
+      "graph_abstraction": 101,
+      "figure_ground_inversion": 25,
+      "satisficing": 1
+    },
+    "nemotron-vl": {
+      "satisficing": 210,
+      "figure_ground_inversion": 231,
+      "corridor_departure": 128,
+      "other": 99,
+      "graph_abstraction": 99,
+      "clearance_failure": 1
+    },
+    "opus55": {
+      "clearance_failure": 175,
+      "procedural_template": 27,
+      "corridor_departure": 222,
+      "satisficing": 69,
+      "graph_abstraction": 4,
+      "other": 7,
+      "figure_ground_inversion": 1
+    },
+    "opus55-max": {
+      "satisficing": 29,
+      "other": 31,
+      "clearance_failure": 4,
+      "figure_ground_inversion": 1
+    }
+  },
+  "failed_before_halfway": {
+    "gpt6-astra": 0.7183098591549296,
+    "gpt61-terra": 0.7811158798283262,
+    "gpt61-sol": 0.703971119133574,
+    "argon": 0.821656050955414,
+    "opus55": 0.8950495049504951,
+    "kimi31": 0.9113300492610837
+  },
+  "tolerance": {
+    "radii": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      8
+    ],
+    "scores": {
+      "gpt6-astra": [
+        88.671875,
+        82.421875,
+        71.875,
+        61.848958333333336,
+        47.78645833333333,
+        18.229166666666664
+      ],
+      "gpt61-terra": [
+        81.25,
+        76.82291666666666,
+        69.66145833333334,
+        61.848958333333336,
+        48.046875,
+        20.3125
+      ],
+      "gpt61-sol": [
+        79.16666666666666,
+        73.046875,
+        63.932291666666664,
+        51.432291666666664,
+        40.36458333333333,
+        16.666666666666664
+      ],
+      "argon": [
+        75.26041666666666,
+        67.70833333333334,
+        59.114583333333336,
+        50.130208333333336,
+        40.625,
+        17.057291666666664
+      ],
+      "opus55": [
+        44.66145833333333,
+        41.66666666666667,
+        34.24479166666667,
+        26.041666666666668,
+        20.052083333333336,
+        8.723958333333332
+      ],
+      "kimi31": [
+        28.515625,
+        25.260416666666668,
+        20.703125,
+        16.666666666666664,
+        12.369791666666668,
+        6.640625
+      ]
+    },
+    "stable": false,
+    "swaps": [
+      [
+        "gpt6-astra",
+        "gpt61-terra"
+      ],
+      [
+        "gpt61-sol",
+        "argon"
+      ]
+    ]
+  },
+  "cost_per_attempt_upper": {
+    "argon": 0.025547114583333325,
+    "argon-nothink": 0.011966880208333334,
+    "gpt6-astra": 0.131043779527559,
+    "gpt6-astra-xhigh": 0.35636716621253395,
+    "gpt61-sol": 0.027514421875,
+    "gpt61-sol-xhigh": 0.07491068817204301,
+    "gpt61-terra": 0.011492346354166664,
+    "gpt61-terra-xhigh": 0.03904156510416664,
+    "kimi31": 0.14441690104166657,
+    "opus55": 0.044475385416666645,
+    "opus55-max": 1.1635276250000002
+  }
+}

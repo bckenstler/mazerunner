@@ -1,6 +1,7 @@
-# MazeRunner
+# MazeRunner v2
 
-**A continuous-control benchmark for multimodal models, and what it found.**
+**A continuous-control benchmark for multimodal models, rebuilt as a difficulty
+ladder, and what it found.**
 
 A model is shown a rendered maze and must submit one continuous drag path from
 a cyan start badge to an amber goal badge, as normalized coordinates, in a
@@ -8,33 +9,38 @@ single tool call. Scoring sweeps a 3-pixel pointer disk along the submitted
 polyline against the same mask that stenciled the image. There is no grid, no
 move vocabulary, no partial credit for a plan that reads well.
 
-The task is deliberately simple to state and turns out to be hard for
-every model tested. The best configuration solves 61% of mazes on a single
-attempt; four of seven models sit below 21%.
+Version 2 replaces the v1 set with a ladder: eight maze families at four sizes,
+plus warped twins of the four grid families, 192 tasks in 48 equally weighted
+cells. The best configuration, GPT-6 Astra at medium effort, solves 71.9% on a
+single attempt. On the largest warped mazes no model passes 30%, whatever its
+effort setting.
 
 ![Leaderboard](results/figures/01-leaderboard.png)
 
 ---
 
-## 1. Why this task
+## 1. Why a v2
 
-Existing maze work for language models is discrete: models emit `UP, LEFT,
-DOWN` over a grid, or pick a cell from a token map. That measures search over a
-symbolic structure the prompt already handed them. Grounding benchmarks go the
-other way and score a single point or box, which measures localization without
-any execution.
+v1 (July 2026, 1,000 tasks, released as v1.0.0) separated the models of its
+day: the best configuration solved 61% and four of seven were below 21%. By
+October the newer models had caught up with it. In a refresh run on the same
+100-task protocol, seven configurations scored between 88% and 94% with
+overlapping intervals, so the top of the board no longer meant anything.
 
-MazeRunner sits in the gap. The model must *perceive* a continuous structure
-from pixels and *execute* a continuous trajectory through it, with a physical
-success criterion. Three properties follow:
+Rather than hand-pick harder mazes, v2 changes the generator settings that make
+a maze hard and exposes them as axes:
 
-- **No symbolic shortcut.** Corridor width is real. A route that is
-  topologically correct but two pixels off the centreline fails.
-- **Failure is localized.** The scorer reports exactly where the pointer left
-  the corridor, which makes failure analysis possible rather than anecdotal.
-- **Difficulty is decomposable.** Topology and rendering style are generated
-  independently, so "hard maze" and "hard picture" can be separated — and they
-  behave very differently (§7 below).
+- **Size.** Four levels per family. L1 is v1's medium setting; each level up
+  adds rows and columns (or rings, rooms, islands) and narrows the corridors.
+  An L4 route has 3.4× the turns of an L1 route and 2.3× the branch points.
+- **Warp.** The four grid families (rectilinear, braided, pipes, island) also
+  come warped at every level: the same maze drawn on a smoothly bent grid.
+  A warped task is built from the same generation attempt as its straight
+  twin, so the topology, start, goal and visual style are identical and only
+  the geometry changes. 64 warped/straight pairs in all.
+
+Every cell holds four tasks and carries equal weight in the headline, so no
+family or size dominates the score.
 
 ---
 
@@ -43,447 +49,284 @@ success criterion. Three properties follow:
 The generator produces four artifacts per task from one seed: a latent world, a
 deterministic solver route, an open-space mask, and a rendered PNG. The
 **renderer paints corridors through the mask as a stencil**, so anything that
-looks open is open by construction — a model can never be penalized for
+looks open is open by construction: a model can never be penalized for
 trusting the picture.
 
-Construction alone is not enough, so every task must also pass pixel-level
-**fairness certification** before it enters the dataset:
+Every task must also pass pixel-level **fairness certification** before it
+ships: corridor boundaries legible along the whole mask outline, no
+corridor-coloured region outside the mask, decoration inside a corridor never
+wider than a third of it, and enough contrast at both badges. Certification
+fails closed: a style is resampled up to six times, and a task that still
+fails is dropped, with every rejection logged.
 
-- corridor boundaries are legible everywhere along the mask outline,
-- no region resembling corridor fill exists outside the mask (no painted-on
-  passage that isn't real),
-- decoration inside a corridor never spans more than a third of its width,
-- both badges have adequate local contrast.
+Four fixes went into the v2 build, each off by default so the v1 generators
+still rebuild byte-identically:
 
-Certification fails closed: a task that cannot pass has its style resampled up
-to six times and is otherwise dropped, with every rejection logged. The scored
-reference route is itself run through the scorer, so a task ships only if its
-own solution passes.
+- **Paired warp.** Grid generators apply the warp after picking the endpoints,
+  so a warped twin keeps its straight task's route.
+- **Pinhole fill.** Rasterization left isolated wall specks of 1–6 px at some
+  corridor joins. v2 fills enclosed specks of 12 px or less (the smallest real
+  wall is 116 px).
+- **Seamless caves.** Cave cells were drawn as pixel-inclusive rectangles, and
+  augmentation scaling opened 1-px seams between them that rendered as dashed
+  lines and acted as walls. v2 caves are seamless. (About a quarter of v1's
+  caves are affected; v1 is retired rather than patched.)
+- **Drawable references.** The stored reference route is the fewest-point
+  simplification that still passes the scorer, under the 512-point submission
+  cap. The longest needs 349 points, so every task can be solved within the
+  protocol.
 
-Efficiency is measured against a **mask-certified geometric optimum** — the
-shortest legal path for a pointer of the given radius, found by eroding the
-mask and running Dijkstra over the legal-centre region — not against the
-generator's graph route, which is an upper bound a good model can legally beat.
-
-**Dataset:** 1,000 tasks across 8 topology families and 20 style archetypes,
-split dev 200 / test-public 300 / test-hidden 500, with 6 archetypes and 8
-family×archetype cells held out of the public splits. Every task records its
-seeds, resolved parameters, certification metrics, and rejection history;
-`dataset verify` rebuilds tasks from provenance and demands byte-identical
+The endpoint pair is drawn from the same far-endpoint band at every level, and
+each straight topology is deduplicated against all 1,000 v1 tasks
+(`datasets/v2/dedup-v1-graph-hashes.txt`). `mazerunner dataset verify --full`
+rebuilds every task from its recorded provenance and demands byte-identical
 masks.
+
+**Dataset:** `datasets/v2/test`, 192 tasks, 14 style archetypes, all public.
 
 ---
 
 ## 3. Protocol
 
-The analysis plan was written and frozen before the main run, and every
-subsequent departure is recorded as a dated amendment in `ANALYSIS_PLAN.md`.
-
 | | |
 |---|---|
-| Task set | `evals/dev-eval-100.txt` — 100 dev tasks, ILP-selected for 12–13 per family, tiers 30/40/30, every archetype ≥6 |
-| Dataset vs. study | the dataset is 1,000 tasks; **every number in this study is from the 100-task subset** (×8 trials). test-public (300) and test-hidden (500, encrypted) ship unevaluated, as headroom for future runs and contamination auditing |
-| Design | uniform flat: every model × every task × exactly 8 trials |
-| Prompt | frozen, dimension-free |
-| Order | randomized per model leg, seed recorded |
-| Reasoning | each model at its vendor default or ladder midpoint, verified from usage telemetry |
-| Scale | 5,600 attempts |
+| Task set | all 192 tasks of `datasets/v2/test` |
+| Design | every default-effort configuration × every task × 4 trials; the extra-effort configurations ran the 96 L3/L4 tasks |
+| Prompt | the v1 prompt, unchanged, dimension-free |
+| Order | shuffled per configuration, order seed 20261028 |
+| Settings | `configs/providers.v2.json` |
+| Time budget | 600 s per call; 1,800 s for GPT xhigh and Claude max |
+| Run | 2026-10-29 to 2026-11-02, 7,776 attempts |
 
-Two headline metrics, never blended: **pass@1** (mean success per attempt,
-macro-averaged over tasks) and **route progress** (fraction of the certified
-route completed before failure). Confidence intervals resample *tasks*, not
-attempts — eight attempts on one maze are not eight independent observations,
-and resampling attempts would shrink intervals by roughly √8 and manufacture
-significance.
+**Headline.** Macro pass@1: the mean over the 48 cells of the mean over a
+cell's tasks of each task's pass rate. The extra-effort configurations are
+scored on their 24 L3/L4 cells and reported in a separate table, never ranked
+against full-ladder scores. Route progress, the fraction of the reference
+route completed before failure, is reported beside pass@1 and never blended
+into it.
 
-Transport failures are excluded from denominators and requeued once; anything
-still missing is listed in the run manifest.
+**Intervals.** 95% intervals resample tasks within each cell. Four attempts on
+one maze are not four independent observations; resampling attempts would
+shrink the intervals by about half and manufacture significance. Comparisons
+between two settings of one model are paired by task: both are resampled with
+the same task draw, so task difficulty cancels.
+
+**Attempts that never came back.** A call can fail in transit (a dropped
+connection) or reach the model and not finish in time. Connection errors never
+reached the model and are replayed until they get an answer. An attempt where
+the model was asked twice and did not answer either time (a client timeout, or
+the gateway resetting the long-running request) counts as a **fail**. This
+applies to 32 of 7,776 attempts: 17 GPT-6 Astra xhigh, 12 GPT-6.1 Sol xhigh,
+3 GPT-6 Astra medium, all on the longest routes. No attempt is missing from
+the final set.
 
 ---
 
 ## 4. Main result
 
-| Model | pass@1 | 95% CI | pass@8 | Route progress |
+| | Model | pass@1 [95% CI] | pass@4 | L1 | L4 | L4 warped | Route progress |
+|---|---|---|---|---|---|---|---|
+| 1 | GPT-6 Astra · medium | **71.9%** [68.5, 75.1] | 86% | 93 | 59 | 19 | 81.8% |
+| 2 | GPT-6.1 Terra · medium | **69.7%** [66.1, 73.2] | 81% | 92 | 47 | 22 | 78.3% |
+| 3 | GPT-6.1 Sol · medium | **63.9%** [60.4, 67.6] | 80% | 87 | 51 | 12 | 75.7% |
+| 4 | Gemini 4 Argon · default | **59.1%** [56.4, 62.0] | 71% | 89 | 37 | 6 | 69.2% |
+| 5 | Claude Opus 5.5 · default | **34.2%** [31.2, 37.4] | 42% | 70 | 20 | 2 | 46.1% |
+| 6 | Kimi K3.1 Pro · high | **20.7%** [17.8, 23.7] | 33% | 57 | 4 | 0 | 32.1% |
+| 7 | Muse Wonder 1.0 · medium | **0.9%** [0.1, 1.8] | 2% | 5 | 0 | 0 | 8.0% |
+| 8 | Nemotron 3.5 Super VL · default | **0.0%** [0.0, 0.0] | 0% | 0 | 0 | 0 | 4.1% |
+
+L1 and L4 average the straight cells of all eight families; L4 warped averages
+the four warped families. Astra and Terra are within each other's intervals,
+as are Sol and Argon.
+
+![Size ladder](results/figures/02-ladder.png)
+
+Every model falls at every step of the ladder. By L4 the GPT-6 models have
+lost 37–49% of their L1 score and Gemini 4 Argon 58%; Claude Opus 5.5 and Kimi
+K3.1 Pro lose 71% and 93%.
+
+---
+
+## 5. Bending a maze is harder than enlarging it
+
+![Warp](results/figures/03-warp.png)
+
+The paired design answers a question v1 could only raise: are irregular mazes
+hard because of their geometry, or because irregular families also happen to
+have different topologies? Here the topology is held fixed and only the
+geometry bends.
+
+- For the leaders the warp cost grows with size: GPT-6 Astra loses 9 points at
+  L1 and 64 at L4 (83% → 19%). A small bent maze is still easy; a large one is
+  where they lose the route.
+- For Claude Opus 5.5 the bending itself is the problem: it solves every
+  straight L1 grid and 42% of their warped twins, and from L2 up it solves
+  almost no warped maze.
+
+![Cells](results/figures/05-cells.png)
+
+Families are not equally hard, and not hard for the same models. Organic mazes
+(curved, irregular corridors) defeat Claude from L1 and Gemini from L2;
+island and pipes stay solvable for all three models shown. The leader's
+weakest cells are the warped L4 grids and the irregular families (organic,
+radial, cave) at L4.
+
+### What predicts failure
+
+![Regression](results/figures/06-regression.png)
+
+A logistic regression of success on task features, per model, with a
+task-clustered bootstrap. Route length and turn count are correlated; with
+length held fixed, more turns means a denser maze, not a longer one, which is
+why turns can come out positive.
+
+- For GPT-6 Astra and Gemini 4 Argon, **corridor width** is the largest effect
+  (+1.5 and +1.2 log-odds per SD): their failures are drawing failures, a line
+  run too close to an edge.
+- For Claude Opus 5.5, **warping** (−1.0) and **branching** (−1.0) dominate:
+  it loses the route itself.
+- Warping hurts all three after length, turns, branches and width are held
+  fixed.
+
+---
+
+## 6. Thinking longer
+
+![Effort](results/figures/04-effort.png)
+
+Each model was run at a second effort setting on the L3/L4 cells and compared
+task by task with its default.
+
+| Model | Setting | L3/L4 pass@1 | Gain [95% CI] | Median output |
 |---|---|---|---|---|
-| GPT-5.6 Sol · xhigh | **60.6%** | [53.4, 67.4] | 86% | 0.719 |
-| GPT-5.6 Sol · medium | **48.4%** | [40.6, 55.8] | 74% | 0.612 |
-| Gemini 3.6 Flash · medium | **29.8%** | [22.2, 37.5] | 46% | 0.432 |
-| Kimi K3 · high | **20.6%** | [14.6, 27.0] | 38% | 0.329 |
-| Claude Opus 5 · high | **16.4%** | [10.2, 23.1] | 26% | 0.320 |
-| Muse Spark 1.1 · medium | **6.0%** | [2.8, 9.8] | 14% | 0.177 |
-| Inkling · default | **0.0%** | [0.0, 0.0] | 0% | 0.029 |
+| Claude Opus 5.5 | default → max | 18.8% → 32.3% | **+13.5** [+7.8, +19.3] | 1.5K → 46K tokens |
+| GPT-6 Astra | medium → xhigh | 56.8% → 69.5% | **+12.8** [+8.1, +17.4] | 2.0K → 6.0K |
+| GPT-6.1 Sol | medium → xhigh | 47.1% → 59.6% | **+12.5** [+8.3, +16.7] | 2.0K → 6.8K |
+| GPT-6.1 Terra | medium → xhigh | 51.0% → 58.6% | **+7.6** [+2.9, +12.2] | 1.6K → 5.6K |
+| Gemini 4 Argon | thinking off → default | 36.2% → 37.5% | +1.3 [−2.3, +5.2] | 0.5K → 1.2K |
 
-Adjacent ranks separate on paired tests except **Kimi K3 vs Claude Opus 5**
-(+4.2pp, CI spans zero, p=0.25) — those two are tied on pass@1, though McNemar
-separates them on any-of-8 reliability (p=0.017).
+- GPT-6 at xhigh and Claude at max effort gain 8–14 points. The gain is on the
+  straight mazes: warped L4 stays at or below 28% for every configuration.
+- Claude Opus 5.5 at its default (adaptive thinking) writes under 350 tokens
+  of reasoning per call. Its max setting writes 30× more output and costs 26×
+  as much per attempt, for less than twice the score. It ran one attempt per
+  maze (96 calls), so its interval is wider.
+- Gemini 4 Argon thinks by default, deciding per call whether to (it thought
+  on 55% of calls). Its higher settings had no effect through the serving
+  gateway, so the comparison runs the other way: switching thinking off costs
+  1.3 points, inside the noise, at half the price.
 
-Difficulty tiers are **measured from the built task, never declared by the
-sampler**: each task's score combines the geodesic route length (normalized by
-the canvas diagonal), the number of ≥30° turns along that route, and the
-junction count on the retained route — `score = length + turns/12 +
-branches/10` (branches capped at 15). Score below 1.6 is *easy*, below 3.0
-*medium*, and everything above *hard*; the bands were calibrated on the smoke
-set before the dataset was built. The sampler aims for a tier by choosing
-generation parameters, but the recorded tier is what the finished maze
-actually measures.
+![Cost](results/figures/10-cost.png)
 
-Difficulty is monotone for every model across these tiers, which is the
-validity check the tiers exist for.
-
-![Tiers](results/figures/02-tiers.png)
-
-### The ranking is not an artifact of the scoring constant
-
-Every score depends on the 3-pixel pointer. Re-scoring all 5,600 stored
-submissions at radii from 1px to 8px produces **the identical ordering at every
-tolerance**, with no inversions anywhere.
-
-![Tolerance](results/figures/04-tolerance.png)
+At list prices, GPT-6.1 Terra at medium is the cheapest strong configuration
+($0.011 per L3/L4 attempt for 51%), and GPT-6 Astra at xhigh the most accurate
+($0.36 for 70%). Muse Wonder 1.0 and Nemotron 3.5 Super VL had no published
+price on the route used and are left off.
 
 ---
 
-## 5. Test-time compute buys accuracy for one model and nothing for the others
+## 7. How models fail
 
-Each model was swept across its own reasoning-effort ladder on a fixed 25-task
-set, 3 trials per level.
+![Failure modes](results/figures/07-failure-modes.png)
 
-![Effort](results/figures/03-effort.png)
+Every failed attempt was classified from its path geometry and, where the
+model returned one, its reasoning trace; a trace-based label is assigned only
+when the path agrees with it. Full taxonomy, per-model shares, and the two
+classifier rules changed for v2: [results/failure-modes.md](results/failure-modes.md).
 
-Three regimes, not one curve:
+- Nine in ten of GPT-6 Astra's failures follow a route that stays inside the
+  corridor and clip a wall with the 3px pointer. Most GPT-6 and Gemini
+  attempts return no reasoning summary, so for them these labels are
+  geometric.
+- Claude Opus 5.5 cuts across walls (44% of its failures), and in 14% says it
+  will commit to a best-guess path it could not verify.
+- Kimi K3.1 Pro and Nemotron 3.5 Super VL most often read the walls as the
+  corridors, and their traces say so.
 
-- **Scaling (GPT-5.6 Sol).** Monotone, +37pp from low to xhigh, still climbing
-  at the top of the ladder.
-- **Threshold (Gemini 3.6 Flash).** Any thinking is worth +12pp over none; more
-  thinking is worth nothing. Low, medium, and high each returned **exactly
-  24/75** while reasoning tokens ran 2,385 → 8,135 → 14,607.
-- **Flat (Claude Opus 5, Kimi K3).** Opus sits inside noise at every level
-  while latency grows 6×. Kimi is flat from low to high, gaining only at max —
-  at 9+ minutes per maze.
+![Progress](results/figures/08-progress.png)
 
-This is the study's most quotable finding and its most consequential one: the
-same nominal knob produces a scaling curve, a step function, and a flat line on
-identical tasks. "Reasoning effort" is not a comparable unit across vendors.
-
----
-
-## 6. Why models fail — and why the answer differs per model
-
-The scorer says *where* an attempt broke. To learn *why*, failure traces were
-read across all seven models, ten recurring reasoning patterns were named, and
-each was operationalized as a classifier rule requiring **both** a lexical cue
-in the model's own trace **and** corroborating geometry from its submitted
-path. Wording alone never assigns a cause: models narrate uncertainty they do
-not act on, and act on confusions they never narrate.
-
-![Failure modes](results/figures/05-failure-modes.png)
-
-The modes, in plain terms:
-
-| Mode | What actually happened |
-|---|---|
-| **Cut through a wall** | Committed to a route and drew it straight through a barrier. The catch-all when the trace names no deeper cause. |
-| **Clearance failure** | The route is *right* — the path's centreline stays inside the corridor the whole way — but the 3px pointer still grazes a wall. A precision failure, not a navigation one. |
-| **Wrong start** | The path never begins on the cyan start badge. Failed at the easiest perceptual target on the board. |
-| **Walls ↔ corridors** | Decided the walls were the walkable space (or vice versa) and traced the solid regions. A figure–ground parse error. |
-| **Never looked** | The reasoning trace contains no coordinate, colour, or spatial reference at all — generic procedure with nothing image-specific in it. |
-| **Gave up verifying** | Said out loud that the path was approximate or unchecked ("maybe. Fine.") and submitted anyway. A policy failure, not a perception one. |
-| **Drew from formula** | Generated the path analytically — arcs, radii, evenly spaced angles — instead of tracing observed corridors. Smooth, regular, and wrong. |
-| **Graph, not pixels** | Reduced the maze to imagined nodes and edges, then submitted a tour of the node positions. Corridor width stops being represented at all. |
-| **Fabricated verification** | Claimed to have checked the whole route ("verified all dead ends") on a path that collides. |
-| **Invented topology** | Justified an impossible route by asserting connections that don't exist ("there might be a hidden passage… badge teleport"). |
-
-Every label requires *both* the model's own words and corroborating geometry
-from its submitted path — wording alone never assigns a cause. Per-attempt
-verdicts with their evidence are in `results/failure-modes.jsonl`.
-
-| Model | Signature failure |
-|---|---|
-| GPT (both configs) | **Clearance, 30%** — centreline legal the entire way; the swept pointer still clips a wall |
-| Gemini · Opus | **Wall-cutting, 63% / 58%** — commit to a route and drive it through a barrier |
-| Kimi K3 · high | **Satisficing, 35%** — states the path is approximate, submits anyway. Only 4% wall cuts |
-| Muse Spark | **Never looked, 28%** — traces with no coordinate, colour, or spatial reference at all |
-| Inkling · default | **Entry-point failure** — 41% wrong start, 22% figure–ground inversion |
-
-Some individual traces are worth reading in full. GPT-5.6 Sol talking itself
-into an impossible route:
-
-> *"there might be a hidden connection throughout the network using badge
-> teleport … It looks like the entire wall network is likely interconnected, so
-> this tube route could indeed be valid."*
-
-Gemini asserting a verification it did not perform, on a path that collides:
-
-> *"I checked all possible dead ends and verified the entire map structure."*
-
-And Kimi declining to check at all:
-
-> *"Does segment (0.500,0.335)->(0.545,0.385) cross gap? maybe central. Fine.
-> … Final can be approximate."*
-
-**Limits.** The largest bucket, "cut through a wall" (40%), is descriptive
-residual rather than mechanism — it means the trace named no recognizable
-cause. 20% of failures carry no trace at all (overwhelmingly Inkling, whose
-provider returns reasoning intermittently) and are labelled on geometry alone;
-every verdict records whether its evidence was `diagnostic`, `uninformative`,
-or `absent`. Agreement with hand labels is 8/9 on the traces used to build the
-taxonomy, which is a sanity check and not a measured accuracy.
-
-### What actually predicts failure
-
-A logistic regression of per-attempt success on the measured task features,
-standardized, with task-clustered bootstrap CIs:
-
-![Regression](results/figures/12-regression.png)
-
-The same relationship as raw pass rates, tasks binned into feature quintiles —
-unadjusted, so correlated features bleed into each other, but the shapes are
-readable: GPT's curve climbs steadily with corridor width and barely reacts to
-turns until the hardest quintile, while Gemini collapses as turns rise and is
-flat in width.
-
-![Response](results/figures/13-response.png)
-
-| Feature | All models | GPT @ xhigh | Gemini |
-|---|---|---|---|
-| normalized length | +0.18 | −0.19 | +0.62 |
-| **turns** | **−0.72 \*** | −0.12 | **−1.70 \*** |
-| **route branches** | **−0.19 \*** | +0.08 | **−0.67 \*** |
-| **min clearance** | +0.19 | **+0.37 \*** | −0.14 |
-
-**Turn count, not route length, makes a maze hard.** A long straight corridor
-is easy; a short twisty one is not. Each turn is a place where the corridor must
-be re-located, and errors compound there.
-
-And the two strongest models are bound by *different things*: GPT's only
-significant predictor is corridor **width** — it can follow any route but needs
-room — while Gemini's are turns and branching, with clearance irrelevant. The
-benchmark measures a different ability depending on where a model sits on it,
-which is why a scalar score alone would mislead about *why* one model wins.
-
-⚠️ This criticizes our own design: `difficulty_score` weights normalized
-length, which does not predict success. Tiers remain monotone in observed pass
-rate because the score is a blend, but a v2 difficulty model should down-weight
-length in favour of turns and branching.
+Failures come early. Even for the leader, 72% of failed attempts first touch a
+wall in the first half of the route; for Claude and Kimi it is 90% and 91%.
 
 ---
 
-## 7. Ablations
+## 8. The scoring constant
 
-Every ablation draws from `dev-eval-100`, so each attempt is paired with the
-same task's main-run attempts.
+![Tolerance](results/figures/09-tolerance.png)
 
-### Style vs topology
-
-**The intuition:** every rendered benchmark entangles "is the structure hard?"
-with "is the picture hard?" Because topology and rendering come from
-independent seeds, the same maze can be re-painted over a byte-identical
-scored mask — making the picture the only variable.
-
-20 topologies rebuilt in 5 visual styles each, with byte-identical scored masks
-asserted per group and the reference route re-verified under every rendering.
-
-![Variance](results/figures/08-variance.png)
-
-Averaged over mazes, style barely matters — a 6-point spread against a 92-point
-topology spread. But the interaction is 14.2% [7.4, 28.5] against a style main
-effect of 0.4% [0.2, 3.8], and **within a single fixed maze the best and worst
-rendering differ by 24 points on average, up to 51**. Style is not a global
-difficulty dial; it is a per-maze one. No archetype is uniformly harder.
-
-A benchmark pairing one style to one maze would report that interaction as
-topology difficulty.
-
-### Input resolution
-
-**The intuition:** vision encoders downsample, so a corridor a few pixels wide
-may not survive into the model's internal representation at all — a failure no
-amount of reasoning can fix. Resending the identical maze at 0.5× and 2×
-isolates that channel. A model that improves with pixels but not with thinking
-was perception-bound; a model stuck at zero at *every* resolution cannot blame
-the encoder — its failure sits upstream of pixel budget.
-
-![Resolution](results/figures/06-resolution.png)
-
-**Kimi more than doubles at 2× resolution (20% → 42%)** while its effort ladder
-was flat at ~16%. Extra reasoning bought it nothing; extra pixels bought it
-everything. That dissociation is the sharpest evidence in the study that the
-binding constraint is perceptual acuity rather than deliberation.
-
-Halving resolution hurts nearly everyone (Opus 18→6%, GPT-medium 54→32%). Two
-exceptions carry information: Gemini is flat across all three scales, and
-**Inkling is 0% at every resolution** — which sharpens its diagnosis. Its
-fingerprints (§8) show coarse, grid-quantized position reports with ~25px of
-slop. If that coarseness were an *input* limitation — detail lost in the
-encoder — doubling the resolution should recover some of it. It recovers
-nothing. The bottleneck is not how much detail reaches the model but the
-fidelity at which it reports what it perceives: the sketch stays coarse no
-matter how sharp the input.
-
-### Closed-loop feedback
-
-**The intuition:** the agentic-loop assumption is that showing a model its
-error beats a fresh guess. This tests the cheapest version on a task where the
-error is visually exact — no diagnosis required, only re-perception of one
-marked location. If closed-loop correction works anywhere, it should work here.
-
-Models were shown their own failed path drawn over the maze with a ⊗ at the
-exact point they left the corridor, told only the failure category, and asked
-again — up to four turns, stopping at first success. No oracle geometry.
-These are true multi-turn conversations with the full history retained: at
-turn 2 the context holds two images (the original maze plus the overlay of
-attempt 1), at turn 3 three, and so on — verified from stored usage, where
-input tokens grow monotonically per turn (e.g. 1.4K → 19K → 25K → 30K). The
-original image is never dropped.
-
-![Feedback](results/figures/07-feedback.png)
-
-Restricted to episodes whose first turn failed — the only place feedback can
-matter — **no model beats simply trying again blind.** GPT-medium is −24pp,
-Gemini −16pp; the strongest configuration is statistically indistinguishable
-from a fresh attempt.
-
-The mechanism is visible in route progress, which *rises* after feedback (+0.15
-to +0.58) while almost never converting to a pass: models repair locally toward
-the marked collision point and then fail somewhere else. The overlay anchors
-them to the failed route instead of prompting a fresh reading.
-
-This tests one feedback design — the cheapest and most natural one. A richer
-signal might do better. What these data rule out is that the obvious version
-works.
-
-### Dimension disclosure
-
-**The intuition:** submissions are normalized, so the model must implicitly
-know the canvas size to convert a measured pixel into a coordinate. Disclosure
-removes that conversion step — so whether it helps or hurts localizes whether
-a model's errors live in measurement or in normalization.
-
-![Dimensions](results/figures/10-dimensions.png)
-
-Telling the model the canvas size redistributes rather than lifts: GPT +8pp,
-Gemini −8pp, Opus +2pp, netting ~zero — replicating a 25-task pilot within 1–4
-points at n=100. The mechanism is specific: disclosure cuts **wrong-start
-errors from 9% to 1%** while barely moving collisions (64%→60%). It repairs the
-normalization step and does nothing for corridor tracing.
-
-At GPT-xhigh the effect vanishes entirely (0pp) — enough reasoning establishes
-scale from the image alone, making the disclosure redundant.
-
-### Vision validity (control)
-
-A methods check rather than a finding, reported last for completeness: 25
-tasks × 2 trials × 7 models with a blank canvas or another task's image
-produced **0 passes in 700 attempts**, route progress ~0.000 — 97% of blind
-attempts never even start on the badge. There is no prior-guessable floor;
-every score in this study comes from reading the specific image. (This is
-also what licenses the Inkling reading in §8: with the image its route
-progress is 0.029, without it 0.000, so it demonstrably uses the picture —
-just coarsely.)
+Every score depends on one constant, the 3px pointer radius. Re-scoring every
+stored submission at radii from 1 to 8 px (no new API calls) changes every
+score, and the order of the six models with non-trivial scores holds from 1 to
+4 px. At 5 px and above, two pairs swap: Astra and Terra, and Sol and Argon.
+Both pairs already overlap in their intervals at 3 px, so the board does not
+claim an order between them.
 
 ---
 
-## 8. Fingerprints: measuring vs. writing round numbers
+## 9. Decisions made during the run, and other caveats
 
-**The intuition:** you can tell how someone obtained a number by looking at
-the digits. A measurement comes out messy — a model that located the badge in
-the image reports it at (0.9184, 0.1507). An *estimate* comes out round —
-(0.90, 0.15) — because rounding is what a coarse internal representation
-produces. The second signature is simpler: the start badge is drawn at a known
-place, so the distance from it to the path's first point measures how
-precisely the model registered what it saw. Neither signal involves routing —
-together they place each model on a spectrum from pixel-level measurement to
-coarse, quantized estimation.
+The v2 design (cells, levels, warp, equal weights, extra effort on L3/L4 only)
+was fixed before the main run. Decisions made after it started, in order:
 
-![Fingerprints](results/figures/09-fingerprints.png)
+- **2026-10-27: calibrating the levels.** The generator settings for each
+  level were chosen by running GPT-6.1 Terra at medium and Gemini 4 Argon on
+  159 candidate mazes, then a pilot with those two and GPT-6 Astra at xhigh,
+  aiming for a ladder that falls steadily rather than for a target score.
+  Settings were chosen per level, never task by task. Even so, three of the
+  configurations on the board informed the design.
+- **2026-10-29 to 10-31: outages.** Overnight network loss turned about 750
+  calls into connection errors, and Kimi K3.1 Pro's only host returned rate
+  limits for hours. Every affected call was replayed; none reached the model,
+  so the replays are first attempts.
+- **2026-10-31: the unanswered-attempt rule** (§3), decided while the
+  extra-effort configurations were still running and before any final score
+  was computed.
+- **2026-11-02: gateway resets count as attempts.** Three units had one client
+  timeout and one gateway reset of a long request. Both reached the model, so
+  both count, and the three score as fails.
+- **2026-11-02: the extra effort settings** for Claude Opus 5.5 (max, one
+  trial) and Gemini 4 Argon (thinking off) were added after the GPT effort
+  results were in, so that more than one vendor has an effort comparison.
+- **2026-11-02: two failure-classifier rules** were changed after spot checks
+  of v2 verdicts ([details](results/failure-modes.md#changes-from-the-v1-classifier)).
 
-**Inkling places 67.9% of its coordinates on an exact 0.01 grid and misses
-the start badge by 25 pixels at the median.** To be precise about what that
-means: it *does* perceive the maze — 25px on an ~800px canvas is near the
-badge, not across the image, and the blind control confirms it (route progress
-0.029 with the image, 0.000 without). What it does not do is measure. Its
-coordinates come from a coarse, quantized internal sketch — positions rounded
-to a 0.01 grid — and on a task whose acceptance radii and corridor widths are
-tens of pixels, 25px of systematic slop fails every time. The gap between
-"sees roughly where things are" and "can report where they are precisely" is
-the whole distance between Inkling and the scoreboard. GPT is the other end of
-the spectrum: irregular coordinates, 1.3px badge accuracy.
+Other caveats:
 
-A subtler separation: **Gemini localizes better than GPT** (2.1px median, 4px
-at p90 — a tighter tail than GPT's 15px) yet scores half as well. Finding where
-things are and tracing a corridor between them are different abilities.
-
----
-
-## 9. What this says
-
-**The field is not saturated.** The best configuration fails 39% of single
-attempts and 48% of hard-tier mazes.
-
-**Reasoning effort is not a portable unit.** The same knob scales one model,
-steps once for another, and does nothing for two more. Comparing "high effort"
-across vendors is not comparing like with like.
-
-**Perception, not planning, is the binding constraint for most of the field** —
-and the evidence is convergent rather than a single test: the effort sweeps
-(more thinking doesn't help), the resolution ablation (more pixels does), the
-difficulty regression (clearance and turns predict; length doesn't), and the trace
-taxonomy (clearance failures, figure–ground inversions, models that never
-looked).
-
-**Self-correction from one's own error does not work here.** Every model was
-better off resampling than reasoning about where it went wrong.
-
-**Benchmarks that pair one rendering to one structure confound two axes.** The
-style×topology interaction is 20× the style main effect; a fixed-style design
-would silently attribute it to topology.
+- Serving routes: the OpenAI, Gemini, Anthropic and Meta models ran through an
+  OpenAI-compatible LiteLLM gateway; Kimi K3.1 Pro (Moonshot) and Nemotron
+  3.5 Super VL (Crusoe, bf16) ran through OpenRouter, pinned to one host each.
+  A different host or serving stack may score differently.
+- Four tasks per cell is a small sample. Cell-level numbers (§5) carry wide
+  intervals; the headline averages 48 of them.
+- v2 has no hidden split. Please don't train on it.
 
 ---
 
 ## 10. Reproducibility
 
-Everything is regenerable from committed artifacts.
+Every number in this document, on the site, and in the figures is computed
+from the merged run and the offline analyses; nothing is hand-typed.
 
-- **Dataset:** one master seed and `dataset.config.json` reproduce all 1,000
-  tasks; `dataset verify` rebuilds from per-task provenance and requires
-  byte-identical masks.
-- **Task sets:** ILP-selected with recorded seeds; `evalset verify` re-solves
-  and asserts identical ids and subset containment.
-- **Runs:** every attempt records its run id, shard, ordinal, order seed, task
-  directory, image variant, serving stack, and full retry history alongside the
-  raw provider payload.
-- **Archive:** every run ever executed — including voided legs and killed
-  shards, retained as evidence rather than tidied away — is compressed and
-  checksummed. `archive verify` re-hashes 12,460 files and distinguishes an
-  appended-to snapshot from a rewritten one by content, not timestamp.
-- **Analysis:** offline, no network, 255 tests.
-
-Known deviations from the frozen plan, all recorded as dated amendments: Qwen3-VL
-and GLM were dropped (not deployed with reasoning / text-only); the effort
-sweeps and floor checks ran on a 25-task set that overlaps `dev-eval-100` by
-only 14 of 25, so sweep↔main-run comparisons are **unpaired**; the Kimi `max`
-sweep leg lost 15 of 75 attempts to timeouts and has uneven per-task coverage.
+| | |
+|---|---|
+| Full traces | release asset `mazerunner-v2-traces.tar.gz`: all 7,776 attempts with reasoning, raw payloads, usage and provenance, plus the board and analyses |
+| Board | `results/analysis/board.json` (`mazerunner board --out`) |
+| Analyses | `results/analysis/`: failure verdicts, tolerance re-scoring, figure findings |
+| Settings | `configs/providers.v2.json`, `configs/board.v2.json` |
 
 ### Commands
 
 ```bash
-uv run mazerunner dataset build && uv run mazerunner dataset verify
-uv run mazerunner evalset build --out evals/dev-eval-100.txt --seed 20260730
-uv run mazerunner run --config litellm.config.json --dataset datasets/v1/dev \
-    --mazes-file evals/dev-eval-100.txt --trials 8 --run-id main --shard 0/6 --order-seed 20260730
-uv run mazerunner merge --runs 'results/main/*/main/shard-*' --out results/main/merged
-uv run mazerunner failuremodes
-uv run python scripts/make_figures.py
-uv run mazerunner archive build && uv run mazerunner archive verify
+uv run mazerunner dataset verify --full                # rebuild all 192 tasks from provenance
+uv run mazerunner run --config configs/providers.v2.json --providers gpt6-astra \
+    --dataset datasets/v2/test --trials 4 --run-id v2-main-gpt6-astra \
+    --order-seed 20261028 --resume --resume-max-timeouts 2
+uv run mazerunner merge --runs 'results/v2-main-*/shard-*' --out results/v2/final
+uv run mazerunner board --out results/analysis/board.json
+uv run mazerunner failuremodes                         # results/analysis/failure-modes.jsonl
+uv run python scripts/make_figures.py                  # figures + findings
+uv run python scripts/build_site.py                    # landing page data
 ```
 
-### Companion documents
-
-| File | Contents |
-|---|---|
-| `ANALYSIS_PLAN.md` | the frozen plan and every dated amendment |
-| `results/main-run-leaderboard.md` | main run, tiers, taxonomy |
-| `results/effort-sweeps.md` | all four effort ladders, with per-provider knob verification |
-| `results/ablations.md` | five ablations in full |
-| `results/analysis.md` | statistics, tolerance curves, fingerprints, economics |
-| `results/failure-modes.md` | the taxonomy, worked examples, and its limits |
-| `results/failure-modes.jsonl` | one verdict per failed attempt, with evidence |
+To score from the release traces instead of re-running, extract the tarball
+to `results/v2/final/` and start from `mazerunner board`.

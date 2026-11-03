@@ -106,7 +106,7 @@ function selectByKey(key) {
 }
 
 // Lazy-load one attempt's payload and its task, then reset the replay.
-// Only the manifest is eager; the 5,594 attempt files are 56MB together.
+// Only the manifest is eager; the attempt files are tens of MB together.
 async function select(a) {
   state.selected = a;
   location.hash = a.k.replaceAll("--", "/");

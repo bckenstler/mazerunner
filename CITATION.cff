@@ -6,10 +6,12 @@ authors:
   - family-names: Kenstler
     given-names: Bradley
 license: MIT
-version: 1.0.0
-date-released: 2026-08-02
+version: 2.0.0
+date-released: 2026-11-02
 abstract: >
   MazeRunner evaluates whether multimodal models can perceive a rendered maze
   and execute one continuous drag trajectory through it, scored by swept-disk
-  collision against the mask that stenciled the render. 1,000 tasks across 8
-  topology families and 20 certified visual styles; full traces released.
+  collision against the mask that stenciled the render. Version 2 is a
+  difficulty ladder: 192 tasks over 8 topology families at 4 size levels plus
+  warped twins of the 4 grid families, in 48 equally weighted cells; full
+  traces released.
