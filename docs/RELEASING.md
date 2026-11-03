@@ -33,7 +33,11 @@ Sanity numbers: largest tracked blob < 5MB
        release-assets/SHA-256SUMS \
        --title "MazeRunner v2.0.0" --notes-file docs/release-notes-v2.md
    ```
-   The `pages.yml` workflow deploys `docs/` on the tag.
+   Then deploy the site from `main`. The `github-pages` environment only
+   accepts deployments from `main`, so the tag push does not deploy:
+   ```bash
+   gh workflow run pages.yml --ref main
+   ```
 3. Confirm Pages is live: the landing page loads its leaderboard and effort
    table, the viewer replays an attempt, and a deep link
    (`viewer/#gpt6-astra/rectilinear-L4w-s0012/2`) restores state.
