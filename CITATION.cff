@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "MazeRunner: A Continuous-Control Benchmark for Multimodal Models"
+title: "MazeRunner: Can an AI Draw Its Way Out of a Maze?"
 message: "If you use MazeRunner, please cite it as below."
 type: software
 authors:

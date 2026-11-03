@@ -1,6 +1,6 @@
-# Failure modes (v2)
+# Failure modes
 
-Every failed attempt in the v2 run — 4,392 across 13 configurations, 3,680 at
+Every failed try in the run — 4,392 across 13 model settings, 3,680 at
 default effort — was classified by `mazerunner failuremodes`
 (`src/mazerunner/analysis/failuremodes.py`). Per-attempt verdicts, each with
 the evidence that produced it, are in `results/analysis/failure-modes.jsonl`
@@ -71,14 +71,14 @@ What this says, with that caveat:
 - Muse Wonder 1.0's failures include the largest share of paths that ignore
   the maze altogether, and of paths that do not start on the start badge.
 
-## Changes from the v1 classifier
+## Two rules adjusted after spot checks
 
-The classifier was built and validated by hand on the v1 traces. Spot checks
-of the v2 verdicts found two rules that do not carry over, and both were
-changed before the figures were made:
+The classifier was first checked by hand on an earlier set of traces. Spot
+checks of these labels found two rules that misfired, and both were changed
+before the figures were made:
 
-1. **`procedural_template` now needs the path to agree.** In v1 a short trace
-   with no perceptual content was enough. GPT-6 returns one-line reasoning
+1. **`procedural_template` now needs the path to agree.** A short trace with
+   no perceptual content used to be enough. GPT-6 returns one-line reasoning
    summaries ("Planning the drag path."), so that rule labelled paths that
    stayed inside the corridor the whole way as "never looked". The label now
    also requires the path to leave the corridor; a legal centreline shows the
@@ -90,6 +90,6 @@ changed before the figures were made:
    commit to") remain. This moved 245 verdicts, 207 of them Kimi's, to other
    labels.
 
-The v2 labels have not been re-validated by hand beyond these spot checks.
+These labels have not been re-checked by hand beyond these spot checks.
 Treat the trace-based modes as indicative and the geometric ones
 (`clearance_failure`, `corridor_departure`) as measurements.

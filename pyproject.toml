@@ -1,7 +1,7 @@
 [project]
 name = "mazerunner"
 version = "2.0.0"
-description = "A continuous-control maze benchmark for multimodal models: one drag path, swept-disk scoring, certified-fair renders"
+description = "A maze benchmark for multimodal models: one drawn path, swept-pointer scoring, certified-fair renders"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Bradley Kenstler" }]

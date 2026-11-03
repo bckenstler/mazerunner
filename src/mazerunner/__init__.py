@@ -1,1 +1,1 @@
-"""MazeRunner: a continuous-control maze benchmark for multimodal models."""
+"""MazeRunner: a maze-drawing benchmark for multimodal models."""

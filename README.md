@@ -139,7 +139,7 @@ v2 has no hidden split. Please don't run it through training pipelines.
 ```bibtex
 @software{kenstler2026mazerunner,
   author  = {Kenstler, Bradley},
-  title   = {MazeRunner: A Continuous-Control Benchmark for Multimodal Models},
+  title   = {MazeRunner: Can an AI Draw Its Way Out of a Maze?},
   year    = {2026},
   version = {2.0.0},
   license = {MIT}
